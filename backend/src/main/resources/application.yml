@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: lucabridge-blog
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:lucabridge}
+    username: ${DB_USER:lucabridge}
+    password: ${DB_PASSWORD:lucabridge}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    # Schema migrations only. Demo seed data lives in db/seed and is added
+    # ONLY by the dev profile (see application-dev.yml) — prod can never run it.
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+app:
+  admin:
+    username: ${APP_ADMIN_USERNAME:admin}
+    # BCrypt hash of the admin password — generate with e.g. `htpasswd -bnBC 10 "" 'yourpassword' | tr -d ':\n'`
+    # or any BCrypt generator. Leave unset to disable admin login (public read API still works).
+    password-hash: ${APP_ADMIN_PASSWORD_HASH:}
+  jwt:
+    # Prod fails fast at startup if this is left at the default (see JwtSecretValidator).
+    secret: ${JWT_SECRET:change-me-in-prod-this-should-be-a-long-random-string}
+    expiration-minutes: 720
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+  i18n:
+    default-lang: zh-Hant
+    supported-langs: zh-Hant,en,zh-Hans
+  storage:
+    endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
+    public-base-url: ${STORAGE_PUBLIC_BASE_URL:http://localhost:9000}
+    bucket: ${STORAGE_BUCKET:blog-media}
+    access-key: ${STORAGE_ACCESS_KEY:minioadmin}
+    secret-key: ${STORAGE_SECRET_KEY:minioadmin}
+    region: us-east-1
+
+logging:
+  level:
+    com.lucabridge.blog: INFO

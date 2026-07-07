@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "home": "Home",
+    "blog": "Blog",
+    "donate": "Donate",
+    "about": "About LucaBridge"
+  },
+  "home": {
+    "latest": "Latest",
+    "readMore": "Read more"
+  },
+  "blog": {
+    "allCategories": "All categories",
+    "empty": "No posts yet"
+  },
+  "post": {
+    "pressLinks": "In the press",
+    "prev": "Previous",
+    "next": "Next",
+    "notFound": "This post could not be found",
+    "fallbackNotice": "Not yet available in this language — showing the 繁體中文 version."
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong. Please try again.",
+    "backHome": "Back to home"
+  }
+}

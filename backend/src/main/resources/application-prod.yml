@@ -1,0 +1,9 @@
+# Prod overrides. Note: flyway locations deliberately NOT overridden — prod uses
+# only classpath:db/migration (schema), never classpath:db/seed (demo data).
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+logging:
+  level:
+    com.lucabridge.blog: INFO

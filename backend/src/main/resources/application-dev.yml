@@ -1,0 +1,8 @@
+# Dev-only overrides. Adds db/seed (V2__seed_demo.sql) on top of the schema
+# migrations — the seed location is simply absent in prod, so it can never run there.
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed
+logging:
+  level:
+    com.lucabridge.blog: DEBUG
