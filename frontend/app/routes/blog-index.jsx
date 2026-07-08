@@ -45,16 +45,15 @@ export default function BlogIndex() {
 
   return (
     <div className="shell" style={{ padding: "32px 20px" }}>
-      <nav style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "24px" }}>
-        <Link to={categoryHref("")} className="kicker" style={{ opacity: category ? 0.5 : 1 }}>
+      <nav style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}>
+        <Link to={categoryHref("")} className={`filter-tag ${category ? "" : "filter-tag--active"}`}>
           {t(lang, "blog.allCategories")}
         </Link>
         {categories.map((c) => (
           <Link
             key={c.key}
             to={categoryHref(c.key)}
-            className="kicker"
-            style={{ opacity: category === c.key ? 1 : 0.5 }}
+            className={`filter-tag ${category === c.key ? "filter-tag--active" : ""}`}
           >
             {c.name}
           </Link>

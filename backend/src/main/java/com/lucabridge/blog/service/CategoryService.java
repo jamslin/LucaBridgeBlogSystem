@@ -5,6 +5,7 @@ import com.lucabridge.blog.entity.Category;
 import com.lucabridge.blog.entity.CategoryTranslation;
 import com.lucabridge.blog.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class CategoryService {
         this.localizationService = localizationService;
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryDto> listCategories(String lang) {
         String normalizedLang = localizationService.normalize(lang);
         return categoryRepository.findAllByOrderBySortOrderAsc().stream()

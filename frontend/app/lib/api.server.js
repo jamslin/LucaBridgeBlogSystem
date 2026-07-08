@@ -27,6 +27,12 @@ export const api = {
   getPosts: ({ lang, category, page = 0, size = 10 } = {}) =>
     get("/api/posts", { lang, category, page, size }),
   getPost: (slug, lang) => get(`/api/posts/${encodeURIComponent(slug)}`, { lang }),
+
+  getPages: (lang) => get("/api/pages", { lang }),
+  getPage: (slug, lang) => get(`/api/pages/${encodeURIComponent(slug)}`, { lang }),
+  getEvents: (lang) => get("/api/events", { lang }),
+  getEvent: (slug, lang) => get(`/api/events/${encodeURIComponent(slug)}`, { lang }),
+  getSettings: () => get("/api/settings"),
 };
 
 /** Public origin for absolute og:/canonical URLs (behind nginx, request.url is internal). */

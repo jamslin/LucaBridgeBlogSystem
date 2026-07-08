@@ -18,8 +18,8 @@ export default function PostCard({ post }) {
         {post.publishedAt && <span>{new Date(post.publishedAt).toLocaleDateString(lang)}</span>}
         {post.readingMinutes && <span>{post.readingMinutes} min</span>}
       </div>
-      <Link to={`/${lang}/blog/${post.slug}`} style={{ fontSize: "13px", fontWeight: 600 }}>
-        {t(lang, "home.readMore")} &rarr;
+      <Link to={`/${lang}/blog/${post.slug}`} className="btn-text">
+        {t(lang, "home.readMore")} <span className="arrow">&rarr;</span>
       </Link>
     </article>
   );

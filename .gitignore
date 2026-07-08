@@ -22,3 +22,6 @@ infra/prometheus-data/
 .idea/
 .vscode/
 *.iml
+
+# Local-only compose overrides (host port publishing for dev)
+docker-compose.override.yml

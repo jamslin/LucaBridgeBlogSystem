@@ -9,20 +9,12 @@ export default function Nav() {
     <div className="shell" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 0" }}>
       <nav style={{ display: "flex", gap: "20px", fontSize: "14px" }}>
         <Link to={`/${lang}`}>{t(lang, "nav.home")}</Link>
+        <Link to={`/${lang}/p/about`}>{t(lang, "nav.about")}</Link>
         <Link to={`/${lang}/blog`}>{t(lang, "nav.blog")}</Link>
+        <Link to={`/${lang}/events`}>{t(lang, "nav.events")}</Link>
       </nav>
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <Link
-          to={`/${lang}/donate`}
-          style={{
-            background: "var(--color-accent)",
-            color: "var(--color-paper)",
-            padding: "8px 16px",
-            borderRadius: "2px",
-            fontWeight: 600,
-            fontSize: "14px",
-          }}
-        >
+        <Link to={`/${lang}/p/donate`} className="btn btn-primary">
           {t(lang, "nav.donate")}
         </Link>
         <LanguageSwitch />

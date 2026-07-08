@@ -9,6 +9,9 @@ export default [
     index("routes/home.jsx"),
     route("blog", "routes/blog-index.jsx"),
     route("blog/:slug", "routes/post.jsx"),
+    route("p/:slug", "routes/page.jsx"),
+    route("events", "routes/events.jsx"),
+    route("events/:slug", "routes/event.jsx"),
     route("*", "routes/not-found.jsx"),
   ]),
 

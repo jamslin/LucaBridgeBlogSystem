@@ -3,7 +3,8 @@
     "home": "Home",
     "blog": "Blog",
     "donate": "Donate",
-    "about": "About LucaBridge"
+    "about": "About LucaBridge",
+    "events": "Events"
   },
   "home": {
     "latest": "Latest",
@@ -12,6 +13,16 @@
   "blog": {
     "allCategories": "All categories",
     "empty": "No posts yet"
+  },
+  "events": {
+    "empty": "No events yet"
+  },
+  "page": {
+    "fallbackNotice": "Not yet available in this language — showing the 繁體中文 version."
+  },
+  "footer": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions"
   },
   "post": {
     "pressLinks": "In the press",

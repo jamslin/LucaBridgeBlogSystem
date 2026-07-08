@@ -3,7 +3,8 @@
     "home": "首页",
     "blog": "文章",
     "donate": "立即捐款",
-    "about": "关于乐桥"
+    "about": "关于乐桥",
+    "events": "活动"
   },
   "home": {
     "latest": "最新文章",
@@ -12,6 +13,16 @@
   "blog": {
     "allCategories": "所有分类",
     "empty": "暂无文章"
+  },
+  "events": {
+    "empty": "暂无活动"
+  },
+  "page": {
+    "fallbackNotice": "此页面尚未提供此语言版本，显示繁体中文内容。"
+  },
+  "footer": {
+    "privacy": "隐私政策",
+    "terms": "使用条款"
   },
   "post": {
     "pressLinks": "媒体报导",

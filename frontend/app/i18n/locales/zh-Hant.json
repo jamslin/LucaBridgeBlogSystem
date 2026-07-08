@@ -3,7 +3,8 @@
     "home": "首頁",
     "blog": "文章",
     "donate": "立即捐款",
-    "about": "關於樂橋"
+    "about": "關於樂橋",
+    "events": "活動"
   },
   "home": {
     "latest": "最新文章",
@@ -12,6 +13,16 @@
   "blog": {
     "allCategories": "所有分類",
     "empty": "暫無文章"
+  },
+  "events": {
+    "empty": "暫無活動"
+  },
+  "page": {
+    "fallbackNotice": "此頁面尚未提供此語言版本，顯示繁體中文內容。"
+  },
+  "footer": {
+    "privacy": "隱私政策",
+    "terms": "使用條款"
   },
   "post": {
     "pressLinks": "媒體報導",

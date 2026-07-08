@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/posts/**", "/api/categories/**").permitAll()
+                        .requestMatchers("/api/pages/**", "/api/events/**", "/api/settings").permitAll()
                         // prometheus is permitAll here but nginx never proxies /actuator,
                         // so it is only reachable on the internal Docker network.
                         .requestMatchers("/actuator/health", "/actuator/prometheus").permitAll()
