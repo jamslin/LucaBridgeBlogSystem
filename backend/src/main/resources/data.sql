@@ -1,3 +1,34 @@
+-- Combined dev seed. Loaded by spring.sql.init AFTER Hibernate builds the
+-- schema from the @Entity classes (see application-dev.yml). Inserts only —
+-- no DDL. Sourced from the former Flyway V1 (categories) + V2 (author) + V4.
+
+-- Category reference data (from former V1):
+-- Seed categories (繁中 required, EN/简中 optional per "Resolved decisions")
+INSERT INTO category (key, sort_order) VALUES
+    ('poverty-relief', 1),
+    ('environment', 2),
+    ('campus', 3),
+    ('volunteering', 4);
+
+INSERT INTO category_translation (category_id, lang, name) VALUES
+    ((SELECT id FROM category WHERE key = 'poverty-relief'), 'zh-Hant', '扶貧'),
+    ((SELECT id FROM category WHERE key = 'poverty-relief'), 'en', 'Poverty Relief'),
+    ((SELECT id FROM category WHERE key = 'poverty-relief'), 'zh-Hans', '扶贫'),
+    ((SELECT id FROM category WHERE key = 'environment'), 'zh-Hant', '環保'),
+    ((SELECT id FROM category WHERE key = 'environment'), 'en', 'Environment'),
+    ((SELECT id FROM category WHERE key = 'environment'), 'zh-Hans', '环保'),
+    ((SELECT id FROM category WHERE key = 'campus'), 'zh-Hant', '校園'),
+    ((SELECT id FROM category WHERE key = 'campus'), 'en', 'Campus'),
+    ((SELECT id FROM category WHERE key = 'campus'), 'zh-Hans', '校园'),
+    ((SELECT id FROM category WHERE key = 'volunteering'), 'zh-Hant', '義工'),
+    ((SELECT id FROM category WHERE key = 'volunteering'), 'en', 'Volunteering'),
+    ((SELECT id FROM category WHERE key = 'volunteering'), 'zh-Hans', '义工');
+
+-- Shared editorial author (from former V2):
+INSERT INTO author (name, avatar_url, bio) VALUES
+    ('LucaBridge 編輯部', NULL, 'LucaBridge editorial team.');
+
+-- Imported Wix content + pages/events/settings (from former V4):
 -- V4 — Real LucaBridge content imported from the live Wix site (lucabridge.com).
 -- DEV-ONLY seed (classpath:db/seed) — never runs in prod, same pattern as V2 demo.
 -- Language: 繁中 (zh-Hant) only, matching the live site. EN / 简中 fall back to 繁中.

@@ -39,11 +39,11 @@ public class Event {
     @Column(name = "cover_image_url", length = 500)
     private String coverImageUrl;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, columnDefinition = "timestamptz not null default now()")
     @Builder.Default
     private Instant createdAt = Instant.now();
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, columnDefinition = "timestamptz not null default now()")
     @Builder.Default
     private Instant updatedAt = Instant.now();
 

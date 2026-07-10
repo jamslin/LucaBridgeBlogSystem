@@ -38,11 +38,11 @@ public class Page {
     @Builder.Default
     private Integer sortOrder = 0;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, columnDefinition = "timestamptz not null default now()")
     @Builder.Default
     private Instant createdAt = Instant.now();
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, columnDefinition = "timestamptz not null default now()")
     @Builder.Default
     private Instant updatedAt = Instant.now();
 

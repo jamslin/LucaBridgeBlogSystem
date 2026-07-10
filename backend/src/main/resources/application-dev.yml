@@ -1,8 +1,28 @@
-# Dev-only overrides. Adds db/seed (V2__seed_demo.sql) on top of the schema
-# migrations — the seed location is simply absent in prod, so it can never run there.
+# Dev-only overrides — EARLY PROTOTYPE PHASE (2026-07-07).
+#
+# Flyway is DISABLED here on purpose. While the schema is still churning, we let
+# Hibernate generate it directly from the @Entity classes (ddl-auto: create-drop),
+# so there are NO migration scripts to write or maintain. The DB is rebuilt from
+# the entities on every backend start.
+#
+# Seed data is loaded from classpath:data.sql, which Spring runs AFTER Hibernate
+# has created the tables (defer-datasource-initialization). data.sql is inserts
+# only — categories, the author, and the imported Wix content.
+#
+# The Flyway files (db/migration V1/V3, db/seed V2/V4) and the Flyway dependency
+# are intentionally kept but dormant. When the schema stabilises: delete these
+# overrides, freeze the final schema into a single baseline V1, and turn Flyway
+# back on (it stays enabled in prod already).
 spring:
   flyway:
-    locations: classpath:db/migration,classpath:db/seed
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
 logging:
   level:
     com.lucabridge.blog: DEBUG

@@ -45,11 +45,11 @@ public class Post {
     @Column(name = "published_at")
     private Instant publishedAt;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, columnDefinition = "timestamptz not null default now()")
     @Builder.Default
     private Instant createdAt = Instant.now();
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, columnDefinition = "timestamptz not null default now()")
     @Builder.Default
     private Instant updatedAt = Instant.now();
 
