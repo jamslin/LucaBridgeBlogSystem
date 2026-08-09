@@ -1,0 +1,70 @@
+# React Router v7 SSR frontend (Node server, port 3000).
+# Mirrors the `frontend` service in docker-compose.yml.
+# API_URL points at the in-cluster backend Service (server-side SSR fetches).
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: lucabridge
+data:
+  API_URL: "http://backend:8080"
+  SITE_ORIGIN: "https://lucabridge.example.org"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: lucabridge
+  labels:
+    app: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: lucabridge
+spec:
+  replicas: 2                 # SSR is stateless — safe to scale; good for rolling updates
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          # ACR image (build+push from your Mac; --attach-acr grants pull).
+          image: lucabridgeacr.azurecr.io/lucabridge-frontend:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: frontend-config
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "192Mi"
+            limits:
+              memory: "512Mi"

@@ -1,0 +1,44 @@
+# AKS managed-nginx Ingress (app routing add-on; ingressClass webapprouting.kubernetes.azure.com).
+# Routing mirrors infra/nginx: /api + /actuator -> backend, everything else -> SSR frontend.
+#
+# HOST-LESS for now: matches any host, so the site is reachable on the ingress public IP.
+#   kubectl get ingress -n lucabridge   -> copy the ADDRESS, browse http://<ADDRESS>
+# When you have a domain: add `host: your.domain` under the rule and point an A record at
+# that IP. For HTTPS, either cert-manager + Let's Encrypt, or Cloudflare in front (SSL Full).
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lucabridge
+  namespace: lucabridge
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+    - http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          - path: /actuator
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+  # --- Add after you have a domain + cert-manager (see docs/azure-aks-setup.md) ---
+  # tls:
+  #   - hosts:
+  #       - your.domain
+  #     secretName: lucabridge-tls

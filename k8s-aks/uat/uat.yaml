@@ -1,0 +1,207 @@
+# LucaBridge UAT — same AKS cluster, isolated namespace `lucabridge-uat`.
+# Reachable at http://uat.20.24.249.212.nip.io (nip.io host routing on the SHARED
+# ingress IP; prod stays host-less on the bare IP). Fully isolated from prod:
+# own Postgres, own MinIO, own secrets.
+#
+# Backend runs the `dev` profile (Hibernate create-drop + data.sql), so UAT
+# self-seeds the demo content on every boot and RESETS on restart — intended for
+# a demo/UAT box. For persistence, add a dedicated `uat` Spring profile instead.
+#
+# Secrets are created imperatively (see README.md) — NOT stored in git.
+---
+apiVersion: v1
+kind: Namespace
+metadata: { name: lucabridge-uat }
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata: { name: uat-quota, namespace: lucabridge-uat }
+spec:
+  hard: { requests.cpu: "1", requests.memory: 2Gi, pods: "10", persistentvolumeclaims: "5" }
+---
+apiVersion: v1
+kind: LimitRange
+metadata: { name: uat-limits, namespace: lucabridge-uat }
+spec:
+  limits:
+    - type: Container
+      default: { cpu: "500m", memory: "512Mi" }
+      defaultRequest: { cpu: "100m", memory: "128Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: postgres, namespace: lucabridge-uat, labels: { app: postgres } }
+spec:
+  clusterIP: None
+  selector: { app: postgres }
+  ports: [{ name: postgres, port: 5432, targetPort: 5432 }]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: { name: postgres, namespace: lucabridge-uat }
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector: { matchLabels: { app: postgres } }
+  template:
+    metadata: { labels: { app: postgres } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports: [{ containerPort: 5432 }]
+          env:
+            - { name: POSTGRES_DB, value: lucabridge }
+            - { name: POSTGRES_USER, value: lucabridge }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: postgres-secret, key: POSTGRES_PASSWORD } }
+            - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+          volumeMounts: [{ name: data, mountPath: /var/lib/postgresql/data }]
+          readinessProbe:
+            exec: { command: ["pg_isready","-U","lucabridge","-d","lucabridge"] }
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources: { requests: { cpu: "100m", memory: "256Mi" }, limits: { memory: "512Mi" } }
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: managed-csi
+        resources: { requests: { storage: 5Gi } }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: minio-data, namespace: lucabridge-uat }
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: managed-csi
+  resources: { requests: { storage: 5Gi } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: minio, namespace: lucabridge-uat, labels: { app: minio } }
+spec:
+  selector: { app: minio }
+  ports: [{ name: s3, port: 9000, targetPort: 9000 }, { name: console, port: 9001, targetPort: 9001 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: minio, namespace: lucabridge-uat }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }
+  selector: { matchLabels: { app: minio } }
+  template:
+    metadata: { labels: { app: minio } }
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          args: ["server","/data","--console-address",":9001"]
+          ports: [{ containerPort: 9000 }, { containerPort: 9001 }]
+          envFrom: [{ secretRef: { name: minio-secret } }]
+          volumeMounts: [{ name: data, mountPath: /data }]
+          readinessProbe:
+            httpGet: { path: /minio/health/live, port: 9000 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources: { requests: { cpu: "50m", memory: "128Mi" }, limits: { memory: "512Mi" } }
+      volumes: [{ name: data, persistentVolumeClaim: { claimName: minio-data } }]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: backend-config, namespace: lucabridge-uat }
+data:
+  SPRING_PROFILES_ACTIVE: "dev"          # dev = create-drop + data.sql seed (self-seeds demo content)
+  DB_HOST: "postgres"
+  STORAGE_ENDPOINT: "http://minio:9000"
+  STORAGE_PUBLIC_BASE_URL: "http://minio:9000"
+  CORS_ORIGINS: "http://uat.20.24.249.212.nip.io"
+---
+apiVersion: v1
+kind: Service
+metadata: { name: backend, namespace: lucabridge-uat, labels: { app: backend } }
+spec:
+  selector: { app: backend }
+  ports: [{ name: http, port: 8080, targetPort: 8080 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: backend, namespace: lucabridge-uat }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: backend } }
+  template:
+    metadata: { labels: { app: backend } }
+    spec:
+      containers:
+        - name: backend
+          image: lucabridgeacr.azurecr.io/lucabridge-backend:latest
+          ports: [{ containerPort: 8080 }]
+          envFrom:
+            - configMapRef: { name: backend-config }
+            - secretRef: { name: backend-secret }
+          env:
+            - name: DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: postgres-secret, key: POSTGRES_PASSWORD } }
+            - name: STORAGE_ACCESS_KEY
+              valueFrom: { secretKeyRef: { name: minio-secret, key: MINIO_ROOT_USER } }
+            - name: STORAGE_SECRET_KEY
+              valueFrom: { secretKeyRef: { name: minio-secret, key: MINIO_ROOT_PASSWORD } }
+          readinessProbe:
+            httpGet: { path: /actuator/health, port: 8080 }
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 20
+          livenessProbe:
+            httpGet: { path: /actuator/health, port: 8080 }
+            initialDelaySeconds: 60
+            periodSeconds: 15
+          resources: { requests: { cpu: "250m", memory: "512Mi" }, limits: { memory: "1Gi" } }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: frontend-config, namespace: lucabridge-uat }
+data:
+  API_URL: "http://backend:8080"
+  SITE_ORIGIN: "http://uat.20.24.249.212.nip.io"
+---
+apiVersion: v1
+kind: Service
+metadata: { name: frontend, namespace: lucabridge-uat, labels: { app: frontend } }
+spec:
+  selector: { app: frontend }
+  ports: [{ name: http, port: 3000, targetPort: 3000 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: frontend, namespace: lucabridge-uat }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: frontend } }
+  template:
+    metadata: { labels: { app: frontend } }
+    spec:
+      containers:
+        - name: frontend
+          image: lucabridgeacr.azurecr.io/lucabridge-frontend:latest
+          ports: [{ containerPort: 3000 }]
+          envFrom: [{ configMapRef: { name: frontend-config } }]
+          readinessProbe:
+            httpGet: { path: /, port: 3000 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources: { requests: { cpu: "100m", memory: "192Mi" }, limits: { memory: "512Mi" } }
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: { name: lucabridge-uat, namespace: lucabridge-uat }
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+    - host: uat.20.24.249.212.nip.io
+      http:
+        paths:
+          - { path: /api, pathType: Prefix, backend: { service: { name: backend, port: { number: 8080 } } } }
+          - { path: /actuator, pathType: Prefix, backend: { service: { name: backend, port: { number: 8080 } } } }
+          - { path: /, pathType: Prefix, backend: { service: { name: frontend, port: { number: 3000 } } } }

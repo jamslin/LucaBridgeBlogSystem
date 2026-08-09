@@ -1,0 +1,105 @@
+# Spring Boot 3 backend (Java 21).
+# Mirrors the `backend` service in docker-compose.yml. Image comes from your registry
+# (GHCR) — built by CI, not `build:` like compose.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: lucabridge
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+  DB_HOST: "postgres"
+  STORAGE_ENDPOINT: "http://minio:9000"
+  # Public URL the browser uses to fetch images — set to your real domain/path in prod.
+  STORAGE_PUBLIC_BASE_URL: "http://minio:9000"
+  CORS_ORIGINS: "https://lucabridge.example.org"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend-secret
+  namespace: lucabridge
+type: Opaque
+stringData:
+  # JWT_SECRET must be a strong random string (prod fails fast if blank).
+  JWT_SECRET: "change-me-long-random-jwt-secret"
+  # BCrypt hash of the admin password (generate with your backend's hash util).
+  APP_ADMIN_PASSWORD_HASH: "change-me-bcrypt-hash"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: lucabridge
+  labels:
+    app: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: lucabridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          # ACR image (build+push from your Mac; --attach-acr grants pull).
+          image: lucabridgeacr.azurecr.io/lucabridge-backend:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: backend-config
+            - secretRef:
+                name: backend-secret
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: STORAGE_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_USER
+            - name: STORAGE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
