@@ -12,6 +12,8 @@ export default [
     route("p/:slug", "routes/page.jsx"),
     route("events", "routes/events.jsx"),
     route("events/:slug", "routes/event.jsx"),
+    route("careers", "routes/careers.jsx"),
+    route("careers/:slug", "routes/career.jsx"),
     route("*", "routes/not-found.jsx"),
   ]),
 

@@ -1,9 +1,25 @@
 {
   "nav": {
     "home": "首頁",
+    "about": "關於我們",
+    "aboutBackground": "背景與發展",
+    "aboutGoals": "目標與宗旨",
+    "aboutStructure": "組織架構",
+    "aboutCommittee": "委員名單",
+    "services": "服務範圍",
+    "news": "最新消息",
+    "newsRecent": "近期消息",
+    "newsInfo": "最新資訊",
+    "donate": "捐款",
+    "donateMethods": "捐款方法",
+    "donateMaterials": "物資捐贈",
+    "recruit": "招募",
+    "recruitVolunteer": "義工",
+    "recruitJobs": "職位空缺",
+    "contact": "聯絡我們",
+    "donateCta": "立即捐款",
+    "menu": "選單",
     "blog": "文章",
-    "donate": "立即捐款",
-    "about": "關於樂橋",
     "events": "活動"
   },
   "home": {
@@ -16,6 +32,12 @@
   },
   "events": {
     "empty": "暫無活動"
+  },
+  "careers": {
+    "empty": "暫無職位空缺",
+    "closes": "截止日期：",
+    "openUntilFilled": "招滿即止",
+    "backToList": "返回職位列表"
   },
   "page": {
     "fallbackNotice": "此頁面尚未提供此語言版本，顯示繁體中文內容。"

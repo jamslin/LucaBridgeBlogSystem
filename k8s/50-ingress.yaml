@@ -1,0 +1,46 @@
+# Traefik Ingress (Traefik ships built-in with k3s — this replaces the nginx container).
+# Routing mirrors infra/nginx: /api/* → backend, everything else → SSR frontend.
+#
+# TLS: uncomment the tls block + install cert-manager for automatic Let's Encrypt,
+# OR terminate TLS at Cloudflare in front. See the checklist "SSL" section.
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lucabridge
+  namespace: lucabridge
+  annotations:
+    # Route order: more specific paths (/api) are matched before "/".
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: lucabridge.example.org      # CHANGE to your domain
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          - path: /actuator
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+  # --- Enable after cert-manager is installed (see checklist) ---
+  # tls:
+  #   - hosts:
+  #       - lucabridge.example.org
+  #     secretName: lucabridge-tls

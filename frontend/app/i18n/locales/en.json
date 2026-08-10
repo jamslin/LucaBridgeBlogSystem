@@ -1,9 +1,25 @@
 {
   "nav": {
     "home": "Home",
-    "blog": "Blog",
+    "about": "About Us",
+    "aboutBackground": "Background & Development",
+    "aboutGoals": "Goals & Mission",
+    "aboutStructure": "Organisation Structure",
+    "aboutCommittee": "Committee Members",
+    "services": "Our Services",
+    "news": "News",
+    "newsRecent": "Recent News",
+    "newsInfo": "Latest Updates",
     "donate": "Donate",
-    "about": "About LucaBridge",
+    "donateMethods": "Ways to Give",
+    "donateMaterials": "Gifts in Kind",
+    "recruit": "Join Us",
+    "recruitVolunteer": "Volunteer",
+    "recruitJobs": "Job Vacancies",
+    "contact": "Contact Us",
+    "donateCta": "Donate Now",
+    "menu": "Menu",
+    "blog": "Blog",
     "events": "Events"
   },
   "home": {
@@ -16,6 +32,12 @@
   },
   "events": {
     "empty": "No events yet"
+  },
+  "careers": {
+    "empty": "No open positions at the moment.",
+    "closes": "Closing date: ",
+    "openUntilFilled": "Open until filled",
+    "backToList": "Back to all positions"
   },
   "page": {
     "fallbackNotice": "Not yet available in this language — showing the 繁體中文 version."

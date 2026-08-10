@@ -1,9 +1,25 @@
 {
   "nav": {
     "home": "首页",
+    "about": "关于我们",
+    "aboutBackground": "背景与发展",
+    "aboutGoals": "目标与宗旨",
+    "aboutStructure": "组织架构",
+    "aboutCommittee": "委员名单",
+    "services": "服务范围",
+    "news": "最新消息",
+    "newsRecent": "近期消息",
+    "newsInfo": "最新资讯",
+    "donate": "捐款",
+    "donateMethods": "捐款方法",
+    "donateMaterials": "物资捐赠",
+    "recruit": "招募",
+    "recruitVolunteer": "义工",
+    "recruitJobs": "职位空缺",
+    "contact": "联络我们",
+    "donateCta": "立即捐款",
+    "menu": "菜单",
     "blog": "文章",
-    "donate": "立即捐款",
-    "about": "关于乐桥",
     "events": "活动"
   },
   "home": {
@@ -16,6 +32,12 @@
   },
   "events": {
     "empty": "暂无活动"
+  },
+  "careers": {
+    "empty": "暂无职位空缺",
+    "closes": "截止日期：",
+    "openUntilFilled": "招满即止",
+    "backToList": "返回职位列表"
   },
   "page": {
     "fallbackNotice": "此页面尚未提供此语言版本，显示繁体中文内容。"

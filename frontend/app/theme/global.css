@@ -237,3 +237,190 @@ img {
 .segmented a:hover { text-decoration: none; background: var(--color-photo-idle); }
 .segmented a[aria-current="true"] { background: var(--color-accent); color: var(--color-paper); }
 .segmented a[aria-current="true"]:hover { background: var(--color-accent-pressed); }
+
+/* ───────────────────────────────────────────────────────────
+   Masthead utility bar + primary navigation (Caritas-style menu)
+   Added in the "big update" restructure.
+   ─────────────────────────────────────────────────────────── */
+.masthead-utility {
+  background: var(--color-accent);
+  color: var(--color-paper);
+  font-size: 13px;
+}
+.masthead-utility a { color: var(--color-paper); }
+.masthead-utility a:hover { color: var(--color-paper); text-decoration: underline; }
+.masthead-utility__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 20px;
+  min-height: 32px;
+}
+.masthead-utility__contact { display: inline-flex; gap: 16px; flex-wrap: wrap; }
+.masthead-utility__right { display: inline-flex; align-items: center; gap: 16px; }
+@media (max-width: 639px) {
+  .masthead-utility__contact { display: none; }
+}
+
+.site-nav {
+  background: var(--color-card);
+  border-bottom: 1px solid var(--color-line);
+  position: relative;
+}
+.site-nav__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.site-nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.site-nav__item { position: relative; }
+.site-nav__link {
+  display: inline-block;
+  padding: 14px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.site-nav__link:hover { color: var(--color-accent); text-decoration: none; }
+.site-nav__expand {
+  display: none; /* desktop uses hover; button is for mobile disclosure */
+  background: none;
+  border: none;
+  color: var(--color-ink);
+  cursor: pointer;
+  font-size: 14px;
+}
+.site-nav__submenu {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  min-width: 180px;
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  box-shadow: var(--elev-card);
+}
+.site-nav__sublink {
+  display: block;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.site-nav__sublink:hover { background: var(--color-photo-idle); text-decoration: none; }
+.site-nav__actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.site-nav__toggle {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  cursor: pointer;
+  padding: 12px 0;
+}
+.site-nav__bars { display: inline-flex; flex-direction: column; gap: 4px; }
+.site-nav__bars span { width: 20px; height: 2px; background: var(--color-ink); display: block; }
+
+/* Desktop: hover / keyboard focus reveals the dropdown. */
+@media (min-width: 1024px) {
+  .site-nav__item.has-children > .site-nav__submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 40;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity var(--motion-micro), transform var(--motion-micro), visibility var(--motion-micro);
+  }
+  .site-nav__item.has-children:hover > .site-nav__submenu,
+  .site-nav__item.has-children:focus-within > .site-nav__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile: hamburger + stacked disclosure. */
+@media (max-width: 1023px) {
+  .site-nav__bar { flex-wrap: wrap; padding: 4px 0; }
+  .site-nav__toggle { display: inline-flex; }
+  .site-nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0;
+    display: none;
+    border-top: 1px solid var(--color-line);
+  }
+  .site-nav__list[data-open="true"] { display: flex; }
+  .site-nav__item { border-bottom: 1px solid var(--color-line); }
+  .site-nav__item.has-children { display: grid; grid-template-columns: 1fr auto; align-items: center; }
+  .site-nav__link { padding: 14px 4px; }
+  .site-nav__expand { display: inline-block; padding: 14px; }
+  .site-nav__submenu {
+    grid-column: 1 / -1;
+    display: none;
+    border: none;
+    box-shadow: none;
+    background: var(--color-photo-idle);
+    border-radius: 0;
+    min-width: 0;
+    padding: 4px 0 8px;
+  }
+  .site-nav__submenu[data-open="true"] { display: block; }
+  .site-nav__actions { width: 100%; justify-content: space-between; padding-bottom: 8px; }
+}
+
+/* Footer columns */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 24px 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(245, 244, 236, 0.18);
+}
+.footer-col ul { list-style: none; margin: 8px 0 0; padding: 0; }
+.footer-col li { margin: 6px 0; font-size: 14px; }
+.footer-col a { color: var(--color-paper); }
+.footer-col a:hover { text-decoration: underline; }
+.footer-col__head {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-paper);
+  display: inline-block;
+}
+.footer-legal {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 24px;
+  font-size: 14px;
+}
+.footer-legal a { color: var(--color-paper); }
+
+/* Chip (job employment-type tag, reused elsewhere) */
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: var(--color-photo-idle);
+  border-radius: var(--radius-pill);
+}

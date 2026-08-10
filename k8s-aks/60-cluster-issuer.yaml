@@ -1,0 +1,43 @@
+# cert-manager ClusterIssuers for LucaBridge (Let's Encrypt via HTTP-01).
+#
+# Prereq — install cert-manager once:
+#   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+#   kubectl -n cert-manager rollout status deploy/cert-manager-webhook
+#
+# Then:
+#   kubectl apply -f 60-cluster-issuer.yaml
+#
+# HTTP-01 solves the challenge through the app-routing nginx ingress, so the
+# lucabridge.org.hk A record must already resolve to the ingress IP before the
+# cert can issue. Test with letsencrypt-staging first (no rate limits); once the
+# staging cert appears, switch the ingress annotation to letsencrypt-prod.
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: jamslin89@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: webapprouting.kubernetes.azure.com
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: jamslin89@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: webapprouting.kubernetes.azure.com

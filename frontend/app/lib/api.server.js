@@ -32,6 +32,8 @@ export const api = {
   getPage: (slug, lang) => get(`/api/pages/${encodeURIComponent(slug)}`, { lang }),
   getEvents: (lang) => get("/api/events", { lang }),
   getEvent: (slug, lang) => get(`/api/events/${encodeURIComponent(slug)}`, { lang }),
+  getJobs: (lang) => get("/api/jobs", { lang }),
+  getJob: (slug, lang) => get(`/api/jobs/${encodeURIComponent(slug)}`, { lang }),
   getSettings: () => get("/api/settings"),
 };
 

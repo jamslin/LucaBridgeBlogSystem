@@ -149,3 +149,173 @@ INSERT INTO media (post_id, url, width, height, caption, sort_order) VALUES
     ((SELECT id FROM post WHERE slug = 'charity-blessing-bags-2025'), 'http://localhost:9000/blog-media/wix/02a841_ce489b52.jpg', 480, 480, '慈善福袋派發', 1),
     ((SELECT id FROM post WHERE slug = 'charity-blessing-bags-2025'), 'http://localhost:9000/blog-media/wix/02a841_730abf01.jpg', 480, 480, '福袋派發現場', 2),
     ((SELECT id FROM post WHERE slug = 'charity-blessing-bags-2025'), 'http://localhost:9000/blog-media/wix/02a841_a0712079.jpg', 480, 480, '義工合照', 3);
+
+-- ═════════════════════════════════════════════════════════════
+-- BIG UPDATE (2026-08-10): Caritas-style site structure.
+-- New setting, static pages (關於我們 sub-pages / 服務範圍 / 物資捐贈 / 義工 /
+-- 聯絡我們) and 職位空缺 job postings. Trilingual PLACEHOLDER copy — replace
+-- with real content before go-live.
+-- ═════════════════════════════════════════════════════════════
+
+INSERT INTO site_setting (key, value) VALUES
+    ('youtube_url', 'https://www.youtube.com/@lucabridge');
+
+-- ── New static pages ─────────────────────────────────────────
+INSERT INTO page (slug, page_type, status, hero_image_url, sort_order) VALUES
+    ('about-background', 'STANDARD', 'PUBLISHED', NULL, 10),
+    ('about-goals',      'STANDARD', 'PUBLISHED', NULL, 11),
+    ('about-structure',  'STANDARD', 'PUBLISHED', NULL, 12),
+    ('about-committee',  'STANDARD', 'PUBLISHED', NULL, 13),
+    ('services',         'STANDARD', 'PUBLISHED', NULL, 20),
+    ('donate-materials', 'STANDARD', 'PUBLISHED', NULL, 30),
+    ('volunteer',        'STANDARD', 'PUBLISHED', NULL, 40),
+    ('contact',          'STANDARD', 'PUBLISHED', NULL, 50);
+
+-- 背景與發展 / Background & Development
+INSERT INTO page_translation (page_id, lang, title, subtitle, body_markdown) VALUES
+    ((SELECT id FROM page WHERE slug='about-background'), 'zh-Hant',
+     '背景與發展', '樂橋的緣起與成長',
+     E'*（此為placeholder內容，待補上正式資料。）*\n\n樂橋成立於2021年，是一所在香港註冊的非牟利慈善團體（免稅編號 91/17604）。由一群關心社區的義工發起，我們由最初的小型探訪服務，逐步發展成涵蓋扶貧、環保、校園及義工發展的綜合服務機構。\n\n## 發展里程\n\n- **2021年**：正式註冊成立，展開首個基層家庭支援計劃。\n- **2023年**：服務擴展至環保及校園教育領域。\n- **2025年**：義工人數突破，服務地區覆蓋新界西多個社區。\n\n多年來，我們一直秉持「攜手同行」的信念，與街坊、學校、企業及其他團體合作，回應社區不斷轉變的需要。'),
+    ((SELECT id FROM page WHERE slug='about-background'), 'en',
+     'Background & Development', 'How LucaBridge began and grew',
+     E'*(Placeholder content — to be replaced with final copy.)*\n\nLucaBridge was established in 2021 as a registered non-profit charity in Hong Kong (tax-exempt no. 91/17604). Founded by a group of community-minded volunteers, we have grown from small-scale home visits into an organisation serving poverty relief, the environment, campus education and volunteer development.\n\n## Milestones\n\n- **2021**: Formally registered; launched our first grassroots family support programme.\n- **2023**: Expanded into environmental and campus education work.\n- **2025**: Volunteer numbers grew, with services reaching communities across the New Territories West.\n\nThroughout, we have held to the belief of walking alongside people — partnering with residents, schools, businesses and other groups to meet the community''s changing needs.'),
+    ((SELECT id FROM page WHERE slug='about-background'), 'zh-Hans',
+     '背景与发展', '乐桥的缘起与成长',
+     E'*（此为placeholder内容，待补上正式资料。）*\n\n乐桥成立于2021年，是一所在香港注册的非牟利慈善团体（免税编号 91/17604）。由一群关心社区的义工发起，我们由最初的小型探访服务，逐步发展成涵盖扶贫、环保、校园及义工发展的综合服务机构。\n\n## 发展里程\n\n- **2021年**：正式注册成立，展开首个基层家庭支援计划。\n- **2023年**：服务扩展至环保及校园教育领域。\n- **2025年**：义工人数突破，服务地区覆盖新界西多个社区。\n\n多年来，我们一直秉持「携手同行」的信念，与街坊、学校、企业及其他团体合作，回应社区不断转变的需要。');
+
+-- 目標與宗旨 / Goals & Mission
+INSERT INTO page_translation (page_id, lang, title, subtitle, body_markdown) VALUES
+    ((SELECT id FROM page WHERE slug='about-goals'), 'zh-Hant',
+     '目標與宗旨', '我們為何而努力',
+     E'*（此為placeholder內容，待補上正式資料。）*\n\n## 使命\n\n以行動支援香港的弱勢社群，讓每個人都能有尊嚴地生活。\n\n## 願景\n\n建立一個互助、共融、可持續的社區，人人都能公平地享有資源與機會。\n\n## 核心價值\n\n- **關愛**：以同理心回應每一位服務對象的需要。\n- **同行**：與社區並肩，而非單向施予。\n- **誠信**：善用每一分捐獻，公開透明地運作。\n- **可持續**：兼顧人與環境的長遠福祉。'),
+    ((SELECT id FROM page WHERE slug='about-goals'), 'en',
+     'Goals & Mission', 'What we work towards',
+     E'*(Placeholder content — to be replaced with final copy.)*\n\n## Mission\n\nTo support Hong Kong''s vulnerable communities through action, so that everyone can live with dignity.\n\n## Vision\n\nA mutually supportive, inclusive and sustainable community where resources and opportunities are shared fairly.\n\n## Core Values\n\n- **Care**: respond to every beneficiary with empathy.\n- **Partnership**: stand alongside the community rather than give one way.\n- **Integrity**: use every donation well, operating openly and transparently.\n- **Sustainability**: consider the long-term wellbeing of both people and the environment.'),
+    ((SELECT id FROM page WHERE slug='about-goals'), 'zh-Hans',
+     '目标与宗旨', '我们为何而努力',
+     E'*（此为placeholder内容，待补上正式资料。）*\n\n## 使命\n\n以行动支援香港的弱势社群，让每个人都能有尊严地生活。\n\n## 愿景\n\n建立一个互助、共融、可持续的社区，人人都能公平地享有资源与机会。\n\n## 核心价值\n\n- **关爱**：以同理心回应每一位服务对象的需要。\n- **同行**：与社区并肩，而非单向施予。\n- **诚信**：善用每一分捐献，公开透明地运作。\n- **可持续**：兼顾人与环境的长远福祉。');
+
+-- 組織架構 / Organisation Structure
+INSERT INTO page_translation (page_id, lang, title, subtitle, body_markdown) VALUES
+    ((SELECT id FROM page WHERE slug='about-structure'), 'zh-Hant',
+     '組織架構', '我們如何運作',
+     E'*（此為placeholder內容，待補上正式資料。）*\n\n樂橋由**董事會**負責整體管治及策略方向，日常運作則由**行政團隊**帶領各服務部門執行。\n\n## 架構概覽\n\n- **董事會** — 制定方向、監督管治\n- **行政總監** — 統籌日常營運\n  - 社區服務部\n  - 環保及教育部\n  - 義工發展組\n  - 傳訊及籌款部\n  - 行政及財務組\n\n各部門緊密協作，確保服務有效地回應社區需要。'),
+    ((SELECT id FROM page WHERE slug='about-structure'), 'en',
+     'Organisation Structure', 'How we operate',
+     E'*(Placeholder content — to be replaced with final copy.)*\n\nLucaBridge is governed by a **Board of Directors** responsible for overall governance and strategy, while day-to-day work is led by an **executive team** across our service departments.\n\n## Structure at a glance\n\n- **Board of Directors** — sets direction, oversees governance\n- **Executive Director** — coordinates daily operations\n  - Community Services\n  - Environment & Education\n  - Volunteer Development\n  - Communications & Fundraising\n  - Administration & Finance\n\nThe departments work closely together to make sure services respond effectively to community needs.'),
+    ((SELECT id FROM page WHERE slug='about-structure'), 'zh-Hans',
+     '组织架构', '我们如何运作',
+     E'*（此为placeholder内容，待补上正式资料。）*\n\n乐桥由**董事会**负责整体管治及策略方向，日常运作则由**行政团队**带领各服务部门执行。\n\n## 架构概览\n\n- **董事会** — 制定方向、监督管治\n- **行政总监** — 统筹日常营运\n  - 社区服务部\n  - 环保及教育部\n  - 义工发展组\n  - 传讯及筹款部\n  - 行政及财务组\n\n各部门紧密协作，确保服务有效地回应社区需要。');
+
+-- 委員名單 / Committee Members
+INSERT INTO page_translation (page_id, lang, title, subtitle, body_markdown) VALUES
+    ((SELECT id FROM page WHERE slug='about-committee'), 'zh-Hant',
+     '委員名單', '董事會及委員會成員',
+     E'*（此為placeholder內容，正式名單待確認。）*\n\n## 董事會\n\n- 主席：陳大文先生\n- 副主席：李小明女士\n- 司庫：黃志強先生\n- 秘書：張美儀女士\n\n## 委員\n\n- 委員：（待補）\n- 委員：（待補）\n- 委員：（待補）\n\n如需查詢董事會資料，歡迎透過「聯絡我們」與本會聯繫。'),
+    ((SELECT id FROM page WHERE slug='about-committee'), 'en',
+     'Committee Members', 'Board and committee members',
+     E'*(Placeholder content — official list to be confirmed.)*\n\n## Board of Directors\n\n- Chairperson: Mr Chan Tai Man\n- Vice-Chairperson: Ms Li Siu Ming\n- Treasurer: Mr Wong Chi Keung\n- Secretary: Ms Cheung Mei Yee\n\n## Committee Members\n\n- Member: (to be added)\n- Member: (to be added)\n- Member: (to be added)\n\nFor enquiries about the Board, please reach us via the Contact Us page.'),
+    ((SELECT id FROM page WHERE slug='about-committee'), 'zh-Hans',
+     '委员名单', '董事会及委员会成员',
+     E'*（此为placeholder内容，正式名单待确认。）*\n\n## 董事会\n\n- 主席：陈大文先生\n- 副主席：李小明女士\n- 司库：黄志强先生\n- 秘书：张美仪女士\n\n## 委员\n\n- 委员：（待补）\n- 委员：（待补）\n- 委员：（待补）\n\n如需查询董事会资料，欢迎透过「联络我们」与本会联系。');
+
+-- 服務範圍 / Our Services
+INSERT INTO page_translation (page_id, lang, title, subtitle, body_markdown) VALUES
+    ((SELECT id FROM page WHERE slug='services'), 'zh-Hant',
+     '服務範圍', '我們提供的支援',
+     E'*（此為placeholder內容，待補上正式資料。）*\n\n樂橋的服務圍繞四大範疇，回應香港弱勢社群的多元需要：\n\n## 扶貧支援\n\n提供糧食包、生活用品及緊急經濟援助，減輕基層家庭的壓力。\n\n## 環保推廣\n\n舉辦回收、清潔及環境教育活動，推動可持續生活。\n\n## 校園計劃\n\n與學校合作推行慈善義賣、義診及服務學習，培養青年的同理心與公民責任。\n\n## 義工發展\n\n招募、培訓及支援義工，讓更多人成為社區改變的推動者。\n\n如欲了解個別服務詳情，歡迎「聯絡我們」。'),
+    ((SELECT id FROM page WHERE slug='services'), 'en',
+     'Our Services', 'The support we provide',
+     E'*(Placeholder content — to be replaced with final copy.)*\n\nLucaBridge''s services span four areas, responding to the diverse needs of Hong Kong''s vulnerable communities:\n\n## Poverty Relief\n\nFood packs, daily necessities and emergency financial aid to ease the pressure on grassroots families.\n\n## Environmental Action\n\nRecycling, clean-up and environmental education activities that promote sustainable living.\n\n## Campus Programmes\n\nCharity sales, free clinics and service learning run with schools to nurture empathy and civic responsibility in young people.\n\n## Volunteer Development\n\nRecruiting, training and supporting volunteers so more people can drive change in their community.\n\nTo learn more about a specific service, please contact us.'),
+    ((SELECT id FROM page WHERE slug='services'), 'zh-Hans',
+     '服务范围', '我们提供的支援',
+     E'*（此为placeholder内容，待补上正式资料。）*\n\n乐桥的服务围绕四大范畴，回应香港弱势社群的多元需要：\n\n## 扶贫支援\n\n提供粮食包、生活用品及紧急经济援助，减轻基层家庭的压力。\n\n## 环保推广\n\n举办回收、清洁及环境教育活动，推动可持续生活。\n\n## 校园计划\n\n与学校合作推行慈善义卖、义诊及服务学习，培养青年的同理心与公民责任。\n\n## 义工发展\n\n招募、培训及支援义工，让更多人成为社区改变的推动者。\n\n如欲了解个别服务详情，欢迎「联络我们」。');
+
+-- 物資捐贈 / Gifts in Kind
+INSERT INTO page_translation (page_id, lang, title, subtitle, body_markdown) VALUES
+    ((SELECT id FROM page WHERE slug='donate-materials'), 'zh-Hant',
+     '物資捐贈', '捐出物資，惜物助人',
+     E'*（此為placeholder內容，待補上正式資料。）*\n\n除了金錢捐款，您亦可捐贈物資，直接支援有需要的家庭。\n\n## 我們現時需要\n\n- 米、罐頭及乾糧等食品（未過期）\n- 全新或狀態良好的日常用品、衛生用品\n- 冬季衣物、被褥\n- 兒童書籍及文具\n\n## 捐贈方法\n\n1. 透過「聯絡我們」與職員預約。\n2. 將物資送到本會地址，或安排上門收集（視乎數量）。\n3. 我們會為合適的物資發出收據。\n\n> 為確保物資能有效運用，捐贈前請先與我們確認現時需要。感謝您的支持！'),
+    ((SELECT id FROM page WHERE slug='donate-materials'), 'en',
+     'Gifts in Kind', 'Give goods, help others',
+     E'*(Placeholder content — to be replaced with final copy.)*\n\nAside from monetary donations, you can also donate goods to directly support families in need.\n\n## What we currently need\n\n- Rice, canned food and dry goods (unexpired)\n- New or good-condition daily necessities and hygiene items\n- Winter clothing and bedding\n- Children''s books and stationery\n\n## How to donate\n\n1. Make an appointment with our staff via Contact Us.\n2. Deliver the goods to our address, or arrange collection (subject to quantity).\n3. We can issue a receipt for suitable donations.\n\n> To make sure goods are used effectively, please confirm current needs with us before donating. Thank you for your support!'),
+    ((SELECT id FROM page WHERE slug='donate-materials'), 'zh-Hans',
+     '物资捐赠', '捐出物资，惜物助人',
+     E'*（此为placeholder内容，待补上正式资料。）*\n\n除了金钱捐款，您亦可捐赠物资，直接支援有需要的家庭。\n\n## 我们现时需要\n\n- 米、罐头及干粮等食品（未过期）\n- 全新或状态良好的日常用品、卫生用品\n- 冬季衣物、被褥\n- 儿童书籍及文具\n\n## 捐赠方法\n\n1. 透过「联络我们」与职员预约。\n2. 将物资送到本会地址，或安排上门收集（视乎数量）。\n3. 我们会为合适的物资发出收据。\n\n> 为确保物资能有效运用，捐赠前请先与我们确认现时需要。感谢您的支持！');
+
+-- 義工 / Volunteer
+INSERT INTO page_translation (page_id, lang, title, subtitle, body_markdown) VALUES
+    ((SELECT id FROM page WHERE slug='volunteer'), 'zh-Hant',
+     '義工招募', '成為改變的推動者',
+     E'*（此為placeholder內容，待補上正式資料。）*\n\n義工是樂橋不可或缺的力量。無論您有多少時間，都能為社區帶來改變。\n\n## 義工可參與的服務\n\n- 探訪基層家庭及長者\n- 協助派發糧食包及物資\n- 支援環保及校園活動\n- 行政、翻譯、攝影等專長支援\n\n## 如何加入\n\n1. 透過「聯絡我們」表達意向，或留下聯絡方法。\n2. 出席簡介會，了解服務詳情。\n3. 完成基本培訓後，即可參與服務。\n\n想投身更長期的工作？請瀏覽「職位空缺」。'),
+    ((SELECT id FROM page WHERE slug='volunteer'), 'en',
+     'Volunteer With Us', 'Be a force for change',
+     E'*(Placeholder content — to be replaced with final copy.)*\n\nVolunteers are an essential part of LucaBridge. However much time you have, you can make a difference in the community.\n\n## Where volunteers help\n\n- Visiting grassroots families and elders\n- Helping distribute food packs and goods\n- Supporting environmental and campus activities\n- Contributing skills such as admin, translation and photography\n\n## How to join\n\n1. Register your interest via Contact Us, or leave your details.\n2. Attend a briefing session to learn more.\n3. Start serving after completing basic training.\n\nLooking for something longer-term? See our Job Vacancies.'),
+    ((SELECT id FROM page WHERE slug='volunteer'), 'zh-Hans',
+     '义工招募', '成为改变的推动者',
+     E'*（此为placeholder内容，待补上正式资料。）*\n\n义工是乐桥不可或缺的力量。无论您有多少时间，都能为社区带来改变。\n\n## 义工可参与的服务\n\n- 探访基层家庭及长者\n- 协助派发粮食包及物资\n- 支援环保及校园活动\n- 行政、翻译、摄影等专长支援\n\n## 如何加入\n\n1. 透过「联络我们」表达意向，或留下联络方法。\n2. 出席简介会，了解服务详情。\n3. 完成基本培训后，即可参与服务。\n\n想投身更长期的工作？请浏览「职位空缺」。');
+
+-- 聯絡我們 / Contact Us
+INSERT INTO page_translation (page_id, lang, title, subtitle, body_markdown) VALUES
+    ((SELECT id FROM page WHERE slug='contact'), 'zh-Hant',
+     '聯絡我們', '我們樂意聆聽',
+     E'*（此為placeholder內容，請以最新聯絡資料為準。）*\n\n如有任何查詢、合作或捐助意向，歡迎透過以下方式與我們聯繫：\n\n- **地址**：元朗合益中心\n- **電話**：+852 2660 9577\n- **WhatsApp**：+852 6185 0571\n- **電郵**：enquiry@lokkiu.org.hk\n\n## 辦公時間\n\n星期一至五 上午10:00 – 下午6:00（公眾假期休息）\n\n您亦可透過我們的 Facebook、Instagram 及 YouTube 專頁了解最新動向。'),
+    ((SELECT id FROM page WHERE slug='contact'), 'en',
+     'Contact Us', 'We would love to hear from you',
+     E'*(Placeholder content — please refer to the latest contact details.)*\n\nFor any enquiries, partnership or donation interest, please reach us through:\n\n- **Address**: Hop Yick Centre, Yuen Long\n- **Phone**: +852 2660 9577\n- **WhatsApp**: +852 6185 0571\n- **Email**: enquiry@lokkiu.org.hk\n\n## Office Hours\n\nMonday to Friday, 10:00 – 18:00 (closed on public holidays)\n\nYou can also follow our Facebook, Instagram and YouTube pages for the latest updates.'),
+    ((SELECT id FROM page WHERE slug='contact'), 'zh-Hans',
+     '联络我们', '我们乐意聆听',
+     E'*（此为placeholder内容，请以最新联络资料为准。）*\n\n如有任何查询、合作或捐助意向，欢迎透过以下方式与我们联系：\n\n- **地址**：元朗合益中心\n- **电话**：+852 2660 9577\n- **WhatsApp**：+852 6185 0571\n- **电邮**：enquiry@lokkiu.org.hk\n\n## 办公时间\n\n星期一至五 上午10:00 – 下午6:00（公众假期休息）\n\n您亦可透过我们的 Facebook、Instagram 及 YouTube 专页了解最新动向。');
+
+-- ═════════════════════════════════════════════════════════════
+-- 職位空缺 Job postings (placeholder)
+-- ═════════════════════════════════════════════════════════════
+INSERT INTO job_posting (slug, status, employment_type, department, location_text, posted_at, closes_at) VALUES
+    ('programme-officer',       'PUBLISHED', 'FULL_TIME', '社區服務部',    '元朗',      TIMESTAMPTZ '2026-07-15 09:00:00+08', TIMESTAMPTZ '2026-09-30 23:59:00+08'),
+    ('volunteer-coordinator',   'PUBLISHED', 'CONTRACT',  '義工發展組',    '元朗',      TIMESTAMPTZ '2026-07-20 09:00:00+08', TIMESTAMPTZ '2026-08-31 23:59:00+08'),
+    ('communications-assistant','PUBLISHED', 'PART_TIME', '傳訊及籌款部',  '元朗 / 在家', TIMESTAMPTZ '2026-08-01 09:00:00+08', NULL);
+
+-- Programme Officer
+INSERT INTO job_posting_translation (job_posting_id, lang, title, employment_type_label, summary, body_markdown) VALUES
+    ((SELECT id FROM job_posting WHERE slug='programme-officer'), 'zh-Hant',
+     '計劃主任', '全職',
+     '統籌扶貧及社區服務計劃，帶領義工團隊執行前線服務。',
+     E'*（此為placeholder職位描述，待補上正式內容。）*\n\n## 主要職責\n\n- 策劃及執行扶貧、探訪及物資派發等社區服務計劃\n- 招募、協調及支援義工團隊\n- 與街坊、地區組織及合作夥伴保持聯繫\n- 撰寫計劃報告及協助申請資助\n\n## 入職要求\n\n- 大專或以上程度，社工、社會科學或相關學科優先\n- 一年或以上社區服務或項目統籌經驗\n- 良好粵語及中文書寫能力，能操簡單英語\n- 有責任感、善於溝通、願意外勤\n\n## 待遇\n\n- 薪金面議，設年假、強積金及在職培訓\n\n有意者請透過「聯絡我們」提交履歷，並註明應徵職位。'),
+    ((SELECT id FROM job_posting WHERE slug='programme-officer'), 'en',
+     'Programme Officer', 'Full-time',
+     'Coordinate poverty-relief and community service programmes and lead frontline volunteer teams.',
+     E'*(Placeholder job description — to be replaced with final copy.)*\n\n## Key responsibilities\n\n- Plan and run community programmes such as poverty relief, home visits and goods distribution\n- Recruit, coordinate and support volunteer teams\n- Keep in touch with residents, district groups and partners\n- Write programme reports and help with grant applications\n\n## Requirements\n\n- Diploma or above; social work, social science or related discipline preferred\n- One year or more of community service or project coordination experience\n- Good Cantonese and written Chinese; basic English\n- Responsible, strong communicator, willing to do field work\n\n## Package\n\n- Salary negotiable; annual leave, MPF and on-the-job training provided\n\nTo apply, please send your CV via Contact Us, stating the position applied for.'),
+    ((SELECT id FROM job_posting WHERE slug='programme-officer'), 'zh-Hans',
+     '计划主任', '全职',
+     '统筹扶贫及社区服务计划，带领义工团队执行前线服务。',
+     E'*（此为placeholder职位描述，待补上正式内容。）*\n\n## 主要职责\n\n- 策划及执行扶贫、探访及物资派发等社区服务计划\n- 招募、协调及支援义工团队\n- 与街坊、地区组织及合作伙伴保持联系\n- 撰写计划报告及协助申请资助\n\n## 入职要求\n\n- 大专或以上程度，社工、社会科学或相关学科优先\n- 一年或以上社区服务或项目统筹经验\n- 良好粤语及中文书写能力，能操简单英语\n- 有责任感、善于沟通、愿意外勤\n\n## 待遇\n\n- 薪金面议，设年假、强积金及在职培训\n\n有意者请透过「联络我们」提交履历，并注明应征职位。');
+
+-- Volunteer Coordinator
+INSERT INTO job_posting_translation (job_posting_id, lang, title, employment_type_label, summary, body_markdown) VALUES
+    ((SELECT id FROM job_posting WHERE slug='volunteer-coordinator'), 'zh-Hant',
+     '義工統籌', '合約',
+     '負責義工招募、培訓及配對，建立活躍的義工社群。',
+     E'*（此為placeholder職位描述，待補上正式內容。）*\n\n## 主要職責\n\n- 制定及推行義工招募與培訓計劃\n- 為不同服務配對合適義工\n- 維繫義工關係，籌辦聚會及嘉許活動\n- 管理義工資料及服務紀錄\n\n## 入職要求\n\n- 大專或以上程度\n- 具義工管理或活動籌辦經驗者優先\n- 良好人際溝通及組織能力\n- 一年合約，表現理想可續約\n\n有意者請透過「聯絡我們」提交履歷。'),
+    ((SELECT id FROM job_posting WHERE slug='volunteer-coordinator'), 'en',
+     'Volunteer Coordinator', 'Contract',
+     'Lead volunteer recruitment, training and matching to build an active volunteer community.',
+     E'*(Placeholder job description — to be replaced with final copy.)*\n\n## Key responsibilities\n\n- Design and run volunteer recruitment and training programmes\n- Match suitable volunteers to different services\n- Maintain volunteer relationships; organise gatherings and appreciation events\n- Manage volunteer records and service logs\n\n## Requirements\n\n- Diploma or above\n- Experience in volunteer management or event organising preferred\n- Strong interpersonal and organisational skills\n- One-year contract, renewable subject to performance\n\nTo apply, please send your CV via Contact Us.'),
+    ((SELECT id FROM job_posting WHERE slug='volunteer-coordinator'), 'zh-Hans',
+     '义工统筹', '合约',
+     '负责义工招募、培训及配对，建立活跃的义工社群。',
+     E'*（此为placeholder职位描述，待补上正式内容。）*\n\n## 主要职责\n\n- 制定及推行义工招募与培训计划\n- 为不同服务配对合适义工\n- 维系义工关系，筹办聚会及嘉许活动\n- 管理义工资料及服务纪录\n\n## 入职要求\n\n- 大专或以上程度\n- 具义工管理或活动筹办经验者优先\n- 良好人际沟通及组织能力\n- 一年合约，表现理想可续约\n\n有意者请透过「联络我们」提交履历。');
+
+-- Communications Assistant
+INSERT INTO job_posting_translation (job_posting_id, lang, title, employment_type_label, summary, body_markdown) VALUES
+    ((SELECT id FROM job_posting WHERE slug='communications-assistant'), 'zh-Hant',
+     '傳訊助理', '兼職',
+     '協助管理社交媒體及製作宣傳內容，講好樂橋的故事。',
+     E'*（此為placeholder職位描述，待補上正式內容。）*\n\n## 主要職責\n\n- 撰寫及編輯社交媒體貼文（Facebook / Instagram / YouTube）\n- 拍攝及剪輯簡單相片與短片\n- 協助籌款活動的宣傳工作\n- 整理服務故事及數據\n\n## 入職要求\n\n- 對社會服務有熱誠\n- 熟悉社交媒體及基本設計 / 剪片工具\n- 良好中文書寫能力\n- 每週約 16–24 小時，時間可商議（部分工作可在家進行）\n\n有意者請透過「聯絡我們」提交履歷及作品集（如有）。'),
+    ((SELECT id FROM job_posting WHERE slug='communications-assistant'), 'en',
+     'Communications Assistant', 'Part-time',
+     'Help run social media and create promotional content to tell LucaBridge''s story well.',
+     E'*(Placeholder job description — to be replaced with final copy.)*\n\n## Key responsibilities\n\n- Write and edit social media posts (Facebook / Instagram / YouTube)\n- Shoot and edit simple photos and short videos\n- Support publicity for fundraising activities\n- Compile service stories and data\n\n## Requirements\n\n- Passion for social service\n- Familiar with social media and basic design / video tools\n- Good written Chinese\n- About 16–24 hours per week, hours negotiable (some work can be done from home)\n\nTo apply, please send your CV and portfolio (if any) via Contact Us.'),
+    ((SELECT id FROM job_posting WHERE slug='communications-assistant'), 'zh-Hans',
+     '传讯助理', '兼职',
+     '协助管理社交媒体及制作宣传内容，讲好乐桥的故事。',
+     E'*（此为placeholder职位描述，待补上正式内容。）*\n\n## 主要职责\n\n- 撰写及编辑社交媒体贴文（Facebook / Instagram / YouTube）\n- 拍摄及剪辑简单相片与短片\n- 协助筹款活动的宣传工作\n- 整理服务故事及数据\n\n## 入职要求\n\n- 对社会服务有热诚\n- 熟悉社交媒体及基本设计 / 剪片工具\n- 良好中文书写能力\n- 每周约 16–24 小时，时间可商议（部分工作可在家进行）\n\n有意者请透过「联络我们」提交履历及作品集（如有）。');
