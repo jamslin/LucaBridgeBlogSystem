@@ -1,21 +1,21 @@
-/* LucaBridge theme — direction 1B "Bridge Green" (FINAL).
+/* LucaBridge theme — direction 1A "Warm Clay" (FINAL).
    Keep in sync with theme/tokens.js. This file is what components paint with. */
 :root {
   /* Core five */
-  --color-paper: #f5f4ec;        /* Linen — page background */
-  --color-ink: #1c1f18;          /* Ink — text & footer */
-  --color-accent: #3f6b4d;       /* Leaf green — primary action & links */
+  --color-paper: #f7f3ec;        /* Linen — page background */
+  --color-ink: #211c15;          /* Ink — text & footer */
+  --color-accent: #b85c3c;       /* Warm Clay — primary action & links */
   --color-gold: #b08534;         /* Ochre gold — 1px rules / small accents only */
-  --color-sage: #c3c6ac;         /* Sage — quiet section fills */
+  --color-sand: #ddd0bd;         /* Sand — quiet section fills */
 
   /* Supporting tints */
   --color-card: #fffdf8;         /* card surface */
-  --color-photo-idle: #e7e8d8;   /* photo / chip idle */
-  --color-accent-hover: #4d7a5b; /* green hover */
-  --color-accent-pressed: #2f5139; /* green pressed */
-  --color-ink-soft: #4f5647;     /* body muted */
-  --color-muted: #6d7a63;        /* captions */
-  --color-line: rgba(28, 31, 24, 0.12);
+  --color-photo-idle: #ece1d0;   /* photo / chip idle */
+  --color-accent-hover: #c86f50; /* clay hover */
+  --color-accent-pressed: #9a4a2d; /* clay pressed */
+  --color-ink-soft: #423c31;     /* body muted */
+  --color-muted: #6f6657;        /* captions */
+  --color-line: rgba(33, 28, 21, 0.12);
   --color-paper-2: #fffdf8;      /* legacy alias -> card surface (used by post.jsx; retire during component pass) */
 
   --font-display: "Noto Serif TC", serif;
@@ -30,8 +30,8 @@
   --radius-chip: 4px; --radius-photo: 6px; --radius-card: 8px; --radius-pill: 999px;
 
   /* Elevation */
-  --elev-card: 0 2px 8px rgba(28, 31, 24, 0.06);
-  --elev-overlay: 0 12px 40px rgba(28, 31, 24, 0.18);
+  --elev-card: 0 2px 8px rgba(33, 28, 21, 0.06);
+  --elev-overlay: 0 12px 40px rgba(33, 28, 21, 0.18);
 
   /* Motion */
   --motion-micro: 120ms ease-out;
@@ -179,9 +179,9 @@ img {
 .btn-secondary:hover { background: var(--color-photo-idle); color: var(--color-accent-pressed); }
 
 .btn[aria-disabled="true"] {
-  background: var(--color-sage);
+  background: var(--color-sand);
   color: var(--color-muted);
-  border-color: var(--color-sage);
+  border-color: var(--color-sand);
   cursor: not-allowed;
   pointer-events: none;
 }
@@ -200,7 +200,7 @@ img {
 .btn-text .arrow { display: inline-block; transition: transform var(--motion-micro); }
 .btn-text:hover .arrow { transform: translateX(3px); }
 
-/* ── Filter tags — sage-tinted pills, one active filled green (design spec §06) ── */
+/* ── Filter tags — sand-tinted pills, one active filled clay (design spec §06) ── */
 .filter-tag {
   display: inline-flex;
   align-items: center;
@@ -215,7 +215,7 @@ img {
   text-decoration: none;
   transition: background var(--motion-micro), color var(--motion-micro);
 }
-.filter-tag:hover { background: var(--color-sage); text-decoration: none; }
+.filter-tag:hover { background: var(--color-sand); text-decoration: none; }
 .filter-tag--active { background: var(--color-accent); color: var(--color-paper); }
 .filter-tag--active:hover { background: var(--color-accent-pressed); }
 

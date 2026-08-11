@@ -1,25 +1,25 @@
-// Design tokens for LucaBridge — direction 1B "Bridge Green" (FINAL).
+// Design tokens for LucaBridge — direction 1A "Warm Clay" (FINAL).
 // Source of truth: "LucaBridge UI/UX Design Specification v1.0" + Notion "02 · Design System".
-// Accent decision RESOLVED: leaf green #3F6B4D. (1A Warm Clay and 1C Two Pillars dropped.)
+// Accent decision RESOLVED: warm clay #B85C3C. (1A Warm Clay and 1C Two Pillars dropped.)
 // Keep global.css in sync — this file is the source of truth for JS-side logic.
 
 export const colors = {
   // Core five
-  paper: "#f5f4ec",       // Linen 亞麻 — page background
-  ink: "#1c1f18",         // Ink 墨黑 — text & footer
-  accent: "#3f6b4d",      // Leaf green 葉綠 — primary action & links
+  paper: "#f7f3ec",       // Linen 亞麻 — page background
+  ink: "#211c15",         // Ink 墨黑 — text & footer
+  accent: "#b85c3c",      // Warm Clay 陶土 — primary action & links
   gold: "#b08534",        // Ochre gold 金 — 1px rules & small accents only (never text)
-  sage: "#c3c6ac",        // Sage 鼠尾草 — quiet section fills
+  sand: "#ddd0bd",        // Sand 沙 — quiet section fills
 
   // Supporting tints
   cardSurface: "#fffdf8", // card surface
-  photoIdle: "#e7e8d8",   // photo / chip idle fill
-  accentHover: "#4d7a5b", // green hover
-  accentPressed: "#2f5139", // green pressed
-  inkSoft: "#4f5647",     // body muted
-  captions: "#6d7a63",    // captions
-  muted: "#4f5647",       // alias kept for existing components
-  line: "rgba(28,31,24,.12)",
+  photoIdle: "#ece1d0",   // photo / chip idle fill
+  accentHover: "#c86f50", // clay hover
+  accentPressed: "#9a4a2d", // clay pressed
+  inkSoft: "#423c31",     // body muted
+  captions: "#6f6657",    // captions
+  muted: "#423c31",       // alias kept for existing components
+  line: "rgba(33,28,21,.12)",
 };
 
 export const typography = {
@@ -64,8 +64,8 @@ export const radius = {
 
 export const elevation = {
   flat: "none",                       // border only
-  card: "0 2px 8px rgba(28,31,24,.06)", // soft 6%
-  overlay: "0 12px 40px rgba(28,31,24,.18)", // modal
+  card: "0 2px 8px rgba(33,28,21,.06)", // soft 6%
+  overlay: "0 12px 40px rgba(33,28,21,.18)", // modal
 };
 
 export const layout = {
