@@ -130,6 +130,7 @@ kind: Deployment
 metadata: { name: backend, namespace: lucabridge-uat }
 spec:
   replicas: 1
+  strategy: { type: Recreate }
   selector: { matchLabels: { app: backend } }
   template:
     metadata: { labels: { app: backend } }
@@ -142,12 +143,14 @@ spec:
             - configMapRef: { name: backend-config }
             - secretRef: { name: backend-secret }
           env:
+            - { name: SPRING_SQL_INIT_DATA_LOCATIONS, value: "file:/seed/data.sql" }
             - name: DB_PASSWORD
               valueFrom: { secretKeyRef: { name: postgres-secret, key: POSTGRES_PASSWORD } }
             - name: STORAGE_ACCESS_KEY
               valueFrom: { secretKeyRef: { name: minio-secret, key: MINIO_ROOT_USER } }
             - name: STORAGE_SECRET_KEY
               valueFrom: { secretKeyRef: { name: minio-secret, key: MINIO_ROOT_PASSWORD } }
+          volumeMounts: [{ name: seed, mountPath: /seed, readOnly: true }]
           readinessProbe:
             httpGet: { path: /actuator/health, port: 8080 }
             initialDelaySeconds: 20
@@ -158,6 +161,7 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 15
           resources: { requests: { cpu: "250m", memory: "512Mi" }, limits: { memory: "1Gi" } }
+      volumes: [{ name: seed, configMap: { name: uat-seed } }]
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -178,6 +182,7 @@ kind: Deployment
 metadata: { name: frontend, namespace: lucabridge-uat }
 spec:
   replicas: 1
+  strategy: { type: Recreate }
   selector: { matchLabels: { app: frontend } }
   template:
     metadata: { labels: { app: frontend } }
@@ -202,6 +207,7 @@ spec:
     - host: uat.20.24.249.212.nip.io
       http:
         paths:
+          - { path: /blog-media, pathType: Prefix, backend: { service: { name: minio, port: { number: 9000 } } } }
           - { path: /api, pathType: Prefix, backend: { service: { name: backend, port: { number: 8080 } } } }
           - { path: /actuator, pathType: Prefix, backend: { service: { name: backend, port: { number: 8080 } } } }
           - { path: /, pathType: Prefix, backend: { service: { name: frontend, port: { number: 3000 } } } }

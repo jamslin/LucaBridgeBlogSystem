@@ -14,7 +14,16 @@ A second, isolated copy of LucaBridge on the **same** AKS cluster, in its own na
   so UAT **self-seeds on boot and RESETS on every restart**. That's intended for a demo box.
   Want it to persist? Add a dedicated `uat` Spring profile (Flyway-managed) instead of `dev`.
 
-## Deploy
+## Automated deployment
+
+Pushes to `main` are deployed by `.github/workflows/deploy-uat.yml`. The workflow builds
+immutable backend and frontend images tagged with the Git commit SHA, pushes them to ACR,
+applies `uat.yaml`, waits for both deployments, and checks the UAT home page.
+
+The workflow uses Azure OIDC. Configure the GitHub `uat` environment with
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_SUBSCRIPTION_ID` before enabling it.
+
+## Manual deployment
 
 Secrets are created imperatively (kept out of git). From Cloud Shell or a machine with
 `kubectl` pointed at the cluster:
@@ -31,14 +40,21 @@ kubectl -n lucabridge-uat create secret generic minio-secret \
 kubectl -n lucabridge-uat create secret generic backend-secret \
   --from-literal=JWT_SECRET="$UJWT" --from-literal=APP_ADMIN_PASSWORD_HASH=""
 
-# 3. apply the stack
+# 3. create the UAT-specific seed and apply the stack
+sed 's#http://localhost:9000#http://uat.20.24.249.212.nip.io#g' \
+  ../../backend/src/main/resources/data.sql > /tmp/uat-data.sql
+kubectl -n lucabridge-uat create configmap uat-seed \
+  --from-file=data.sql=/tmp/uat-data.sql --dry-run=client -o yaml | kubectl apply -f -
 kubectl apply -f uat.yaml
 kubectl -n lucabridge-uat get pods -w
 ```
 
 ## Notes / known follow-ups
 
-- **Images won't load** — MinIO isn't publicly exposed (same as prod). Text content only.
+- **Media:** `/blog-media` is routed to UAT MinIO and the demo bucket must allow anonymous
+  downloads. Run `mc anonymous set download m/blog-media` after rebuilding MinIO storage.
+  Download each source image to a file before `mc cp`; avoid `mc pipe`, which can exceed
+  UAT's memory limit. Do not use public-read buckets for private uploads.
 - **NetworkPolicy not applied** — the cluster has no network-policy engine; enabling it
   (`az aks update --network-policy ...`) restarts prod nodes, so it's deferred. Isolation
   still holds via separate namespace + separate secrets.

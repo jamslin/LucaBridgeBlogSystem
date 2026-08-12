@@ -1,0 +1,88 @@
+name: Deploy UAT to AKS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: lucabridge-uat
+  cancel-in-progress: false
+
+env:
+  ACR_NAME: lucabridgeacr
+  ACR_SERVER: lucabridgeacr.azurecr.io
+  RESOURCE_GROUP: rg-lucabridge
+  AKS_CLUSTER: aks-lucabridge
+  NAMESPACE: lucabridge-uat
+  UAT_ORIGIN: http://uat.20.24.249.212.nip.io
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: uat
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Sign in to Azure with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Sign in to Azure Container Registry
+        run: az acr login --name "$ACR_NAME"
+
+      - name: Build and push backend
+        run: |
+          docker build \
+            --tag "$ACR_SERVER/lucabridge-backend:${GITHUB_SHA}" \
+            backend
+          docker push "$ACR_SERVER/lucabridge-backend:${GITHUB_SHA}"
+
+      - name: Build and push frontend
+        run: |
+          docker build \
+            --tag "$ACR_SERVER/lucabridge-frontend:${GITHUB_SHA}" \
+            frontend
+          docker push "$ACR_SERVER/lucabridge-frontend:${GITHUB_SHA}"
+
+      - name: Connect to AKS
+        uses: azure/aks-set-context@v4
+        with:
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.AKS_CLUSTER }}
+          admin: true
+
+      - name: Create the UAT-specific seed
+        run: |
+          sed "s#http://localhost:9000#${UAT_ORIGIN}#g" \
+            backend/src/main/resources/data.sql > /tmp/uat-data.sql
+          kubectl -n "$NAMESPACE" create configmap uat-seed \
+            --from-file=data.sql=/tmp/uat-data.sql \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy to UAT
+        uses: Azure/k8s-deploy@v5
+        with:
+          namespace: ${{ env.NAMESPACE }}
+          manifests: k8s-aks/uat/uat.yaml
+          images: |
+            ${{ env.ACR_SERVER }}/lucabridge-backend:${{ github.sha }}
+            ${{ env.ACR_SERVER }}/lucabridge-frontend:${{ github.sha }}
+          strategy: basic
+
+      - name: Verify UAT
+        run: |
+          kubectl -n "$NAMESPACE" rollout status deployment/backend --timeout=300s
+          kubectl -n "$NAMESPACE" rollout status deployment/frontend --timeout=300s
+          curl --fail --show-error --silent \
+            --retry 12 --retry-delay 5 \
+            "$UAT_ORIGIN/zh-Hant" > /dev/null
