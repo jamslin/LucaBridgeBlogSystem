@@ -9,6 +9,10 @@ export const meta = () => [{ title: "LucaBridge CMS" }];
 const NAV = [
   { to: "/admin", label: "Dashboard", end: true },
   { to: "/admin/posts", label: "Posts" },
+  { to: "/admin/events", label: "Events" },
+  { to: "/admin/jobs", label: "Jobs" },
+  { to: "/admin/pages", label: "Pages" },
+  { to: "/admin/categories", label: "Categories" },
   { to: "/admin/media", label: "Media" },
   { to: "/admin/settings", label: "Settings" },
   { to: "/admin/users", label: "Users", adminOnly: true },

@@ -104,4 +104,33 @@ export const adminApi = {
   changeUserPassword: (id, newPassword) =>
     request(`/api/admin/users/${id}/password`, { method: "PUT", body: { newPassword } }),
   deleteUser: (id) => request(`/api/admin/users/${id}`, { method: "DELETE" }),
+
+  // events
+  listEvents: () => request("/api/admin/events"),
+  getEvent: (id) => request(`/api/admin/events/${id}`),
+  saveEvent: (payload) => request("/api/admin/events", { method: "POST", body: payload }),
+  publishEvent: (id) => request(`/api/admin/events/${id}/publish`, { method: "POST" }),
+  unpublishEvent: (id) => request(`/api/admin/events/${id}/unpublish`, { method: "POST" }),
+  deleteEvent: (id) => request(`/api/admin/events/${id}`, { method: "DELETE" }),
+
+  // jobs
+  listJobs: () => request("/api/admin/jobs"),
+  getJob: (id) => request(`/api/admin/jobs/${id}`),
+  saveJob: (payload) => request("/api/admin/jobs", { method: "POST", body: payload }),
+  publishJob: (id) => request(`/api/admin/jobs/${id}/publish`, { method: "POST" }),
+  unpublishJob: (id) => request(`/api/admin/jobs/${id}/unpublish`, { method: "POST" }),
+  deleteJob: (id) => request(`/api/admin/jobs/${id}`, { method: "DELETE" }),
+
+  // pages
+  listPages: () => request("/api/admin/pages"),
+  getPage: (id) => request(`/api/admin/pages/${id}`),
+  savePage: (payload) => request("/api/admin/pages", { method: "POST", body: payload }),
+  publishPage: (id) => request(`/api/admin/pages/${id}/publish`, { method: "POST" }),
+  unpublishPage: (id) => request(`/api/admin/pages/${id}/unpublish`, { method: "POST" }),
+  deletePage: (id) => request(`/api/admin/pages/${id}`, { method: "DELETE" }),
+
+  // categories (admin)
+  listCategoriesAdmin: () => request("/api/admin/categories"),
+  saveCategory: (payload) => request("/api/admin/categories", { method: "POST", body: payload }),
+  deleteCategory: (id) => request(`/api/admin/categories/${id}`, { method: "DELETE" }),
 };

@@ -18,6 +18,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findBySlug(String slug);
 
+    long countByCategoryKey(String categoryKey);
+
     Optional<Post> findFirstByStatusAndPublishedAtLessThanOrderByPublishedAtDesc(PostStatus status, java.time.Instant publishedAt);
 
     Optional<Post> findFirstByStatusAndPublishedAtGreaterThanOrderByPublishedAtAsc(PostStatus status, java.time.Instant publishedAt);
