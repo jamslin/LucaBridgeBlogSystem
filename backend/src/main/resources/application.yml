@@ -19,6 +19,10 @@ spring:
     # Schema migrations only. Demo seed data lives in db/seed and is added
     # ONLY by the dev profile (see application-dev.yml) — prod can never run it.
     locations: classpath:db/migration
+    # The live prod DB was created by ddl-auto=update and has no flyway history,
+    # so baseline it (at v0, so V1 still runs — V1 is IF NOT EXISTS, safe either way).
+    baseline-on-migrate: true
+    baseline-version: 0
   servlet:
     multipart:
       max-file-size: 10MB
@@ -41,6 +45,7 @@ app:
     username: ${APP_ADMIN_USERNAME:admin}
     # BCrypt hash of the admin password — generate with e.g. `htpasswd -bnBC 10 "" 'yourpassword' | tr -d ':\n'`
     # or any BCrypt generator. Leave unset to disable admin login (public read API still works).
+    # On first start this hash seeds the bootstrap admin row in app_user (see AdminUserInitializer).
     password-hash: ${APP_ADMIN_PASSWORD_HASH:}
   jwt:
     # Prod fails fast at startup if this is left at the default (see JwtSecretValidator).

@@ -1,0 +1,250 @@
+/* Admin CMS styling. Reuses the design tokens from global.css (:root vars are
+   loaded app-wide via root.jsx). Scoped under .admin-* so it never touches the
+   public site. */
+
+.admin-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Login ---- */
+.admin-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-paper);
+  font-family: var(--font-body);
+  padding: 20px;
+}
+.admin-login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-card);
+  padding: 32px 28px;
+}
+.admin-login-card h1 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin: 0 0 4px;
+  color: var(--color-ink);
+}
+.admin-login-card p.sub {
+  margin: 0 0 24px;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+/* ---- Shell ---- */
+.admin-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 236px 1fr;
+  background: var(--color-paper);
+  font-family: var(--font-body);
+  color: var(--color-ink);
+}
+.admin-sidebar {
+  background: var(--color-ink);
+  color: #f2ece1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.admin-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  padding: 4px 10px 18px;
+  color: #fff;
+}
+.admin-brand span { color: var(--color-accent); }
+.admin-nav { display: flex; flex-direction: column; gap: 2px; }
+.admin-nav a {
+  display: block;
+  padding: 9px 12px;
+  border-radius: var(--radius-chip);
+  color: #d9d1c4;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background var(--motion-micro), color var(--motion-micro);
+}
+.admin-nav a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.admin-nav a.active { background: var(--color-accent); color: #fff; }
+.admin-sidebar-foot {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  font-size: 12px;
+  color: #b7ad9d;
+}
+.admin-sidebar-foot .who { color: #f2ece1; font-size: 13px; margin-bottom: 8px; }
+.admin-sidebar-foot .who small { display:block; color:#b7ad9d; }
+
+/* ---- Main ---- */
+.admin-main { display: flex; flex-direction: column; min-width: 0; }
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-card);
+}
+.admin-topbar h1 { font-family: var(--font-display); font-size: 20px; margin: 0; }
+.admin-content { padding: 28px; max-width: 960px; }
+
+/* ---- Cards / tables ---- */
+.admin-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  box-shadow: var(--elev-card);
+  margin-bottom: 20px;
+}
+.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.admin-table th, .admin-table td {
+  text-align: left;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--color-line);
+  vertical-align: middle;
+}
+.admin-table th {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table .row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+/* ---- Forms ---- */
+.admin-field { margin-bottom: 16px; }
+.admin-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  margin-bottom: 6px;
+}
+.admin-input, .admin-field input, .admin-field textarea, .admin-field select {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-chip);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-ink);
+  background: #fff;
+  box-sizing: border-box;
+}
+.admin-field textarea { min-height: 160px; resize: vertical; line-height: 1.6; }
+.admin-field input:focus, .admin-field textarea:focus, .admin-field select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(184,92,60,0.14);
+}
+.admin-field .hint { font-size: 12px; color: var(--color-muted); margin-top: 5px; }
+.admin-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.admin-row > .admin-field { flex: 1; min-width: 180px; }
+
+/* ---- Buttons ---- */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: var(--radius-chip);
+  border: 1px solid var(--color-line);
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background var(--motion-micro), border-color var(--motion-micro), opacity var(--motion-micro);
+}
+.admin-btn:hover { background: var(--color-photo-idle); }
+.admin-btn.primary { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
+.admin-btn.primary:hover { background: var(--color-accent-hover); }
+.admin-btn.danger { color: #a12b1a; border-color: rgba(161,43,26,0.4); }
+.admin-btn.danger:hover { background: rgba(161,43,26,0.08); }
+.admin-btn.ghost { background: transparent; border-color: transparent; color: var(--color-accent); }
+.admin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.admin-btn-sm { padding: 5px 10px; font-size: 13px; }
+.admin-actions { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+.admin-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 12px; }
+
+/* ---- Badges ---- */
+.admin-badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.admin-badge.published { background: #e3efe4; color: #2f6b3d; }
+.admin-badge.draft { background: var(--color-photo-idle); color: var(--color-ink-soft); }
+.role-badge {
+  display: inline-block;
+  margin-right: 5px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--color-sand);
+  color: var(--color-ink-soft);
+}
+.role-badge.admin { background: var(--color-accent); color: #fff; }
+
+/* ---- Alerts ---- */
+.admin-alert { padding: 11px 14px; border-radius: var(--radius-chip); font-size: 13px; margin-bottom: 16px; }
+.admin-alert.error { background: rgba(161,43,26,0.09); color: #a12b1a; border: 1px solid rgba(161,43,26,0.25); }
+.admin-alert.success { background: #e3efe4; color: #2f6b3d; border: 1px solid rgba(47,107,61,0.25); }
+.admin-empty { padding: 40px; text-align: center; color: var(--color-muted); }
+
+/* ---- Language tabs ---- */
+.lang-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--color-line); margin-bottom: 18px; }
+.lang-tab {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.lang-tab.active { color: var(--color-accent); border-bottom-color: var(--color-accent); font-weight: 600; }
+.lang-tab .req { color: #a12b1a; }
+
+/* ---- Dashboard cards ---- */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+.stat-card { background: var(--color-card); border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: 18px; }
+.stat-card .n { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--color-accent); }
+.stat-card .l { font-size: 13px; color: var(--color-muted); margin-top: 2px; }
+.media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+.media-item { border: 1px solid var(--color-line); border-radius: var(--radius-photo); overflow: hidden; background: #fff; }
+.media-item img { width: 100%; height: 100px; object-fit: cover; display: block; }
+.media-item .u { font-size: 11px; padding: 6px; color: var(--color-muted); word-break: break-all; }
+
+@media (max-width: 720px) {
+  .admin-shell { grid-template-columns: 1fr; }
+  .admin-sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .admin-nav { flex-direction: row; flex-wrap: wrap; }
+  .admin-sidebar-foot { margin: 0 0 0 auto; padding: 0; border: none; }
+}

@@ -6,17 +6,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 /**
- * Uploads to the S3-compatible bucket (MinIO locally, any S3-compatible store in prod
- * — see S3ClientConfig). Only image types are accepted; size is capped by
- * spring.servlet.multipart in application.yml.
+ * Stores/removes/lists objects in the S3-compatible bucket (MinIO locally). Only image types
+ * are accepted on upload; size is capped by spring.servlet.multipart. Cataloguing lives in
+ * {@link MediaService} — this class only touches storage.
  */
 @Service
 public class MediaStorageService {
@@ -32,7 +36,7 @@ public class MediaStorageService {
         this.appProperties = appProperties;
     }
 
-    public String upload(MultipartFile file) {
+    public StoredMedia store(MultipartFile file) {
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
             throw new BadRequestException("Unsupported file type: " + contentType
@@ -57,6 +61,27 @@ public class MediaStorageService {
             throw new UncheckedIOException("Failed to upload media", e);
         }
 
+        return new StoredMedia(key, urlFor(bucket, key), contentType, file.getSize());
+    }
+
+    public void delete(String objectKey) {
+        s3Client.deleteObject(DeleteObjectRequest.builder()
+                .bucket(appProperties.getStorage().getBucket())
+                .key(objectKey)
+                .build());
+    }
+
+    /** Every object currently in the bucket — used to backfill the catalogue. */
+    public List<StoredObject> listAll() {
+        String bucket = appProperties.getStorage().getBucket();
+        List<StoredObject> out = new ArrayList<>();
+        s3Client.listObjectsV2Paginator(ListObjectsV2Request.builder().bucket(bucket).build())
+                .contents()
+                .forEach(o -> out.add(new StoredObject(o.key(), urlFor(bucket, o.key()), o.size())));
+        return out;
+    }
+
+    private String urlFor(String bucket, String key) {
         return appProperties.getStorage().getPublicBaseUrl() + "/" + bucket + "/" + key;
     }
 
@@ -64,4 +89,8 @@ public class MediaStorageService {
         if (filename == null) return "file";
         return filename.replaceAll("[^a-zA-Z0-9._-]", "_");
     }
+
+    public record StoredMedia(String objectKey, String url, String contentType, long sizeBytes) {}
+
+    public record StoredObject(String objectKey, String url, long sizeBytes) {}
 }

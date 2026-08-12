@@ -17,6 +17,18 @@ export default [
     route("*", "routes/not-found.jsx"),
   ]),
 
+  // Admin CMS — client-only subtree (auth + data fetching happen in the browser).
+  // Static "admin" segment out-ranks ":lang", so these never hit the public layout.
+  route("admin/login", "routes/admin/login.jsx"),
+  route("admin", "routes/admin/layout.jsx", [
+    index("routes/admin/dashboard.jsx"),
+    route("posts", "routes/admin/posts.jsx"),
+    route("posts/:id", "routes/admin/post-edit.jsx"),
+    route("media", "routes/admin/media.jsx"),
+    route("settings", "routes/admin/settings.jsx"),
+    route("users", "routes/admin/users.jsx"),
+  ]),
+
   // SEO plumbing served by SSR — always in sync with the DB
   route("sitemap.xml", "routes/sitemap[.]xml.jsx"),
   route("robots.txt", "routes/robots[.]txt.jsx"),

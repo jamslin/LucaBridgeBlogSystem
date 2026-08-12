@@ -14,8 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.HashMap;
 
 @Service
 public class PostService {
@@ -103,8 +107,48 @@ public class PostService {
     }
 
     // ---------------------------------------------------------------------
-    // Admin write path — TODO per "04 · Engineering Setup & Roadmap" (Phase 4).
-    // Wiring below is functional but not yet exercised by tests or the admin UI.
+    // Admin read path — powers the CMS posts list and editor (all statuses,
+    // raw translations with no language fallback).
+    // ---------------------------------------------------------------------
+
+    @Transactional(readOnly = true)
+    public List<AdminPostSummaryDto> listAllForAdmin() {
+        return postRepository.findAll().stream()
+                .sorted(Comparator.comparing(Post::getId).reversed())
+                .map(this::toAdminSummary)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public AdminPostDetailDto getForEdit(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found: " + id));
+
+        List<PostTranslationInput> translations = post.getTranslations().stream()
+                .map(t -> new PostTranslationInput(t.getLang(), t.getTitle(), t.getSubtitle(),
+                        t.getExcerpt(), t.getBodyMarkdown()))
+                .toList();
+
+        return new AdminPostDetailDto(post.getId(), post.getSlug(),
+                post.getCategory() != null ? post.getCategory().getKey() : null,
+                post.getCoverImageUrl(), post.getReadingMinutes(),
+                post.getStatus().name(), post.getPublishedAt(), translations);
+    }
+
+    private AdminPostSummaryDto toAdminSummary(Post post) {
+        String defaultLang = localizationService.defaultLang();
+        String title = post.getTranslations().stream()
+                .filter(t -> defaultLang.equals(t.getLang()))
+                .map(PostTranslation::getTitle)
+                .findFirst()
+                .orElseGet(() -> post.getTranslations().stream()
+                        .map(PostTranslation::getTitle).findFirst().orElse(post.getSlug()));
+        return new AdminPostSummaryDto(post.getId(), post.getSlug(), post.getStatus().name(),
+                post.getCategory() != null ? post.getCategory().getKey() : null, title, post.getPublishedAt());
+    }
+
+    // ---------------------------------------------------------------------
+    // Admin write path.
     // ---------------------------------------------------------------------
 
     @Transactional
@@ -122,17 +166,27 @@ public class PostService {
         post.setCoverImageUrl(request.coverImageUrl());
         post.setReadingMinutes(request.readingMinutes());
 
-        post.getTranslations().clear();
-        for (PostTranslationInput t : request.translations()) {
-            post.getTranslations().add(PostTranslation.builder()
-                    .post(post)
-                    .lang(t.lang())
-                    .title(t.title())
-                    .subtitle(t.subtitle())
-                    .excerpt(t.excerpt())
-                    .bodyMarkdown(t.bodyMarkdown())
-                    .build());
+        // Reconcile translations by lang IN PLACE. Clearing then re-adding the same
+        // (post_id, lang) rows makes Hibernate flush the new INSERTs before the orphan
+        // DELETEs, violating the (post_id, lang) unique constraint when editing a post.
+        Map<String, PostTranslation> existing = new HashMap<>();
+        for (PostTranslation t : post.getTranslations()) {
+            existing.put(t.getLang(), t);
         }
+        Set<String> incomingLangs = new HashSet<>();
+        for (PostTranslationInput in : request.translations()) {
+            incomingLangs.add(in.lang());
+            PostTranslation t = existing.get(in.lang());
+            if (t == null) {
+                t = PostTranslation.builder().post(post).lang(in.lang()).build();
+                post.getTranslations().add(t);
+            }
+            t.setTitle(in.title());
+            t.setSubtitle(in.subtitle());
+            t.setExcerpt(in.excerpt());
+            t.setBodyMarkdown(in.bodyMarkdown());
+        }
+        post.getTranslations().removeIf(t -> !incomingLangs.contains(t.getLang()));
 
         return postRepository.save(post).getId();
     }
@@ -153,5 +207,20 @@ public class PostService {
             post.setPublishedAt(Instant.now());
         }
         postRepository.save(post);
+    }
+
+    @Transactional
+    public void unpublish(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found: " + id));
+        post.setStatus(PostStatus.DRAFT);
+        postRepository.save(post);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found: " + id));
+        postRepository.delete(post);
     }
 }
