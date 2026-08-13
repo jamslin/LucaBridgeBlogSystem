@@ -25,7 +25,7 @@ export default function Masthead() {
         </div>
       </div>
 
-      <div className="shell" style={{ display: "flex", alignItems: "center", gap: "12px", padding: "20px 0" }}>
+      <div className="shell masthead-brand">
         <span
           aria-hidden="true"
           style={{ width: "18px", height: "18px", background: "var(--color-accent)", transform: "rotate(45deg)", display: "inline-block" }}
