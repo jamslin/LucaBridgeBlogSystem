@@ -133,4 +133,9 @@ export const adminApi = {
   listCategoriesAdmin: () => request("/api/admin/categories"),
   saveCategory: (payload) => request("/api/admin/categories", { method: "POST", body: payload }),
   deleteCategory: (id) => request(`/api/admin/categories/${id}`, { method: "DELETE" }),
+
+  // homepage banners
+  listBanners: () => request("/api/admin/banners"),
+  saveBanner: (payload) => request("/api/admin/banners", { method: "POST", body: payload }),
+  deleteBanner: (id) => request(`/api/admin/banners/${id}`, { method: "DELETE" }),
 };

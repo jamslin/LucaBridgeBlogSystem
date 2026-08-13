@@ -31,6 +31,7 @@ export default [
     route("pages", "routes/admin/pages.jsx"),
     route("pages/:id", "routes/admin/page-edit.jsx"),
     route("categories", "routes/admin/categories.jsx"),
+    route("banners", "routes/admin/banners.jsx"),
     route("media", "routes/admin/media.jsx"),
     route("settings", "routes/admin/settings.jsx"),
     route("users", "routes/admin/users.jsx"),

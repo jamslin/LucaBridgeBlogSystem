@@ -45,7 +45,7 @@ public class SecurityConfig {
                         // Public read API (GET only). Writes on these resources go through /api/admin/**.
                         .requestMatchers(HttpMethod.GET,
                                 "/api/posts/**", "/api/categories/**", "/api/pages/**",
-                                "/api/events/**", "/api/jobs/**", "/api/settings").permitAll()
+                                "/api/events/**", "/api/jobs/**", "/api/banners/**", "/api/settings").permitAll()
                         // prometheus is permitAll here but nginx never proxies /actuator,
                         // so it is only reachable on the internal Docker network.
                         .requestMatchers("/actuator/health", "/actuator/prometheus").permitAll()

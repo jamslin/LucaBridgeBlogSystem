@@ -13,6 +13,7 @@ const NAV = [
   { to: "/admin/jobs", label: "Jobs" },
   { to: "/admin/pages", label: "Pages" },
   { to: "/admin/categories", label: "Categories" },
+  { to: "/admin/banners", label: "Homepage banners" },
   { to: "/admin/media", label: "Media" },
   { to: "/admin/settings", label: "Settings" },
   { to: "/admin/users", label: "Users", adminOnly: true },

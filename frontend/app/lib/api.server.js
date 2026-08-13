@@ -35,6 +35,7 @@ export const api = {
   getJobs: (lang) => get("/api/jobs", { lang }),
   getJob: (slug, lang) => get(`/api/jobs/${encodeURIComponent(slug)}`, { lang }),
   getSettings: () => get("/api/settings"),
+  getBanners: (lang) => get("/api/banners", { lang }),
 };
 
 /** Public origin for absolute og:/canonical URLs (behind nginx, request.url is internal). */
