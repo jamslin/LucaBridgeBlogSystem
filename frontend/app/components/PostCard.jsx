@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router";
 import { t } from "../i18n";
+import { formatHongKongDate } from "../lib/date";
 
 export default function PostCard({ post }) {
   const { lang } = useParams();
@@ -15,7 +16,7 @@ export default function PostCard({ post }) {
       </h3>
       {post.excerpt && <p style={{ color: "var(--color-ink-soft)", margin: 0 }}>{post.excerpt}</p>}
       <div className="meta" style={{ display: "flex", gap: "12px" }}>
-        {post.publishedAt && <span>{new Date(post.publishedAt).toLocaleDateString(lang)}</span>}
+        {post.publishedAt && <span>{formatHongKongDate(post.publishedAt, lang)}</span>}
         {post.readingMinutes && <span>{post.readingMinutes} min</span>}
       </div>
       <Link to={`/${lang}/blog/${post.slug}`} className="btn-text">

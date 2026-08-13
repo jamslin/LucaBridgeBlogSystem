@@ -6,6 +6,7 @@ import { SUPPORTED_LANGS, t } from "../i18n";
 import Gallery from "../components/Gallery";
 import PressLinks from "../components/PressLinks";
 import PrevNextBar from "../components/PrevNextBar";
+import { formatHongKongDate } from "../lib/date";
 
 export async function loader({ params, request }) {
   const post = await api.getPost(params.slug, params.lang); // throws 404 Response for unknown slug
@@ -57,7 +58,7 @@ export default function Post() {
         <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>{post.title}</h1>
         {post.subtitle && <p style={{ fontFamily: "var(--font-kicker)", fontStyle: "italic" }}>{post.subtitle}</p>}
         <div className="meta" style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
-          {post.publishedAt && <span>{new Date(post.publishedAt).toLocaleDateString(lang)}</span>}
+          {post.publishedAt && <span>{formatHongKongDate(post.publishedAt, lang)}</span>}
           {post.readingMinutes && <span>{post.readingMinutes} min</span>}
         </div>
 

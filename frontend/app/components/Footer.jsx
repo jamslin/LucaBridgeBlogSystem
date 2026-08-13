@@ -39,7 +39,7 @@ export default function Footer() {
       </div>
 
       <div className="shell footer-legal">
-        <span>&copy; {new Date().getFullYear()} 樂橋 LucaBridge</span>
+        <span>&copy; {layoutData?.currentYear} 樂橋 LucaBridge</span>
         <nav style={{ display: "flex", gap: "16px", fontSize: "14px" }}>
           <Link to={L("/p/privacy")}>{t(lang, "footer.privacy")}</Link>
           <Link to={L("/p/terms")}>{t(lang, "footer.terms")}</Link>

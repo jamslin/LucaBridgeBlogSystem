@@ -20,7 +20,8 @@ export async function loader({ params }) {
   } catch {
     settings = {};
   }
-  return { settings };
+  const currentYear = new Date(Date.now() + 8 * 60 * 60 * 1000).getUTCFullYear();
+  return { settings, currentYear };
 }
 
 export default function LangLayout() {

@@ -2,6 +2,7 @@ import { Link, useLoaderData, useParams } from "react-router";
 
 import { api } from "../lib/api.server";
 import { t } from "../i18n";
+import { formatHongKongDate } from "../lib/date";
 
 export async function loader({ params }) {
   const events = await api.getEvents(params.lang);
@@ -11,11 +12,6 @@ export async function loader({ params }) {
 export function meta({ params }) {
   const title = `${t(params.lang, "nav.events")} — 樂橋 LucaBridge`;
   return [{ title }, { property: "og:title", content: title }];
-}
-
-function formatDate(iso, lang) {
-  if (!iso) return "";
-  return new Date(iso).toLocaleDateString(lang, { year: "numeric", month: "long", day: "numeric" });
 }
 
 export default function Events() {
@@ -36,7 +32,7 @@ export default function Events() {
           >
             {e.coverImageUrl && <img src={e.coverImageUrl} alt="" style={{ borderRadius: 0 }} />}
             <div style={{ padding: "16px" }}>
-              <span className="kicker">{formatDate(e.startsAt, lang)}</span>
+              <span className="kicker">{formatHongKongDate(e.startsAt, lang, { long: true })}</span>
               <h3 style={{ margin: "4px 0" }}>
                 <Link to={`/${lang}/events/${e.slug}`}>{e.title}</Link>
               </h3>

@@ -2,6 +2,7 @@ import { Link, useLoaderData, useParams } from "react-router";
 
 import { api } from "../lib/api.server";
 import { t } from "../i18n";
+import { formatHongKongDate } from "../lib/date";
 
 export async function loader({ params }) {
   const jobs = await api.getJobs(params.lang);
@@ -11,11 +12,6 @@ export async function loader({ params }) {
 export function meta({ params }) {
   const title = `${t(params.lang, "nav.recruitJobs")} — 樂橋 LucaBridge`;
   return [{ title }, { property: "og:title", content: title }];
-}
-
-function formatDate(iso, lang) {
-  if (!iso) return "";
-  return new Date(iso).toLocaleDateString(lang, { year: "numeric", month: "long", day: "numeric" });
 }
 
 export default function Careers() {
@@ -46,7 +42,7 @@ export default function Careers() {
             {j.summary && <p style={{ margin: "8px 0 0" }}>{j.summary}</p>}
             <p className="meta" style={{ marginTop: "10px" }}>
               {j.closesAt
-                ? `${t(lang, "careers.closes")}${formatDate(j.closesAt, lang)}`
+                ? `${t(lang, "careers.closes")}${formatHongKongDate(j.closesAt, lang, { long: true })}`
                 : t(lang, "careers.openUntilFilled")}
             </p>
           </li>

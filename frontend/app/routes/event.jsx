@@ -3,6 +3,7 @@ import { useLoaderData, useParams } from "react-router";
 
 import { api, siteOrigin } from "../lib/api.server";
 import { SUPPORTED_LANGS, t } from "../i18n";
+import { formatHongKongDateTime } from "../lib/date";
 
 export async function loader({ params, request }) {
   const event = await api.getEvent(params.slug, params.lang); // throws 404 Response for unknown slug
@@ -49,7 +50,7 @@ export default function EventDetail() {
       <div className="reading-column">
         <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>{event.title}</h1>
         <div className="meta" style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
-          {event.startsAt && <span>{new Date(event.startsAt).toLocaleString(lang)}</span>}
+          {event.startsAt && <span>{formatHongKongDateTime(event.startsAt, lang)}</span>}
           {event.locationText && <span>{event.locationText}</span>}
         </div>
         <ReactMarkdown>{event.bodyMarkdown}</ReactMarkdown>

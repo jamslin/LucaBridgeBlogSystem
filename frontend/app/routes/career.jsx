@@ -3,6 +3,7 @@ import { Link, useLoaderData, useParams } from "react-router";
 
 import { api, siteOrigin } from "../lib/api.server";
 import { SUPPORTED_LANGS, t } from "../i18n";
+import { formatHongKongDate } from "../lib/date";
 
 export async function loader({ params, request }) {
   const job = await api.getJob(params.slug, params.lang);
@@ -27,11 +28,6 @@ export function meta({ data, params }) {
   ];
 }
 
-function formatDate(iso, lang) {
-  if (!iso) return "";
-  return new Date(iso).toLocaleDateString(lang, { year: "numeric", month: "long", day: "numeric" });
-}
-
 export default function Career() {
   const { lang } = useParams();
   const { job } = useLoaderData();
@@ -39,7 +35,7 @@ export default function Career() {
     job.employmentTypeLabel,
     job.department,
     job.locationText,
-    job.closesAt ? `${t(lang, "careers.closes")}${formatDate(job.closesAt, lang)}` : null,
+    job.closesAt ? `${t(lang, "careers.closes")}${formatHongKongDate(job.closesAt, lang, { long: true })}` : null,
   ].filter(Boolean);
 
   return (
