@@ -57,6 +57,7 @@ export default function JobEdit() {
     setError(""); setOk("");
     const translations = LANGS.map((l) => ({ lang: l.code, ...tr[l.code] })).filter((t) => t.title.trim() || t.bodyMarkdown.trim());
     if (!slug.trim()) { setError("Slug is required"); return; }
+    if (postedAt && closesAt && closesAt < postedAt) { setError("Closing date must not be before posting date"); return; }
     const hant = translations.find((t) => t.lang === "zh-Hant");
     if (!hant || !hant.title.trim()) { setError("繁中 title is required"); return; }
     setBusy(true);
@@ -64,7 +65,7 @@ export default function JobEdit() {
       const newId = await adminApi.saveJob({ id: isNew ? null : Number(id), slug: slug.trim(), employmentType: employmentType.trim() || null, department: department.trim() || null, locationText: locationText.trim() || null, postedAt: toIso(postedAt), closesAt: toIso(closesAt), translations });
       if (publish) await adminApi.publishJob(newId);
       if (isNew) navigate(`/admin/jobs/${newId}`, { replace: true });
-      else { if (publish) setStatus("PUBLISHED"); setOk(publish ? "Published." : "Saved."); }
+      else { setStatus(publish ? "PUBLISHED" : "DRAFT"); setOk(publish ? "Published." : "Saved as draft."); }
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
 

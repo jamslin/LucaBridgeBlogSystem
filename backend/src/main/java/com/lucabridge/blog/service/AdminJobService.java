@@ -4,6 +4,7 @@ import com.lucabridge.blog.dto.*;
 import com.lucabridge.blog.entity.JobPosting;
 import com.lucabridge.blog.entity.JobPostingTranslation;
 import com.lucabridge.blog.exception.BadRequestException;
+import com.lucabridge.blog.exception.ConflictException;
 import com.lucabridge.blog.exception.ResourceNotFoundException;
 import com.lucabridge.blog.repository.JobPostingRepository;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,14 @@ public class AdminJobService {
         JobPosting j = req.id() != null
                 ? repo.findById(req.id()).orElseThrow(() -> new ResourceNotFoundException("Job not found: " + req.id()))
                 : JobPosting.builder().status("DRAFT").build();
-        j.setSlug(req.slug().trim());
+        String slug = req.slug().trim();
+        boolean duplicate = j.getId() == null ? repo.existsBySlug(slug) : repo.existsBySlugAndIdNot(slug, j.getId());
+        if (duplicate) throw new ConflictException("Job slug already exists: " + slug);
+        if (req.postedAt() != null && req.closesAt() != null && req.closesAt().isBefore(req.postedAt())) {
+            throw new BadRequestException("Closing date must not be before posting date");
+        }
+        j.setSlug(slug);
+        j.setStatus("DRAFT");
         j.setEmploymentType(req.employmentType());
         j.setDepartment(req.department());
         j.setLocationText(req.locationText());
@@ -72,10 +80,32 @@ public class AdminJobService {
     }
 
     @Transactional
-    public void setStatus(Long id, String status) {
+    public void publish(Long id) {
         JobPosting j = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Job not found: " + id));
-        j.setStatus(status);
+        if (j.getPostedAt() != null && j.getClosesAt() != null && j.getClosesAt().isBefore(j.getPostedAt())) {
+            throw new BadRequestException("Closing date must not be before posting date");
+        }
+        validateTranslationsForPublish(j.getTranslations());
+        j.setStatus("PUBLISHED");
         repo.save(j);
+    }
+
+    @Transactional
+    public void unpublish(Long id) {
+        JobPosting j = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Job not found: " + id));
+        j.setStatus("DRAFT");
+        repo.save(j);
+    }
+
+    private void validateTranslationsForPublish(List<JobPostingTranslation> translations) {
+        JobPostingTranslation required = translations.stream().filter(t -> localization.defaultLang().equals(t.getLang()))
+                .findFirst().orElseThrow(() -> new BadRequestException("Cannot publish without a " + localization.defaultLang() + " translation"));
+        if (!complete(required)) throw new BadRequestException("The " + localization.defaultLang() + " translation needs a title and body");
+        if (translations.stream().anyMatch(t -> !complete(t))) throw new BadRequestException("Every saved translation needs a title and body before publishing");
+    }
+
+    private boolean complete(JobPostingTranslation t) {
+        return t.getTitle() != null && !t.getTitle().isBlank() && t.getBodyMarkdown() != null && !t.getBodyMarkdown().isBlank();
     }
 
     @Transactional

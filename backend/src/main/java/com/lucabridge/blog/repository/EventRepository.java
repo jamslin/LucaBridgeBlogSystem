@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByStatusOrderByStartsAtDesc(String status);
     Optional<Event> findBySlugAndStatus(String slug, String status);
+    boolean existsBySlug(String slug);
+    boolean existsBySlugAndIdNot(String slug, Long id);
 }

@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface JobPostingRepository extends JpaRepository<JobPosting, Long> {
     List<JobPosting> findByStatusOrderByPostedAtDesc(String status);
     Optional<JobPosting> findBySlugAndStatus(String slug, String status);
+    boolean existsBySlug(String slug);
+    boolean existsBySlugAndIdNot(String slug, Long id);
 }

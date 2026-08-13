@@ -28,10 +28,10 @@ public class AdminJobController {
     public ResponseEntity<Long> upsert(@Valid @RequestBody JobUpsertRequest req) { return ResponseEntity.ok(service.upsert(req)); }
 
     @PostMapping("/{id}/publish")
-    public ResponseEntity<Void> publish(@PathVariable Long id) { service.setStatus(id, "PUBLISHED"); return ResponseEntity.ok().build(); }
+    public ResponseEntity<Void> publish(@PathVariable Long id) { service.publish(id); return ResponseEntity.ok().build(); }
 
     @PostMapping("/{id}/unpublish")
-    public ResponseEntity<Void> unpublish(@PathVariable Long id) { service.setStatus(id, "DRAFT"); return ResponseEntity.ok().build(); }
+    public ResponseEntity<Void> unpublish(@PathVariable Long id) { service.unpublish(id); return ResponseEntity.ok().build(); }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) { service.delete(id); return ResponseEntity.noContent().build(); }

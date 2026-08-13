@@ -4,6 +4,7 @@ import com.lucabridge.blog.dto.*;
 import com.lucabridge.blog.entity.Page;
 import com.lucabridge.blog.entity.PageTranslation;
 import com.lucabridge.blog.exception.BadRequestException;
+import com.lucabridge.blog.exception.ConflictException;
 import com.lucabridge.blog.exception.ResourceNotFoundException;
 import com.lucabridge.blog.repository.PageRepository;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,11 @@ public class AdminPageService {
         Page p = req.id() != null
                 ? repo.findById(req.id()).orElseThrow(() -> new ResourceNotFoundException("Page not found: " + req.id()))
                 : Page.builder().status("DRAFT").build();
-        p.setSlug(req.slug().trim());
+        String slug = req.slug().trim();
+        boolean duplicate = p.getId() == null ? repo.existsBySlug(slug) : repo.existsBySlugAndIdNot(slug, p.getId());
+        if (duplicate) throw new ConflictException("Page slug already exists: " + slug);
+        p.setSlug(slug);
+        p.setStatus("DRAFT");
         if (req.pageType() != null && !req.pageType().isBlank()) p.setPageType(req.pageType());
         p.setSortOrder(req.sortOrder() != null ? req.sortOrder() : 0);
         p.setHeroImageUrl(req.heroImageUrl());
@@ -69,10 +74,29 @@ public class AdminPageService {
     }
 
     @Transactional
-    public void setStatus(Long id, String status) {
+    public void publish(Long id) {
         Page p = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Page not found: " + id));
-        p.setStatus(status);
+        validateTranslationsForPublish(p.getTranslations());
+        p.setStatus("PUBLISHED");
         repo.save(p);
+    }
+
+    @Transactional
+    public void unpublish(Long id) {
+        Page p = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Page not found: " + id));
+        p.setStatus("DRAFT");
+        repo.save(p);
+    }
+
+    private void validateTranslationsForPublish(List<PageTranslation> translations) {
+        PageTranslation required = translations.stream().filter(t -> localization.defaultLang().equals(t.getLang()))
+                .findFirst().orElseThrow(() -> new BadRequestException("Cannot publish without a " + localization.defaultLang() + " translation"));
+        if (!complete(required)) throw new BadRequestException("The " + localization.defaultLang() + " translation needs a title and body");
+        if (translations.stream().anyMatch(t -> !complete(t))) throw new BadRequestException("Every saved translation needs a title and body before publishing");
+    }
+
+    private boolean complete(PageTranslation t) {
+        return t.getTitle() != null && !t.getTitle().isBlank() && t.getBodyMarkdown() != null && !t.getBodyMarkdown().isBlank();
     }
 
     @Transactional

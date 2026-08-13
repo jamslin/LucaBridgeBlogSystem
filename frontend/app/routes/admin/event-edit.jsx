@@ -8,8 +8,8 @@ const LANGS = [
   { code: "zh-Hans", label: "简中" },
 ];
 const empty = () => { const o = {}; for (const l of LANGS) o[l.code] = { title: "", summary: "", bodyMarkdown: "" }; return o; };
-const toDate = (iso) => (iso ? iso.slice(0, 10) : "");
-const toIso = (d) => (d ? new Date(d + "T00:00:00Z").toISOString() : null);
+const toHongKongInput = (iso) => iso ? new Date(iso).toLocaleString("sv-SE", { timeZone: "Asia/Hong_Kong" }).replace(" ", "T").slice(0, 16) : "";
+const toIso = (value) => value ? new Date(`${value}:00+08:00`).toISOString() : null;
 
 export default function EventEdit() {
   const { id } = useParams();
@@ -36,7 +36,7 @@ export default function EventEdit() {
         const e = await adminApi.getEvent(id);
         if (!alive) return;
         setSlug(e.slug || ""); setStatus(e.status || "DRAFT");
-        setStartsAt(toDate(e.startsAt)); setEndsAt(toDate(e.endsAt));
+        setStartsAt(toHongKongInput(e.startsAt)); setEndsAt(toHongKongInput(e.endsAt));
         setLocationText(e.locationText || ""); setCoverImageUrl(e.coverImageUrl || "");
         const base = empty();
         for (const t of e.translations || []) if (base[t.lang]) base[t.lang] = { title: t.title || "", summary: t.summary || "", bodyMarkdown: t.bodyMarkdown || "" };
@@ -71,6 +71,8 @@ export default function EventEdit() {
     setError(""); setOk("");
     const translations = LANGS.map((l) => ({ lang: l.code, ...tr[l.code] })).filter((t) => t.title.trim() || t.bodyMarkdown.trim());
     if (!slug.trim()) { setError("Slug is required"); return; }
+    if (startsAt && endsAt && endsAt < startsAt) { setError("Event end must not be before start"); return; }
+    if (publish && !startsAt) { setError("Event start date and time are required before publishing"); return; }
     const hant = translations.find((t) => t.lang === "zh-Hant");
     if (!hant || !hant.title.trim()) { setError("繁中 title is required"); return; }
     setBusy(true);
@@ -78,7 +80,7 @@ export default function EventEdit() {
       const newId = await adminApi.saveEvent({ id: isNew ? null : Number(id), slug: slug.trim(), startsAt: toIso(startsAt), endsAt: toIso(endsAt), locationText: locationText.trim() || null, coverImageUrl: coverImageUrl.trim() || null, translations });
       if (publish) await adminApi.publishEvent(newId);
       if (isNew) navigate(`/admin/events/${newId}`, { replace: true });
-      else { if (publish) setStatus("PUBLISHED"); setOk(publish ? "Published." : "Saved."); }
+      else { setStatus(publish ? "PUBLISHED" : "DRAFT"); setOk(publish ? "Published." : "Saved as draft."); }
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
 
@@ -97,8 +99,8 @@ export default function EventEdit() {
         <div className="admin-card">
           <div className="admin-row">
             <div className="admin-field"><label>Slug</label><input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="event-slug" /></div>
-            <div className="admin-field"><label>Starts</label><input type="date" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} /></div>
-            <div className="admin-field"><label>Ends</label><input type="date" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} /></div>
+            <div className="admin-field"><label>Starts (Hong Kong time)</label><input type="datetime-local" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} /></div>
+            <div className="admin-field"><label>Ends (Hong Kong time)</label><input type="datetime-local" value={endsAt} onChange={(e) => setEndsAt(e.target.value)} /></div>
           </div>
           <div className="admin-field"><label>Location</label><input value={locationText} onChange={(e) => setLocationText(e.target.value)} /></div>
           <div className="admin-field">

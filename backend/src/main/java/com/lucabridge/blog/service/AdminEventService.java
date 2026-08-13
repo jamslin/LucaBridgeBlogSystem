@@ -4,6 +4,7 @@ import com.lucabridge.blog.dto.*;
 import com.lucabridge.blog.entity.Event;
 import com.lucabridge.blog.entity.EventTranslation;
 import com.lucabridge.blog.exception.BadRequestException;
+import com.lucabridge.blog.exception.ConflictException;
 import com.lucabridge.blog.exception.ResourceNotFoundException;
 import com.lucabridge.blog.repository.EventRepository;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,12 @@ public class AdminEventService {
         Event e = req.id() != null
                 ? repo.findById(req.id()).orElseThrow(() -> new ResourceNotFoundException("Event not found: " + req.id()))
                 : Event.builder().status("DRAFT").build();
-        e.setSlug(req.slug().trim());
+        String slug = req.slug().trim();
+        boolean duplicate = e.getId() == null ? repo.existsBySlug(slug) : repo.existsBySlugAndIdNot(slug, e.getId());
+        if (duplicate) throw new ConflictException("Event slug already exists: " + slug);
+        validateDates(req.startsAt(), req.endsAt());
+        e.setSlug(slug);
+        e.setStatus("DRAFT");
         e.setStartsAt(req.startsAt());
         e.setEndsAt(req.endsAt());
         e.setLocationText(req.locationText());
@@ -70,10 +76,37 @@ public class AdminEventService {
     }
 
     @Transactional
-    public void setStatus(Long id, String status) {
+    public void publish(Long id) {
         Event e = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found: " + id));
-        e.setStatus(status);
+        validateDates(e.getStartsAt(), e.getEndsAt());
+        if (e.getStartsAt() == null) throw new BadRequestException("Event start date and time are required before publishing");
+        validateTranslationsForPublish(e.getTranslations());
+        e.setStatus("PUBLISHED");
         repo.save(e);
+    }
+
+    @Transactional
+    public void unpublish(Long id) {
+        Event e = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found: " + id));
+        e.setStatus("DRAFT");
+        repo.save(e);
+    }
+
+    private void validateDates(java.time.Instant startsAt, java.time.Instant endsAt) {
+        if (startsAt != null && endsAt != null && endsAt.isBefore(startsAt)) {
+            throw new BadRequestException("Event end must not be before start");
+        }
+    }
+
+    private void validateTranslationsForPublish(List<EventTranslation> translations) {
+        EventTranslation required = translations.stream().filter(t -> localization.defaultLang().equals(t.getLang()))
+                .findFirst().orElseThrow(() -> new BadRequestException("Cannot publish without a " + localization.defaultLang() + " translation"));
+        if (required.getTitle() == null || required.getTitle().isBlank() || required.getBodyMarkdown() == null || required.getBodyMarkdown().isBlank()) {
+            throw new BadRequestException("The " + localization.defaultLang() + " translation needs a title and body");
+        }
+        if (translations.stream().anyMatch(t -> t.getTitle() == null || t.getTitle().isBlank() || t.getBodyMarkdown() == null || t.getBodyMarkdown().isBlank())) {
+            throw new BadRequestException("Every saved translation needs a title and body before publishing");
+        }
     }
 
     @Transactional

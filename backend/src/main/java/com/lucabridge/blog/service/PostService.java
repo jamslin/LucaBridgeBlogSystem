@@ -3,6 +3,7 @@ package com.lucabridge.blog.service;
 import com.lucabridge.blog.dto.*;
 import com.lucabridge.blog.entity.*;
 import com.lucabridge.blog.exception.BadRequestException;
+import com.lucabridge.blog.exception.ConflictException;
 import com.lucabridge.blog.exception.ResourceNotFoundException;
 import com.lucabridge.blog.repository.CategoryRepository;
 import com.lucabridge.blog.repository.PostRepository;
@@ -161,7 +162,13 @@ public class PostService {
                         .orElseThrow(() -> new ResourceNotFoundException("Post not found: " + request.id()))
                 : Post.builder().status(PostStatus.DRAFT).build();
 
-        post.setSlug(request.slug());
+        String slug = request.slug().trim();
+        boolean duplicate = post.getId() == null
+                ? postRepository.existsBySlug(slug)
+                : postRepository.existsBySlugAndIdNot(slug, post.getId());
+        if (duplicate) throw new ConflictException("Post slug already exists: " + slug);
+        post.setSlug(slug);
+        post.setStatus(PostStatus.DRAFT);
         post.setCategory(category);
         post.setCoverImageUrl(request.coverImageUrl());
         post.setReadingMinutes(request.readingMinutes());
@@ -196,10 +203,17 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found: " + id));
 
-        boolean hasRequiredLang = post.getTranslations().stream()
-                .anyMatch(t -> t.getLang().equals(localizationService.defaultLang()));
-        if (!hasRequiredLang) {
+        PostTranslation required = post.getTranslations().stream()
+                .filter(t -> t.getLang().equals(localizationService.defaultLang()))
+                .findFirst().orElse(null);
+        if (required == null) {
             throw new BadRequestException("Cannot publish without a " + localizationService.defaultLang() + " translation");
+        }
+        if (!complete(required)) {
+            throw new BadRequestException("The " + localizationService.defaultLang() + " translation needs a title and body");
+        }
+        if (post.getTranslations().stream().anyMatch(t -> !complete(t))) {
+            throw new BadRequestException("Every saved translation needs a title and body before publishing");
         }
 
         post.setStatus(PostStatus.PUBLISHED);
@@ -222,5 +236,10 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found: " + id));
         postRepository.delete(post);
+    }
+
+    private boolean complete(PostTranslation translation) {
+        return translation.getTitle() != null && !translation.getTitle().isBlank()
+                && translation.getBodyMarkdown() != null && !translation.getBodyMarkdown().isBlank();
     }
 }

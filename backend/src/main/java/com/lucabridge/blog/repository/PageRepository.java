@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface PageRepository extends JpaRepository<Page, Long> {
     List<Page> findByStatusOrderBySortOrderAsc(String status);
     Optional<Page> findBySlugAndStatus(String slug, String status);
+    boolean existsBySlug(String slug);
+    boolean existsBySlugAndIdNot(String slug, Long id);
 }

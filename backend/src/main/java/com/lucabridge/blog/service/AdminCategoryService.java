@@ -4,6 +4,7 @@ import com.lucabridge.blog.dto.*;
 import com.lucabridge.blog.entity.Category;
 import com.lucabridge.blog.entity.CategoryTranslation;
 import com.lucabridge.blog.exception.BadRequestException;
+import com.lucabridge.blog.exception.ConflictException;
 import com.lucabridge.blog.exception.ResourceNotFoundException;
 import com.lucabridge.blog.repository.CategoryRepository;
 import com.lucabridge.blog.repository.PostRepository;
@@ -34,9 +35,16 @@ public class AdminCategoryService {
         Category c;
         if (req.id() != null) {
             c = repo.findById(req.id()).orElseThrow(() -> new ResourceNotFoundException("Category not found: " + req.id()));
+            String key = req.key().trim();
+            if (!c.getKey().equals(key) && postRepository.countByCategoryKey(c.getKey()) > 0) {
+                throw new ConflictException("Category key cannot be changed while posts use it");
+            }
+            if (!c.getKey().equals(key) && repo.findByKey(key).isPresent()) {
+                throw new ConflictException("Category key already exists: " + key);
+            }
         } else {
             if (repo.findByKey(req.key().trim()).isPresent()) {
-                throw new BadRequestException("Category key already exists: " + req.key());
+                throw new ConflictException("Category key already exists: " + req.key());
             }
             c = Category.builder().build();
         }
