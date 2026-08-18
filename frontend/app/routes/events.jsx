@@ -24,13 +24,14 @@ export default function Events() {
 
       {events.length === 0 && <p>{t(lang, "events.empty")}</p>}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "32px" }}>
+      <div className="events-grid">
         {events.map((e) => (
-          <article
-            key={e.id}
-            style={{ background: "var(--color-card)", borderRadius: "8px", overflow: "hidden", border: "1px solid var(--color-line)" }}
-          >
-            {e.coverImageUrl && <img src={e.coverImageUrl} alt="" style={{ borderRadius: 0 }} />}
+          <article key={e.id} className="events-card">
+            {e.coverImageUrl && (
+              <Link to={`/${lang}/events/${e.slug}`} className="events-card__media">
+                <img src={e.coverImageUrl} alt="" loading="lazy" />
+              </Link>
+            )}
             <div style={{ padding: "16px" }}>
               <span className="kicker">{formatHongKongDate(e.startsAt, lang, { long: true })}</span>
               <h3 style={{ margin: "4px 0" }}>

@@ -45,7 +45,11 @@ export default function EventDetail() {
         </p>
       )}
 
-      {event.coverImageUrl && <img src={event.coverImageUrl} alt="" style={{ marginBottom: "24px" }} />}
+      {event.coverImageUrl && (
+        <div className="event-hero">
+          <img src={event.coverImageUrl} alt="" />
+        </div>
+      )}
 
       <div className="reading-column">
         <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>{event.title}</h1>

@@ -6,15 +6,15 @@ export default function PostCard({ post }) {
   const { lang } = useParams();
 
   return (
-    <article style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-      <Link to={`/${lang}/blog/${post.slug}`}>
+    <article className="post-card">
+      <Link to={`/${lang}/blog/${post.slug}`} className="post-card__thumb">
         {post.coverImageUrl && <img src={post.coverImageUrl} alt="" loading="lazy" />}
       </Link>
       <span className="kicker">{post.category?.name}</span>
-      <h3 style={{ fontSize: "20px" }}>
+      <h3 className="post-card__title">
         <Link to={`/${lang}/blog/${post.slug}`}>{post.title}</Link>
       </h3>
-      {post.excerpt && <p style={{ color: "var(--color-ink-soft)", margin: 0 }}>{post.excerpt}</p>}
+      {post.excerpt && <p className="post-card__excerpt">{post.excerpt}</p>}
       <div className="meta" style={{ display: "flex", gap: "12px" }}>
         {post.publishedAt && <span>{formatHongKongDate(post.publishedAt, lang)}</span>}
         {post.readingMinutes && <span>{post.readingMinutes} min</span>}

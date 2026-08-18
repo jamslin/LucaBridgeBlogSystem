@@ -5,6 +5,7 @@ import { api } from "../lib/api.server";
 import Masthead from "../components/Masthead";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
+import StickyDonate from "../components/StickyDonate";
 
 // Lang validation lives in the loader (server-side redirect, no hooks-order
 // pitfalls). Also loads site settings once for the whole shell so the masthead
@@ -33,6 +34,7 @@ export default function LangLayout() {
         <Outlet />
       </main>
       <Footer />
+      <StickyDonate />
     </>
   );
 }

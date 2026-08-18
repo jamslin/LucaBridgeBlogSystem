@@ -33,6 +33,13 @@ export function Layout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        {/* Apply the saved text-size step before first paint (no flash). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var s=localStorage.getItem('lb_fontsize');if(s==='sm'||s==='md'||s==='lg'){document.documentElement.dataset.fontsize=s;}}catch(e){}})();",
+          }}
+        />
       </head>
       <body>
         {children}

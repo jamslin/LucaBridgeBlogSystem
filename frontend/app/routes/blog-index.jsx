@@ -62,13 +62,7 @@ export default function BlogIndex() {
 
       {posts.items.length === 0 && <p>{t(lang, "blog.empty")}</p>}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: "32px",
-        }}
-      >
+      <div className="card-grid">
         {posts.items.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

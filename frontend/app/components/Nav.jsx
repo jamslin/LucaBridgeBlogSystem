@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router";
 
 import { t } from "../i18n";
 import { NAV } from "../nav";
-import LanguageSwitch from "./LanguageSwitch";
 
 // Primary navigation. Desktop (>=1024px): horizontal bar; items with children
 // reveal a dropdown on hover/focus-within (pure CSS, works pre-hydration).
@@ -69,11 +68,6 @@ export default function Nav() {
             <Link to={L("/p/contact")} className="site-nav__link" onClick={closeAll}>{t(lang, "nav.contact")}</Link>
           </li>
         </ul>
-
-        <div className="site-nav__actions">
-          <Link to={L("/p/donate")} className="btn btn-primary">{t(lang, "nav.donateCta")}</Link>
-          <LanguageSwitch />
-        </div>
       </div>
     </nav>
   );

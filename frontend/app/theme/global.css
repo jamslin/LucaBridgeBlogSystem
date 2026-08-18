@@ -52,12 +52,22 @@ body {
   height: 100%;
 }
 
+/* User-selectable text size (a11y — WCAG 2.1 SC 1.4.4). The step lives on
+   <html> as data-fontsize and scales the rem unit; only rem-based content text
+   scales — chrome (nav, buttons, utility bar) stays in px so the header keeps
+   its layout at every width. Persisted in localStorage, applied pre-paint by a
+   tiny script in root.jsx to avoid a flash. */
+html { font-size: 100%; }                       /* 16px baseline */
+html[data-fontsize="sm"] { font-size: 87.5%; }  /* 14px */
+html[data-fontsize="md"] { font-size: 100%; }   /* 16px (default) */
+html[data-fontsize="lg"] { font-size: 125%; }   /* 20px */
+
 body {
   margin: 0;
   background: var(--color-paper);
   color: var(--color-ink-soft);
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.8;
 }
 
@@ -79,9 +89,11 @@ h3 {
   margin: 0 0 0.5em;
 }
 
-h1 { font-weight: 700; font-size: 54px; line-height: 1.06; }
-h2 { font-weight: 700; font-size: 32px; line-height: 1.15; }
-h3 { font-weight: 600; font-size: 20px; line-height: 1.3; }
+/* rem so headings scale with the text-size control; decorative headings that
+   set their own clamp()/px size (hero, section headings) still override these. */
+h1 { font-weight: 700; font-size: 3.375rem; line-height: 1.06; }
+h2 { font-weight: 700; font-size: 2rem; line-height: 1.15; }
+h3 { font-weight: 600; font-size: 1.25rem; line-height: 1.3; }
 
 .shell {
   max-width: var(--shell-max-width);
@@ -560,4 +572,133 @@ img {
   .home-service-card { min-height: 190px; }
   .home-news { padding: 52px 0 64px; }
   .home-news__heading { align-items: flex-start; flex-direction: column; }
+}
+
+/* ───────────────────────────────────────────────────────────
+   Client comments round 1 — header controls, donate CTA, cards
+   ─────────────────────────────────────────────────────────── */
+
+/* Utility bar now hosts the language switch + text-size control (client ask).
+   Both sit on the clay bar, so recolour the segmented control for contrast. */
+.masthead-utility__right { flex-wrap: wrap; row-gap: 6px; }
+.masthead-utility .segmented { border-color: rgba(255, 255, 255, 0.45); }
+.masthead-utility .segmented a { color: var(--color-paper); border-left-color: rgba(255, 255, 255, 0.32); }
+.masthead-utility .segmented a:hover { background: rgba(255, 255, 255, 0.16); }
+.masthead-utility .segmented a[aria-current="true"] { background: var(--color-paper); color: var(--color-accent); }
+.masthead-utility .segmented a[aria-current="true"]:hover { background: var(--color-paper); }
+
+/* Text-size control — three A- / A / A+ buttons, matches the segmented pill. */
+.fontsize {
+  display: inline-flex;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.fontsize__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 26px;
+  padding: 0 8px;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.32);
+  background: transparent;
+  color: var(--color-paper);
+  font-family: var(--font-body);
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+.fontsize__btn:first-child { border-left: none; }
+.fontsize__btn:nth-child(1) { font-size: 11px; }
+.fontsize__btn:nth-child(2) { font-size: 13px; }
+.fontsize__btn:nth-child(3) { font-size: 15px; }
+.fontsize__btn:hover { background: rgba(255, 255, 255, 0.16); }
+.fontsize__btn[aria-pressed="true"] { background: var(--color-paper); color: var(--color-accent); }
+
+/* Donate CTA promoted to the wordmark row, right-aligned (client ask). */
+.masthead-brand { flex-wrap: wrap; }
+.masthead-brand__donate { margin-left: auto; }
+
+/* Compact sticky donate — appears once the header scrolls out of view so the
+   primary CTA is never lost on long pages. Hidden by default (SSR-safe). */
+.sticky-donate {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-paper);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: var(--elev-overlay);
+  opacity: 0;
+  transform: translateY(120%);
+  pointer-events: none;
+  transition: opacity var(--motion-standard), transform var(--motion-standard);
+}
+.sticky-donate:hover { color: var(--color-paper); text-decoration: none; background: var(--color-accent-pressed); }
+.sticky-donate[data-visible="true"] { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* Item 4 — cap the event-detail hero so a portrait photo can't fill the
+   viewport and push content below the fold. */
+.event-hero {
+  aspect-ratio: 16 / 9;
+  max-height: 60vh;
+  overflow: hidden;
+  border-radius: var(--radius-photo);
+  background: var(--color-photo-idle);
+  margin-bottom: 24px;
+}
+.event-hero img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; margin: 0; }
+
+/* Item 5 — events listing: fixed 2-col from the start (1-col below md),
+   regardless of item count. A single event occupies one column. */
+.events-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.events-card { background: var(--color-card); border-radius: 8px; overflow: hidden; border: 1px solid var(--color-line); }
+.events-card__media { display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--color-photo-idle); }
+.events-card__media img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; margin: 0; }
+@media (max-width: 767px) { .events-grid { grid-template-columns: 1fr; } }
+
+/* Item 6 — news/blog cards: 3-up ≥1280, 2-up 768–1279, 1-up below.
+   Shorter thumbnails (16:9), 2-line excerpt clamp, title down one step. */
+.card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+@media (max-width: 1279px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 767px) { .card-grid { grid-template-columns: 1fr; } }
+
+.post-card { display: flex; flex-direction: column; gap: 10px; }
+.post-card__thumb {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-photo);
+  background: var(--color-photo-idle);
+}
+.post-card__thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; margin: 0; transition: transform var(--motion-standard); }
+.post-card:hover .post-card__thumb img { transform: scale(1.035); }
+.post-card__title { font-size: 1.125rem; margin: 0; }
+.post-card__excerpt {
+  color: var(--color-ink-soft);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Small screens: keep the utility bar to the essential controls so the header
+   never wraps or overflows at 375px (language + text-size stay reachable). */
+@media (max-width: 639px) {
+  .masthead-utility__social { display: none; }        /* social lives in the footer too */
+  .masthead-utility__right > a { display: none; }      /* 聯絡我們 — still in nav + footer */
+  .masthead-utility__inner { justify-content: flex-end; gap: 8px; }
+  .masthead-utility__right { gap: 8px; }
 }
