@@ -11,21 +11,30 @@ data:
   SPRING_PROFILES_ACTIVE: "prod"
   DB_HOST: "postgres"
   STORAGE_ENDPOINT: "http://minio:9000"
-  # Public URL the browser uses to fetch images — set to your real domain/path in prod.
-  STORAGE_PUBLIC_BASE_URL: "http://minio:9000"
-  CORS_ORIGINS: "https://lucabridge.example.org"
+  # Public URL the browser uses to fetch images. Must be browser-reachable, NOT the
+  # in-cluster address — http://minio:9000 resolves only inside the cluster, so every
+  # stored image 404s in a browser. Requires a /blog-media route on the ingress
+  # (the UAT manifest already has one; prod's 50-ingress.yaml does not yet).
+  STORAGE_PUBLIC_BASE_URL: "https://lucabridge.org.hk"
+  # Real prod origin. Was "https://lucabridge.example.org" (placeholder) until 2026-08-20 —
+  # that meant every admin-CMS call from the real domain was blocked by CORS.
+  CORS_ORIGINS: "https://lucabridge.org.hk"
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: backend-secret
-  namespace: lucabridge
-type: Opaque
-stringData:
-  # JWT_SECRET must be a strong random string (prod fails fast if blank).
-  JWT_SECRET: "change-me-long-random-jwt-secret"
-  # BCrypt hash of the admin password (generate with your backend's hash util).
-  APP_ADMIN_PASSWORD_HASH: "change-me-bcrypt-hash"
+# !! DO NOT UNCOMMENT AND APPLY !!
+# The live backend-secret was created imperatively on 2026-08-06 with a real JWT secret
+# and a real bcrypt admin hash (`kubectl create secret generic backend-secret ...`).
+# Applying the placeholder below would overwrite them and lock every admin out of the CMS.
+# It is kept here only to document the required keys.
+#
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: backend-secret
+#   namespace: lucabridge
+# type: Opaque
+# stringData:
+#   JWT_SECRET: "<strong random string — prod fails fast if blank>"
+#   APP_ADMIN_PASSWORD_HASH: "<bcrypt hash of the admin password>"
 ---
 apiVersion: v1
 kind: Service
@@ -59,7 +68,13 @@ spec:
     spec:
       containers:
         - name: backend
-          # ACR image (build+push from your Mac; --attach-acr grants pull).
+          # TAG IS A PLACEHOLDER. Live prod runs a COMMIT-SHA tag, not :latest
+          # (2026-08-29: b4e5e008cdc87ebe92841e9b105ad63c5b36c1ad). The GitHub Actions
+          # workflow overrides it via `Azure/k8s-deploy` images:, and manual promotion
+          # uses `kubectl set image`. A SHA frozen here would be stale within a day, so
+          # this file is deliberately NOT the source of truth for which build is running.
+          # Ask the cluster instead:
+          #   kubectl -n lucabridge get deploy -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.template.spec.containers[*].image}{"\n"}{end}'
           image: lucabridgeacr.azurecr.io/lucabridge-backend:latest
           ports:
             - containerPort: 8080

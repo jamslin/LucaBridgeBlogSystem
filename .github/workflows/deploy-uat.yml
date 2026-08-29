@@ -1,8 +1,27 @@
+# Deploy UAT to AKS — MANUAL ONLY since 2026-08-29.
+#
+# The automatic `push: branches: [main]` trigger was removed. Reasons:
+#   1. UAT was merged into prod and its workloads are scaled to 0, so every push
+#      failed at the rollout/smoke-test steps.
+#   2. There is now only ONE environment, and it is the one the client looks at.
+#      An automatic push-to-deploy into that is a bigger risk than a manual click.
+#
+# Run it from GitHub -> Actions -> "Deploy UAT to AKS" -> Run workflow.
+# The build + push steps still work and still tag images with the full commit SHA,
+# so this remains the supported way to produce an image for prod.
+#
+# To promote an image built here into prod:
+#   kubectl -n lucabridge set image deployment/backend  backend=lucabridgeacr.azurecr.io/lucabridge-backend:<SHA>
+#   kubectl -n lucabridge set image deployment/frontend frontend=lucabridgeacr.azurecr.io/lucabridge-frontend:<SHA>
+#
+# DO NOT change `environment: uat` below. The Entra federated credential subject is
+# pinned to `repo:jamslin/LucaBridgeBlogSystem:environment:uat`; renaming it breaks OIDC.
+#
+# Before re-enabling the push trigger, un-park UAT first (see k8s-aks/uat/uat.yaml)
+# and check the cluster still fits — prod alone sits at ~1462m of 1900m on one node.
 name: Deploy UAT to AKS
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,7 +38,7 @@ env:
   RESOURCE_GROUP: rg-lucabridge
   AKS_CLUSTER: aks-lucabridge
   NAMESPACE: lucabridge-uat
-  UAT_ORIGIN: http://uat.20.24.249.212.nip.io
+  UAT_ORIGIN: http://uat.20.187.173.180.nip.io
 
 jobs:
   build-and-deploy:

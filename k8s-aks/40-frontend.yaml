@@ -9,7 +9,9 @@ metadata:
   namespace: lucabridge
 data:
   API_URL: "http://backend:8080"
-  SITE_ORIGIN: "https://lucabridge.example.org"
+  # Real prod origin. Was "https://lucabridge.example.org" (placeholder) until 2026-08-20 —
+  # that made SSR emit wrong canonical/OG URLs on every page.
+  SITE_ORIGIN: "https://lucabridge.org.hk"
 ---
 apiVersion: v1
 kind: Service
@@ -32,7 +34,11 @@ metadata:
   name: frontend
   namespace: lucabridge
 spec:
-  replicas: 2                 # SSR is stateless — safe to scale; good for rolling updates
+  # 1, not 2. On a single Standard_B2s_v2 (2 vCPU, ~1.9 allocatable, ~0.85 eaten by
+  # kube-system + app-routing nginx) a second SSR replica buys nothing and is enough to
+  # push the cluster autoscaler to a second node — that was 76% of the 2026-08-20 cost
+  # overrun. Raise this only after moving to a bigger node SKU.
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -43,7 +49,13 @@ spec:
     spec:
       containers:
         - name: frontend
-          # ACR image (build+push from your Mac; --attach-acr grants pull).
+          # TAG IS A PLACEHOLDER. Live prod runs a COMMIT-SHA tag, not :latest
+          # (2026-08-29: b4e5e008cdc87ebe92841e9b105ad63c5b36c1ad). The GitHub Actions
+          # workflow overrides it via `Azure/k8s-deploy` images:, and manual promotion
+          # uses `kubectl set image`. A SHA frozen here would be stale within a day, so
+          # this file is deliberately NOT the source of truth for which build is running.
+          # Ask the cluster instead:
+          #   kubectl -n lucabridge get deploy -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.template.spec.containers[*].image}{"\n"}{end}'
           image: lucabridgeacr.azurecr.io/lucabridge-frontend:latest
           ports:
             - containerPort: 3000

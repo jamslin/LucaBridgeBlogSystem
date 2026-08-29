@@ -7,10 +7,20 @@
 # Then:
 #   kubectl apply -f 60-cluster-issuer.yaml
 #
-# HTTP-01 solves the challenge through the app-routing nginx ingress, so the
-# lucabridge.org.hk A record must already resolve to the ingress IP before the
-# cert can issue. Test with letsencrypt-staging first (no rate limits); once the
-# staging cert appears, switch the ingress annotation to letsencrypt-prod.
+# CHANGED 2026-08-29 — ingressClassName was `webapprouting.kubernetes.azure.com` until the
+# AKS app-routing add-on was removed. That value was a SILENT TIME BOMB: the current cert is
+# valid to 2026-11-20 and cert-manager starts renewing ~30 days out, so the stale class would
+# not have failed until mid-October, when the HTTP-01 solver would have created a challenge
+# Ingress that no controller watches. The challenge stays Pending, renewal never completes,
+# and the certificate simply expires. Nothing alerts on this.
+#
+# Check renewal health with:
+#   kubectl get certificate,certificaterequest,order,challenge -A
+#
+# HTTP-01 solves the challenge through the self-managed ingress-nginx (class `nginx`), so
+# the lucabridge.org.hk A record must already resolve to the ingress IP (20.187.173.180)
+# before a cert can issue or renew. Test with letsencrypt-staging first (no rate limits);
+# once the staging cert appears, switch the ingress annotation to letsencrypt-prod.
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -25,7 +35,7 @@ spec:
     solvers:
       - http01:
           ingress:
-            ingressClassName: webapprouting.kubernetes.azure.com
+            ingressClassName: nginx
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -40,4 +50,4 @@ spec:
     solvers:
       - http01:
           ingress:
-            ingressClassName: webapprouting.kubernetes.azure.com
+            ingressClassName: nginx

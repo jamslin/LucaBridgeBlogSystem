@@ -1,11 +1,35 @@
-# AKS managed-nginx Ingress (app routing add-on; ingressClass webapprouting.kubernetes.azure.com).
-# Routing mirrors infra/nginx: /api + /actuator -> backend, everything else -> SSR frontend.
+# Self-managed ingress-nginx Ingress (class `nginx`).
+# Routing: /blog-media -> minio, /api + /actuator -> backend, everything else -> SSR frontend.
 #
-# Host-bound to lucabridge.org.hk with TLS via cert-manager (Let's Encrypt).
-#   A record: lucabridge.org.hk -> ingress public IP (kubectl get ingress -n lucabridge -> ADDRESS)
-# NOTE: now that a host is set, the bare-IP URL no longer matches this rule (expected for prod).
-# cert-manager must be installed and 60-cluster-issuer.yaml applied first; the A record must
-# already resolve, because the HTTP-01 challenge is served over port 80 on this host.
+#   DNS (HKDNR):  lucabridge.org.hk      A     -> 20.187.173.180
+#                 www.lucabridge.org.hk  CNAME -> lucabridge.org.hk.
+#
+# CHANGED 2026-08-29 — the AKS app-routing add-on was removed and replaced with a
+# self-managed ingress-nginx (Helm, namespace `ingress-nginx`, 1 replica @ 100m).
+# app-routing ran 2 replicas x 500m = 1000m of CPU requests that could not be tuned
+# (NginxIngressController exposes only spec.scaling.min/maxReplicas, not resources).
+# Dropping it took cluster requests 2734m -> 1734m and is what made ONE node possible.
+# Side effect: a new LoadBalancer means a NEW PUBLIC IP. The old 20.24.249.212 is dead.
+#
+# TWO SEPARATE THINGS ARE REQUIRED FOR TLS — one without the other silently fails:
+#   1. spec.tls  -> this is what makes cert-manager's ingress-shim create the Certificate.
+#   2. rules[].host -> ingress-nginx builds server blocks from this. With tls but no matching
+#      rule host, the SNI request falls through to the default server and STILL gets the
+#      self-signed cert, even though `kubectl get certificate` reports READY True.
+#
+# AZURE LOAD BALANCER HEALTH PROBES — the trap that made the new IP time out on TCP.
+# On Kubernetes >1.24 the `appProtocol` on a Service port drives the LB probe protocol,
+# and the default probe path is `/`. ingress-nginx answers a host-less `/` with 404, so
+# Azure marked every backend unhealthy and silently dropped all traffic - no RST, just a
+# timeout. Fixed on the CONTROLLER SERVICE (not on this Ingress) with:
+#   service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /healthz
+# Check with: az network lb probe list -g mc_rg-lucabridge_aks-lucabridge_eastasia --lb-name kubernetes -o table
+#
+# BEFORE TRUSTING THIS FILE AS A DESCRIPTION OF PROD, DIFF IT:
+#   kubectl get ingress lucabridge -n lucabridge -o yaml
+# NOTE: the live object still carries a `last-applied-configuration` annotation from the
+# 2026-08-06 app-routing version. A three-way `kubectl apply` of this file resolves it
+# correctly, but do not read that annotation as current state.
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -13,18 +37,65 @@ metadata:
   name: lucabridge
   namespace: lucabridge
   annotations:
-    # Start with letsencrypt-staging to test, then switch to letsencrypt-prod.
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
-  ingressClassName: webapprouting.kubernetes.azure.com
+  ingressClassName: nginx
   tls:
+    # Both names must be listed here, or the cert will not carry the missing SAN.
     - hosts:
         - lucabridge.org.hk
+        - www.lucabridge.org.hk
       secretName: lucabridge-tls
   rules:
     - host: lucabridge.org.hk
       http:
         paths:
+          # /blog-media must come FIRST — `/` is a catch-all Prefix and would swallow it.
+          # `blog-media` is also the MinIO bucket name, so the path maps 1:1 onto the object
+          # key with no rewrite. The bucket needs `mc anonymous set download` for the browser
+          # to fetch objects unsigned; without it every image is a 403, not a 404.
+          - path: /blog-media
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  number: 9000
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          - path: /actuator
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+    # www serves the same content. SEO duplicate-content is handled by the frontend's
+    # SITE_ORIGIN=https://lucabridge.org.hk, which emits a canonical tag pointing at the apex.
+    # If a 301 www -> apex is ever wanted, it needs a SEPARATE Ingress object, because the
+    # nginx.ingress.kubernetes.io/permanent-redirect annotation applies to the whole Ingress.
+    - host: www.lucabridge.org.hk
+      http:
+        paths:
+          - path: /blog-media
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  number: 9000
           - path: /api
             pathType: Prefix
             backend:

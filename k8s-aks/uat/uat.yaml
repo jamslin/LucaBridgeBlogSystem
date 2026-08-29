@@ -1,5 +1,32 @@
+# ---------------------------------------------------------------------------
+# 2026-08-29: UAT was MERGED INTO PROD and is now dormant, not just parked.
+#   - prod runs the same commit-SHA images UAT last ran
+#   - prod DB was dropped and reseeded from backend/src/main/resources/data.sql
+#   - the 20 media objects in UAT MinIO were mirrored into prod MinIO
+# UAT keeps its 2 PVCs (~US$0.64/mo) and its namespace, but nothing runs.
+# The old ingress IP 20.24.249.212 and class webapprouting.kubernetes.azure.com are
+# both DEAD — updated below so this file is not a landmine if UAT is ever revived.
+# ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# UAT IS PARKED (2026-08-20). All replicas are 0 on purpose.
+#
+# Why: prod + UAT together request ~1.1 vCPU of pod CPU. One Standard_B2s_v2 has
+# ~1.9 allocatable, of which kube-system + app-routing nginx take ~0.85. Both
+# environments therefore cannot fit on one node, and the cluster autoscaler kept a
+# second (and third) node alive — 76% of the 2026-08-20 cost overrun.
+#
+# Leaving these at 0 in Git matters: the "Deploy UAT to AKS" GitHub Actions workflow
+# re-applies this file on every push to main. If replicas were 1 here, any push would
+# silently un-park UAT and drag the cluster back to two nodes.
+#
+# To un-park for a test session:
+#   kubectl scale deploy --all --replicas=1 -n lucabridge-uat
+#   kubectl scale statefulset/postgres --replicas=1 -n lucabridge-uat
+# UAT runs SPRING_PROFILES_ACTIVE=dev (create-drop + data.sql), so it re-seeds itself
+# on boot and loses nothing by being parked. Park it again when you are done.
+# ---------------------------------------------------------------------------
 # LucaBridge UAT — same AKS cluster, isolated namespace `lucabridge-uat`.
-# Reachable at http://uat.20.24.249.212.nip.io (nip.io host routing on the SHARED
+# Reachable at http://uat.20.187.173.180.nip.io (nip.io host routing on the SHARED
 # ingress IP; prod stays host-less on the bare IP). Fully isolated from prod:
 # own Postgres, own MinIO, own secrets.
 #
@@ -17,7 +44,7 @@ apiVersion: v1
 kind: ResourceQuota
 metadata: { name: uat-quota, namespace: lucabridge-uat }
 spec:
-  hard: { requests.cpu: "1", requests.memory: 2Gi, pods: "10", persistentvolumeclaims: "5" }
+  hard: { requests.cpu: "500m", requests.memory: 2Gi, pods: "10", persistentvolumeclaims: "5" }
 ---
 apiVersion: v1
 kind: LimitRange
@@ -26,7 +53,7 @@ spec:
   limits:
     - type: Container
       default: { cpu: "500m", memory: "512Mi" }
-      defaultRequest: { cpu: "100m", memory: "128Mi" }
+      defaultRequest: { cpu: "50m", memory: "128Mi" }
 ---
 apiVersion: v1
 kind: Service
@@ -41,7 +68,7 @@ kind: StatefulSet
 metadata: { name: postgres, namespace: lucabridge-uat }
 spec:
   serviceName: postgres
-  replicas: 1
+  replicas: 0          # parked — see banner at top of file
   selector: { matchLabels: { app: postgres } }
   template:
     metadata: { labels: { app: postgres } }
@@ -61,7 +88,7 @@ spec:
             exec: { command: ["pg_isready","-U","lucabridge","-d","lucabridge"] }
             initialDelaySeconds: 5
             periodSeconds: 5
-          resources: { requests: { cpu: "100m", memory: "256Mi" }, limits: { memory: "512Mi" } }
+          resources: { requests: { cpu: "50m", memory: "256Mi" }, limits: { memory: "512Mi" } }
   volumeClaimTemplates:
     - metadata: { name: data }
       spec:
@@ -88,7 +115,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: { name: minio, namespace: lucabridge-uat }
 spec:
-  replicas: 1
+  replicas: 0          # parked — see banner at top of file
   strategy: { type: Recreate }
   selector: { matchLabels: { app: minio } }
   template:
@@ -116,7 +143,7 @@ data:
   DB_HOST: "postgres"
   STORAGE_ENDPOINT: "http://minio:9000"
   STORAGE_PUBLIC_BASE_URL: "http://minio:9000"
-  CORS_ORIGINS: "http://uat.20.24.249.212.nip.io"
+  CORS_ORIGINS: "http://uat.20.187.173.180.nip.io"
 ---
 apiVersion: v1
 kind: Service
@@ -129,7 +156,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: { name: backend, namespace: lucabridge-uat }
 spec:
-  replicas: 1
+  replicas: 0          # parked — see banner at top of file
   strategy: { type: Recreate }
   selector: { matchLabels: { app: backend } }
   template:
@@ -160,7 +187,7 @@ spec:
             httpGet: { path: /actuator/health, port: 8080 }
             initialDelaySeconds: 60
             periodSeconds: 15
-          resources: { requests: { cpu: "250m", memory: "512Mi" }, limits: { memory: "1Gi" } }
+          resources: { requests: { cpu: "150m", memory: "512Mi" }, limits: { memory: "1Gi" } }
       volumes: [{ name: seed, configMap: { name: uat-seed } }]
 ---
 apiVersion: v1
@@ -168,7 +195,7 @@ kind: ConfigMap
 metadata: { name: frontend-config, namespace: lucabridge-uat }
 data:
   API_URL: "http://backend:8080"
-  SITE_ORIGIN: "http://uat.20.24.249.212.nip.io"
+  SITE_ORIGIN: "http://uat.20.187.173.180.nip.io"
 ---
 apiVersion: v1
 kind: Service
@@ -181,7 +208,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: { name: frontend, namespace: lucabridge-uat }
 spec:
-  replicas: 1
+  replicas: 0          # parked — see banner at top of file
   strategy: { type: Recreate }
   selector: { matchLabels: { app: frontend } }
   template:
@@ -196,15 +223,15 @@ spec:
             httpGet: { path: /, port: 3000 }
             initialDelaySeconds: 10
             periodSeconds: 10
-          resources: { requests: { cpu: "100m", memory: "192Mi" }, limits: { memory: "512Mi" } }
+          resources: { requests: { cpu: "50m", memory: "192Mi" }, limits: { memory: "512Mi" } }
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata: { name: lucabridge-uat, namespace: lucabridge-uat }
 spec:
-  ingressClassName: webapprouting.kubernetes.azure.com
+  ingressClassName: nginx
   rules:
-    - host: uat.20.24.249.212.nip.io
+    - host: uat.20.187.173.180.nip.io
       http:
         paths:
           - { path: /blog-media, pathType: Prefix, backend: { service: { name: minio, port: { number: 9000 } } } }
