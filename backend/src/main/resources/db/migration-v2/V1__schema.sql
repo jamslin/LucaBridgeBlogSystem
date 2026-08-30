@@ -93,7 +93,7 @@ CREATE TABLE company (
     founded_year   integer,
     phone          varchar(40),
     email          varchar(320),
-    logo_media_id  bigint REFERENCES media(id) ON DELETE SET NULL,
+    logo_media_id  bigint REFERENCES media(id) ON DELETE RESTRICT,
     instagram_url  varchar(500),
     facebook_url   varchar(500),
     youtube_url    varchar(500),
@@ -129,7 +129,7 @@ CREATE TABLE company_text (
 CREATE TABLE service (
     id             bigserial PRIMARY KEY,
     code           varchar(50) NOT NULL UNIQUE,   -- stable identifier used in code and URLs
-    icon_media_id  bigint REFERENCES media(id) ON DELETE SET NULL,
+    icon_media_id  bigint REFERENCES media(id) ON DELETE RESTRICT,
     sort_order     integer     NOT NULL DEFAULT 0,
     is_active      boolean     NOT NULL DEFAULT true
 );
@@ -152,7 +152,7 @@ CREATE TABLE blog (
     id             bigserial PRIMARY KEY,
     slug           varchar(200) NOT NULL UNIQUE,
     service_id     bigint REFERENCES service(id) ON DELETE SET NULL,
-    cover_media_id bigint REFERENCES media(id) ON DELETE SET NULL,
+    cover_media_id bigint REFERENCES media(id) ON DELETE RESTRICT,
     author_id      bigint REFERENCES app_user(id) ON DELETE SET NULL,
     read_minutes   integer,
     gallery_layout varchar(20)  NOT NULL DEFAULT 'NONE'
@@ -200,7 +200,7 @@ CREATE TABLE blog_gallery (
 CREATE TABLE event (
     id                     bigserial PRIMARY KEY,
     slug                   varchar(200) NOT NULL UNIQUE,
-    cover_media_id         bigint REFERENCES media(id) ON DELETE SET NULL,
+    cover_media_id         bigint REFERENCES media(id) ON DELETE RESTRICT,
     gallery_layout         varchar(20)  NOT NULL DEFAULT 'NONE'
                            CHECK (gallery_layout IN ('NONE','CAROUSEL','GRID','MASONRY')),
     -- when the event HAPPENS. Never confuse with the publish window below.
@@ -371,7 +371,7 @@ CREATE TABLE home_block (
     id           bigserial PRIMARY KEY,
     slot         varchar(20) NOT NULL
                  CHECK (slot IN ('HERO','STAT','FEATURED','SUPPORT','VOLUNTEER','QUICK_LINK')),
-    media_id     bigint REFERENCES media(id) ON DELETE SET NULL,
+    media_id     bigint REFERENCES media(id) ON DELETE RESTRICT,
     blog_id      bigint REFERENCES blog(id) ON DELETE SET NULL,  -- FEATURED pins a story
     link_url     varchar(1000),
     sort_order   integer     NOT NULL DEFAULT 0,
@@ -446,3 +446,56 @@ CREATE INDEX idx_service_icon     ON service (icon_media_id);
 CREATE INDEX idx_home_block_slot  ON home_block (slot, sort_order) WHERE is_active;
 CREATE INDEX idx_reg_event_status ON event_registration (event_id, status);
 CREATE INDEX idx_audit_entity     ON audit_log (entity_type, entity_id, at DESC);
+
+-- ---------------------------------------------------------------------------
+-- media usage
+--
+-- Every place an image can be referenced, in one view. Deleting a media row is
+-- reference-counted against this: two posts may share a photo, so removing one must
+-- not break the other.
+--
+-- Deliberately does NOT filter on deleted_at. A soft-deleted post still counts as a
+-- reference, or restoring it would give you a post full of dead images.
+-- ---------------------------------------------------------------------------
+
+CREATE VIEW media_usage AS
+    SELECT b.cover_media_id AS media_id, 'blog'::text       AS entity_type, b.id          AS entity_id, 'cover'::text   AS field
+      FROM blog b WHERE b.cover_media_id IS NOT NULL
+    UNION ALL
+    SELECT g.media_id,                   'blog'::text,                      g.blog_id,                 'gallery'::text
+      FROM blog_gallery g
+    UNION ALL
+    SELECT e.cover_media_id,             'event'::text,                     e.id,                      'cover'::text
+      FROM event e WHERE e.cover_media_id IS NOT NULL
+    UNION ALL
+    SELECT g.media_id,                   'event'::text,                     g.event_id,                'gallery'::text
+      FROM event_gallery g
+    UNION ALL
+    SELECT h.media_id,                   'home_block'::text,                h.id,                      'image'::text
+      FROM home_block h WHERE h.media_id IS NOT NULL
+    UNION ALL
+    SELECT s.icon_media_id,              'service'::text,                   s.id,                      'icon'::text
+      FROM service s WHERE s.icon_media_id IS NOT NULL
+    UNION ALL
+    SELECT c.logo_media_id,              'company'::text,                   c.id::bigint,              'logo'::text
+      FROM company c WHERE c.logo_media_id IS NOT NULL;
+
+-- ---------------------------------------------------------------------------
+-- media_unused — what "clear unused images" is allowed to touch.
+--
+-- Belt and braces: also refuses anything whose URL appears inside a markdown body.
+-- Inline images are switched off in the CMS for phase 1, so in principle no such
+-- reference can exist — but a sweeper that deletes images out of live articles is not
+-- a bug you get to make twice, and at this content volume the scan costs nothing.
+-- ---------------------------------------------------------------------------
+
+CREATE VIEW media_unused AS
+    SELECT m.*
+      FROM media m
+     WHERE NOT EXISTS (SELECT 1 FROM media_usage u WHERE u.media_id = m.id)
+       AND NOT EXISTS (
+             SELECT 1 FROM blog_text t
+              WHERE position(m.url IN concat(t.tc_body, t.en_body, t.sc_body)) > 0)
+       AND NOT EXISTS (
+             SELECT 1 FROM event_text t
+              WHERE position(m.url IN concat(t.tc_body, t.en_body, t.sc_body)) > 0);
