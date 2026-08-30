@@ -1,28 +1,19 @@
-# Dev-only overrides — EARLY PROTOTYPE PHASE (2026-07-07).
+# Dev overrides.
 #
-# Flyway is DISABLED here on purpose. While the schema is still churning, we let
-# Hibernate generate it directly from the @Entity classes (ddl-auto: create-drop),
-# so there are NO migration scripts to write or maintain. The DB is rebuilt from
-# the entities on every backend start.
+# Flyway now runs in dev exactly as it does in prod, and Hibernate only validates.
+# The previous setup (ddl-auto: create-drop plus a data.sql seed) is gone on purpose:
+# it rebuilt the schema on every start, which raced a rolling update and wiped the
+# UAT database, and its seed once overwrote the real admin row in prod.
 #
-# Seed data is loaded from classpath:data.sql, which Spring runs AFTER Hibernate
-# has created the tables (defer-datasource-initialization). data.sql is inserts
-# only — categories, the author, and the imported Wix content.
-#
-# The Flyway files (db/migration V1/V3, db/seed V2/V4) and the Flyway dependency
-# are intentionally kept but dormant. When the schema stabilises: delete these
-# overrides, freeze the final schema into a single baseline V1, and turn Flyway
-# back on (it stays enabled in prod already).
+# Content comes from a dump/restore, never from a file in the repo. Migrations carry
+# schema and closed-list reference data only.
 spring:
-  flyway:
-    enabled: false
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    defer-datasource-initialization: true
+      ddl-auto: validate
   sql:
     init:
-      mode: always
+      mode: never
 logging:
   level:
-    com.lucabridge.blog: DEBUG
+    com.lucabridge.core: DEBUG

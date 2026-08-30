@@ -1,6 +1,6 @@
 spring:
   application:
-    name: lucabridge-blog
+    name: lucabridge
   profiles:
     active: dev
   datasource:
@@ -16,13 +16,12 @@ spring:
         format_sql: true
   flyway:
     enabled: true
-    # Schema migrations only. Demo seed data lives in db/seed and is added
-    # ONLY by the dev profile (see application-dev.yml) — prod can never run it.
+    # Schema and closed-list reference data only. Content never lives in a migration —
+    # it arrives by dump/restore. Every environment, dev included, runs these.
     locations: classpath:db/migration
-    # The live prod DB was created by ddl-auto=update and has no flyway history,
-    # so baseline it (at v0, so V1 still runs — V1 is IF NOT EXISTS, safe either way).
-    baseline-on-migrate: true
-    baseline-version: 0
+    # No baseline: the v2 schema starts from an empty database. If Flyway ever reports
+    # "found non-empty schema without history", that means it is pointed at the old
+    # database - drop it rather than baselining over a schema that no longer matches.
   servlet:
     multipart:
       max-file-size: 10MB
@@ -54,8 +53,10 @@ app:
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
   i18n:
-    default-lang: zh-Hant
-    supported-langs: zh-Hant,en,zh-Hans
+    # Internal tokens. The BCP-47 tags (zh-Hant / zh-Hans / en) are derived from these
+    # by Lang and are the only form allowed to reach a browser or a crawler.
+    default-lang: tc
+    supported-langs: tc,en,sc
   storage:
     endpoint: ${STORAGE_ENDPOINT:http://localhost:9000}
     public-base-url: ${STORAGE_PUBLIC_BASE_URL:http://localhost:9000}
@@ -66,4 +67,4 @@ app:
 
 logging:
   level:
-    com.lucabridge.blog: INFO
+    com.lucabridge.core: INFO
