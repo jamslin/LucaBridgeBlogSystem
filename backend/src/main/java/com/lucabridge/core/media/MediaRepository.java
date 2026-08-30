@@ -19,4 +19,8 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
     /** What the sweeper's DB-row pass may delete. Columns mirror {@link Media} exactly. */
     @Query(value = "SELECT * FROM media_unused", nativeQuery = true)
     List<Media> findUnused();
+
+    /** Projection for building the catalogued-keys set — avoids loading every full Media row. */
+    @Query("SELECT m.s3Key FROM Media m")
+    List<String> findAllS3Keys();
 }
