@@ -11,13 +11,20 @@ export default function Dashboard() {
     let alive = true;
     (async () => {
       try {
-        const posts = await adminApi.listPosts();
-        const published = posts.filter((p) => p.status === "PUBLISHED").length;
+        const [blog, events, jobs] = await Promise.all([
+          adminApi.listBlog(), adminApi.listEvents(), adminApi.listJobs(),
+        ]);
+        const published = (rows) => rows.filter((r) => r.status === "PUBLISHED").length;
         let users = null;
         if (isAdmin) {
           try { users = (await adminApi.listUsers()).length; } catch (_) { /* ignore */ }
         }
-        if (alive) setStats({ total: posts.length, published, drafts: posts.length - published, users });
+        if (alive) setStats({
+          blogTotal: blog.length, blogPublished: published(blog),
+          eventsTotal: events.length, eventsPublished: published(events),
+          jobsTotal: jobs.length, jobsPublished: published(jobs),
+          users,
+        });
       } catch (e) {
         if (alive) setError(e.message);
       }
@@ -34,17 +41,17 @@ export default function Dashboard() {
           Welcome back, {user.username}.
         </p>
         <div className="stat-grid">
-          <div className="stat-card"><div className="n">{stats ? stats.total : "—"}</div><div className="l">Posts total</div></div>
-          <div className="stat-card"><div className="n">{stats ? stats.published : "—"}</div><div className="l">Published</div></div>
-          <div className="stat-card"><div className="n">{stats ? stats.drafts : "—"}</div><div className="l">Drafts</div></div>
+          <div className="stat-card"><div className="n">{stats ? `${stats.blogPublished}/${stats.blogTotal}` : "—"}</div><div className="l">Blog posts published</div></div>
+          <div className="stat-card"><div className="n">{stats ? `${stats.eventsPublished}/${stats.eventsTotal}` : "—"}</div><div className="l">Events published</div></div>
+          <div className="stat-card"><div className="n">{stats ? `${stats.jobsPublished}/${stats.jobsTotal}` : "—"}</div><div className="l">Jobs published</div></div>
           {isAdmin ? (
             <div className="stat-card"><div className="n">{stats && stats.users != null ? stats.users : "—"}</div><div className="l">CMS users</div></div>
           ) : null}
         </div>
         <div className="admin-actions" style={{ marginTop: 24 }}>
-          <Link className="admin-btn primary" to="/admin/posts/new">New post</Link>
-          <Link className="admin-btn" to="/admin/posts">Manage posts</Link>
-          <Link className="admin-btn" to="/admin/settings">Site settings</Link>
+          <Link className="admin-btn primary" to="/admin/blog/new">New blog post</Link>
+          <Link className="admin-btn" to="/admin/events/new">New event</Link>
+          <Link className="admin-btn" to="/admin/home-blocks">Home page content</Link>
         </div>
       </div>
     </>

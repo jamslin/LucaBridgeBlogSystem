@@ -17,7 +17,7 @@ export function meta({ data, params }) {
   const url = `${origin}/${params.lang}/careers/${job.slug}`;
   return [
     { title },
-    { name: "description", content: job.summary ?? job.title },
+    { name: "description", content: job.title },
     { property: "og:type", content: "website" },
     { property: "og:title", content: job.title },
     { property: "og:url", content: url },
@@ -32,25 +32,33 @@ export default function Career() {
   const { lang } = useParams();
   const { job } = useLoaderData();
   const facts = [
-    job.employmentTypeLabel,
+    job.employmentType,
     job.department,
-    job.locationText,
+    job.location,
     job.closesAt ? `${t(lang, "careers.closes")}${formatHongKongDate(job.closesAt, lang, { long: true })}` : null,
   ].filter(Boolean);
 
   return (
     <article className="shell" style={{ padding: "32px 20px" }}>
-      {job.fallback && (
-        <p className="meta" style={{ background: "var(--color-card)", padding: "8px 12px", borderRadius: "4px" }}>
-          {t(lang, "page.fallbackNotice")}
-        </p>
-      )}
       <div className="reading-column">
         <p className="kicker">{t(lang, "nav.recruitJobs")}</p>
         <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>{job.title}</h1>
         {facts.length > 0 && <p className="meta" style={{ marginBottom: "8px" }}>{facts.join(" · ")}</p>}
-        {job.summary && <p style={{ fontFamily: "var(--font-kicker)", fontStyle: "italic" }}>{job.summary}</p>}
-        <ReactMarkdown>{job.bodyMarkdown}</ReactMarkdown>
+        {job.body && <ReactMarkdown>{job.body}</ReactMarkdown>}
+
+        {(job.applyEmail || job.applyUrl) && (
+          <p style={{ marginTop: "24px" }}>
+            <a
+              className="btn btn-primary"
+              href={job.applyUrl || `mailto:${job.applyEmail}`}
+              target={job.applyUrl ? "_blank" : undefined}
+              rel={job.applyUrl ? "noopener noreferrer" : undefined}
+            >
+              {t(lang, "careers.apply")}
+            </a>
+          </p>
+        )}
+
         <p style={{ marginTop: "32px" }}>
           <Link to={`/${lang}/careers`}>← {t(lang, "careers.backToList")}</Link>
         </p>

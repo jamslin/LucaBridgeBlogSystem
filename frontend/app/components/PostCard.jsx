@@ -8,16 +8,15 @@ export default function PostCard({ post }) {
   return (
     <article style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
       <Link to={`/${lang}/blog/${post.slug}`}>
-        {post.coverImageUrl && <img src={post.coverImageUrl} alt="" loading="lazy" />}
+        {post.coverUrl && <img src={post.coverUrl} alt="" loading="lazy" />}
       </Link>
-      <span className="kicker">{post.category?.name}</span>
       <h3 style={{ fontSize: "20px" }}>
         <Link to={`/${lang}/blog/${post.slug}`}>{post.title}</Link>
       </h3>
-      {post.excerpt && <p style={{ color: "var(--color-ink-soft)", margin: 0 }}>{post.excerpt}</p>}
+      {post.summary && <p style={{ color: "var(--color-ink-soft)", margin: 0 }}>{post.summary}</p>}
       <div className="meta" style={{ display: "flex", gap: "12px" }}>
         {post.publishedAt && <span>{formatHongKongDate(post.publishedAt, lang)}</span>}
-        {post.readingMinutes && <span>{post.readingMinutes} min</span>}
+        {post.readMinutes && <span>{post.readMinutes} min</span>}
       </div>
       <Link to={`/${lang}/blog/${post.slug}`} className="btn-text">
         {t(lang, "home.readMore")} <span className="arrow">&rarr;</span>

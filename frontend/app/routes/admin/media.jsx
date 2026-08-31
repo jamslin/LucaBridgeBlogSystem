@@ -8,17 +8,12 @@ function MediaCard({ m, onSaveAlt, onCopy, onDelete }) {
     <div className="admin-card" style={{ padding: 14, marginBottom: 0 }}>
       <img src={m.url} alt={m.altText || ""} loading="lazy"
            style={{ width: "100%", height: 140, objectFit: "cover", borderRadius: "var(--radius-photo)", border: "1px solid var(--color-line)" }} />
-      <div style={{ fontSize: 12, color: "var(--color-muted)", marginTop: 8, wordBreak: "break-all" }}>{m.filename || "(unnamed)"}</div>
+      <div style={{ fontSize: 12, color: "var(--color-muted)", marginTop: 8, wordBreak: "break-all" }}>{m.fileName || "(unnamed)"}</div>
       <div style={{ margin: "8px 0" }}>
         {m.inUse
-          ? <span className="admin-badge published">In use ({m.usages.length})</span>
+          ? <span className="admin-badge published">In use ({m.usageCount})</span>
           : <span className="admin-badge draft">Unused</span>}
       </div>
-      {m.inUse ? (
-        <div style={{ fontSize: 11, color: "var(--color-muted)", marginBottom: 8 }}>
-          {m.usages.map((u, i) => <div key={i}>{u.title} · {u.field}</div>)}
-        </div>
-      ) : null}
       <label style={{ fontSize: 11, fontWeight: 600, color: "var(--color-ink-soft)" }}>Alt text</label>
       <input value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="Describe the image" style={{ marginTop: 4, marginBottom: 8 }} />
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -58,11 +53,17 @@ export default function Media() {
     load();
   }
 
-  async function sync() {
+  async function sweep() {
     setBusy(true); setError(""); setOk("");
     try {
-      const r = await adminApi.syncMedia();
-      setOk(`Synced — ${r.added} new image${r.added === 1 ? "" : "s"} catalogued from storage.`);
+      const preview = await adminApi.mediaSweepPreview();
+      const count = preview.unusedMedia.length + preview.orphanObjectKeys.length;
+      if (count === 0) { setOk("Nothing to sweep — every catalogued image is in use."); setBusy(false); return; }
+      if (!window.confirm(`This permanently deletes ${preview.unusedMedia.length} unused image(s) and ${preview.orphanObjectKeys.length} orphaned storage object(s). This cannot be undone. Continue?`)) {
+        setBusy(false); return;
+      }
+      const result = await adminApi.mediaSweep();
+      setOk(`Swept — removed ${result.removedMediaCount} unused image(s) and ${result.removedOrphanCount} orphaned object(s).`);
       load();
     } catch (e) { setError(e.message); }
     finally { setBusy(false); }
@@ -77,12 +78,12 @@ export default function Media() {
 
   async function saveAlt(m, alt) {
     setError(""); setOk("");
-    try { await adminApi.updateMedia(m.id, alt); setOk("Alt text saved."); load(); }
+    try { await adminApi.updateMediaAlt(m.id, alt); setOk("Alt text saved."); load(); }
     catch (e) { setError(e.message); }
   }
 
   async function del(m) {
-    if (!window.confirm(`Delete ${m.filename || "this image"}? This removes the file from storage.`)) return;
+    if (!window.confirm(`Delete ${m.fileName || "this image"}? This removes the file from storage.`)) return;
     setError(""); setOk("");
     try { await adminApi.deleteMedia(m.id); setOk("Deleted."); load(); }
     catch (e) { setError(e.message); } // backend blocks in-use images with a helpful message
@@ -99,19 +100,19 @@ export default function Media() {
           <div className="admin-field" style={{ marginBottom: 0 }}>
             <label>Upload images</label>
             <input ref={fileRef} type="file" accept="image/*" multiple onChange={onFiles} disabled={busy} />
-            <div className="hint">JPG / PNG / WebP / GIF / AVIF, up to 10 MB each. Every upload is catalogued here — including images added from the post editor.</div>
+            <div className="hint">JPG / PNG / WebP / GIF / AVIF, up to 10 MB each. Every upload is catalogued here — including images added from the blog/event editors.</div>
           </div>
           <div className="admin-actions" style={{ marginTop: 12 }}>
-            <button className="admin-btn" disabled={busy} onClick={sync}>Sync from storage</button>
-            <span className="hint" style={{ margin: 0 }}>Catalogues images already in the bucket (e.g. seeded covers).</span>
+            <button className="admin-btn" disabled={busy} onClick={sweep}>Sweep unused</button>
+            <span className="hint" style={{ margin: 0 }}>Permanently deletes any catalogued image with zero references, plus orphaned storage objects. Shows a preview count before anything is removed.</span>
           </div>
-          {busy ? <p style={{ color: "var(--color-muted)", marginBottom: 0 }}>Uploading…</p> : null}
+          {busy ? <p style={{ color: "var(--color-muted)", marginBottom: 0 }}>Working…</p> : null}
         </div>
 
         {items === null ? (
           <div className="admin-empty">Loading…</div>
         ) : items.length === 0 ? (
-          <div className="admin-empty">No images yet. Upload one above, or add a cover/inline image in the post editor.</div>
+          <div className="admin-empty">No images yet. Upload one above, or add a cover/inline image in the blog or event editor.</div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
             {items.map((m) => (

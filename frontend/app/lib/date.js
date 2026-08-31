@@ -18,6 +18,15 @@ export function formatHongKongDate(iso, lang, { long = false } = {}) {
   return long ? `${year}年${month}月${day}日` : `${year}/${month}/${day}`;
 }
 
+const MONTHS_EN_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** Day + short month, for the home-page events timeline's date badge. */
+export function hongKongDayMonth(iso, lang) {
+  if (!iso) return { day: "", month: "" };
+  const { month, day } = hongKongParts(iso);
+  return { day: String(day), month: lang === "en" ? MONTHS_EN_SHORT[month - 1] : `${month}月` };
+}
+
 export function formatHongKongDateTime(iso, lang) {
   if (!iso) return "";
   const { year, month, day, hour, minute } = hongKongParts(iso);

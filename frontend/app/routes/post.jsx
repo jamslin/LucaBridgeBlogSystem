@@ -2,14 +2,12 @@ import ReactMarkdown from "react-markdown";
 import { useLoaderData, useParams } from "react-router";
 
 import { api, siteOrigin } from "../lib/api.server";
-import { SUPPORTED_LANGS, t } from "../i18n";
+import { SUPPORTED_LANGS } from "../i18n";
 import Gallery from "../components/Gallery";
-import PressLinks from "../components/PressLinks";
-import PrevNextBar from "../components/PrevNextBar";
 import { formatHongKongDate } from "../lib/date";
 
 export async function loader({ params, request }) {
-  const post = await api.getPost(params.slug, params.lang); // throws 404 Response for unknown slug
+  const post = await api.getBlogPost(params.slug, params.lang); // throws 404 Response for unknown slug
   return { post, origin: siteOrigin(request) };
 }
 
@@ -23,12 +21,12 @@ export function meta({ data, params }) {
 
   return [
     { title },
-    { name: "description", content: post.subtitle ?? post.title },
+    { name: "description", content: post.summary ?? post.title },
     { property: "og:type", content: "article" },
     { property: "og:title", content: post.title },
-    { property: "og:description", content: post.subtitle ?? "" },
+    { property: "og:description", content: post.summary ?? "" },
     { property: "og:url", content: url },
-    ...(post.coverImageUrl ? [{ property: "og:image", content: post.coverImageUrl }] : []),
+    ...(post.coverUrl ? [{ property: "og:image", content: post.coverUrl }] : []),
     { tagName: "link", rel: "canonical", href: url },
     ...SUPPORTED_LANGS.map((l) => ({
       tagName: "link",
@@ -45,28 +43,18 @@ export default function Post() {
 
   return (
     <article className="shell" style={{ padding: "32px 20px" }}>
-      {post.fallback && (
-        <p className="meta" style={{ background: "var(--color-paper-2)", padding: "8px 12px", borderRadius: "2px" }}>
-          {t(lang, "post.fallbackNotice")}
-        </p>
-      )}
-
-      {post.coverImageUrl && <img src={post.coverImageUrl} alt="" style={{ marginBottom: "24px" }} />}
+      {post.coverUrl && <img src={post.coverUrl} alt="" style={{ marginBottom: "24px" }} />}
 
       <div className="reading-column">
-        <span className="kicker">{post.category?.name}</span>
         <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>{post.title}</h1>
-        {post.subtitle && <p style={{ fontFamily: "var(--font-kicker)", fontStyle: "italic" }}>{post.subtitle}</p>}
         <div className="meta" style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
           {post.publishedAt && <span>{formatHongKongDate(post.publishedAt, lang)}</span>}
-          {post.readingMinutes && <span>{post.readingMinutes} min</span>}
+          {post.readMinutes && <span>{post.readMinutes} min</span>}
         </div>
 
-        <ReactMarkdown>{post.bodyMarkdown}</ReactMarkdown>
+        <ReactMarkdown>{post.body}</ReactMarkdown>
 
-        <Gallery media={post.media} />
-        <PressLinks links={post.pressLinks} />
-        <PrevNextBar previous={post.previous} next={post.next} />
+        <Gallery media={post.gallery} />
       </div>
     </article>
   );

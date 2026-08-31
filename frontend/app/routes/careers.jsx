@@ -5,7 +5,7 @@ import { t } from "../i18n";
 import { formatHongKongDate } from "../lib/date";
 
 export async function loader({ params }) {
-  const jobs = await api.getJobs(params.lang);
+  const jobs = await api.getJobs({ lang: params.lang, size: 30 });
   return { jobs };
 }
 
@@ -22,10 +22,10 @@ export default function Careers() {
     <div className="shell" style={{ padding: "32px 20px" }}>
       <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)", marginBottom: "24px" }}>{t(lang, "nav.recruitJobs")}</h1>
 
-      {jobs.length === 0 && <p>{t(lang, "careers.empty")}</p>}
+      {jobs.content.length === 0 && <p>{t(lang, "careers.empty")}</p>}
 
       <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: "16px" }}>
-        {jobs.map((j) => (
+        {jobs.content.map((j) => (
           <li
             key={j.id}
             style={{ background: "var(--color-card)", border: "1px solid var(--color-line)", borderRadius: "8px", padding: "20px 24px" }}
@@ -34,12 +34,11 @@ export default function Careers() {
               <h3 style={{ margin: 0 }}>
                 <Link to={`/${lang}/careers/${j.slug}`}>{j.title}</Link>
               </h3>
-              {j.employmentTypeLabel && <span className="chip">{j.employmentTypeLabel}</span>}
+              {j.employmentType && <span className="chip">{j.employmentType}</span>}
             </div>
             <p className="meta" style={{ margin: "6px 0" }}>
-              {[j.department, j.locationText].filter(Boolean).join(" · ")}
+              {[j.department, j.location].filter(Boolean).join(" · ")}
             </p>
-            {j.summary && <p style={{ margin: "8px 0 0" }}>{j.summary}</p>}
             <p className="meta" style={{ marginTop: "10px" }}>
               {j.closesAt
                 ? `${t(lang, "careers.closes")}${formatHongKongDate(j.closesAt, lang, { long: true })}`

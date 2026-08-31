@@ -3,29 +3,22 @@ import { Link } from "react-router";
 import { adminApi } from "../../lib/adminApi";
 
 export default function Events() {
-  const [rows, setRows] = useState(null);
+  const [events, setEvents] = useState(null);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState(null);
 
   async function load() {
-    try { setError(""); setRows(await adminApi.listEvents()); }
-    catch (e) { setError(e.message); setRows([]); }
+    try { setError(""); setEvents(await adminApi.listEvents()); }
+    catch (e) { setError(e.message); setEvents([]); }
   }
   useEffect(() => { load(); }, []);
 
-  async function togglePublish(r) {
-    setBusyId(r.id);
-    try {
-      if (r.status === "PUBLISHED") await adminApi.unpublishEvent(r.id);
-      else await adminApi.publishEvent(r.id);
-      await load();
-    } catch (e) { setError(e.message); } finally { setBusyId(null); }
-  }
-  async function remove(r) {
-    if (!window.confirm(`Delete "${r.title}"?`)) return;
-    setBusyId(r.id);
-    try { await adminApi.deleteEvent(r.id); await load(); }
-    catch (e) { setError(e.message); } finally { setBusyId(null); }
+  async function remove(e) {
+    if (!window.confirm(`Delete "${e.tcTitle}"? This cannot be undone.`)) return;
+    setBusyId(e.id);
+    try { await adminApi.deleteEvent(e.id); await load(); }
+    catch (err) { setError(err.message); }
+    finally { setBusyId(null); }
   }
 
   return (
@@ -37,22 +30,26 @@ export default function Events() {
       <div className="admin-content">
         {error ? <div className="admin-alert error">{error}</div> : null}
         <div className="admin-card" style={{ padding: 0 }}>
-          {rows === null ? <div className="admin-empty">Loading…</div>
-            : rows.length === 0 ? <div className="admin-empty">No events yet.</div>
-            : (
+          {events === null ? (
+            <div className="admin-empty">Loading…</div>
+          ) : events.length === 0 ? (
+            <div className="admin-empty">No events yet. Create your first one.</div>
+          ) : (
             <table className="admin-table">
-              <thead><tr><th>Title</th><th>Starts</th><th>Status</th><th></th></tr></thead>
+              <thead><tr><th>Title</th><th>State</th><th>Registration</th><th></th></tr></thead>
               <tbody>
-                {rows.map((r) => (
-                  <tr key={r.id}>
-                    <td><Link to={`/admin/events/${r.id}`} style={{ color: "var(--color-accent)", fontWeight: 600 }}>{r.title}</Link><div style={{ fontSize: 12, color: "var(--color-muted)" }}>{r.slug}</div></td>
-                    <td>{r.startsAt ? r.startsAt.slice(0, 10) : "—"}</td>
-                    <td><span className={`admin-badge ${r.status === "PUBLISHED" ? "published" : "draft"}`}>{r.status === "PUBLISHED" ? "Published" : "Draft"}</span></td>
+                {events.map((e) => (
+                  <tr key={e.id}>
+                    <td><Link to={`/admin/events/${e.id}`} style={{ color: "var(--color-accent)", fontWeight: 600 }}>{e.tcTitle}</Link><div style={{ fontSize: 12, color: "var(--color-muted)" }}>{e.slug}</div></td>
+                    <td><span className={`admin-badge ${e.state === "LIVE" ? "published" : "draft"}`}>{e.state}</span></td>
+                    <td>
+                      {e.registration ? `${e.registration.state} (${e.registration.registeredCount}${e.registration.capacity != null ? `/${e.registration.capacity}` : ""})` : "—"}
+                    </td>
                     <td>
                       <div className="row-actions">
-                        <Link className="admin-btn admin-btn-sm" to={`/admin/events/${r.id}`}>Edit</Link>
-                        <button className="admin-btn admin-btn-sm" disabled={busyId === r.id} onClick={() => togglePublish(r)}>{r.status === "PUBLISHED" ? "Unpublish" : "Publish"}</button>
-                        <button className="admin-btn admin-btn-sm danger" disabled={busyId === r.id} onClick={() => remove(r)}>Delete</button>
+                        <Link className="admin-btn admin-btn-sm" to={`/admin/events/${e.id}`}>Edit</Link>
+                        <Link className="admin-btn admin-btn-sm" to={`/admin/events/${e.id}/registrations`}>Registrations</Link>
+                        <button className="admin-btn admin-btn-sm danger" disabled={busyId === e.id} onClick={() => remove(e)}>Delete</button>
                       </div>
                     </td>
                   </tr>

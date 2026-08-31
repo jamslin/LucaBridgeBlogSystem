@@ -2,18 +2,13 @@
   "nav": {
     "home": "Home",
     "about": "About Us",
-    "aboutBackground": "Background & Development",
-    "aboutGoals": "Goals & Mission",
-    "aboutStructure": "Organisation Structure",
-    "aboutCommittee": "Committee Members",
-    "services": "Our Services",
+    "services": "Services",
     "news": "News",
-    "newsRecent": "Recent News",
-    "newsInfo": "Latest Updates",
+    "newsRecent": "Blog",
+    "newsEvents": "Events",
     "donate": "Donate",
-    "donateMethods": "Ways to Give",
-    "donateMaterials": "Gifts in Kind",
-    "recruit": "Join Us",
+    "recruit": "Recruitment",
+    "recruitShort": "Join us",
     "recruitVolunteer": "Volunteer",
     "recruitJobs": "Job Vacancies",
     "contact": "Contact Us",
@@ -23,39 +18,94 @@
     "events": "Events"
   },
   "home": {
-    "latest": "Latest",
-    "readMore": "Read more"
+    "latest": "Latest news",
+    "readMore": "Read more",
+    "upcomingEvents": "Upcoming events",
+    "viewAllEvents": "View all events",
+    "ourServices": "What we do"
   },
   "blog": {
-    "allCategories": "All categories",
     "empty": "No posts yet"
   },
   "events": {
-    "empty": "No events yet"
+    "empty": "No events yet",
+    "registerCta": "Register",
+    "notOpenYet": "Registration opens soon",
+    "closed": "Registration closed",
+    "full": "Full — join the waitlist",
+    "almostFull": "Almost full",
+    "spotsLeft": "spots left",
+    "unlimited": "Open registration",
+    "notRegisterable": "Contact us to join this event",
+    "registrationTitle": "Register for this event",
+    "fullName": "Full name",
+    "gender": "Gender",
+    "genderM": "Male",
+    "genderF": "Female",
+    "genderSkip": "Prefer not to say",
+    "birthYear": "Birth year",
+    "email": "Email",
+    "phone": "Phone",
+    "postalAddress": "Postal address (optional)",
+    "referral": "How did you hear about us?",
+    "referralOther": "Other (please specify)",
+    "referralSelect": "Select an option",
+    "friendsOptIn": "I'd like to bring friends / receive updates about future events",
+    "termsAgree": "I have read and agree to the Terms & Conditions and Privacy Policy",
+    "submit": "Submit registration",
+    "submitting": "Submitting…",
+    "successTitle": "Registration received",
+    "successConfirmed": "You're confirmed. Your reference code is",
+    "successWaitlist": "You're on the waitlist. Your reference code is",
+    "backToEvents": "Back to all events"
   },
   "careers": {
     "empty": "No open positions at the moment.",
     "closes": "Closing date: ",
     "openUntilFilled": "Open until filled",
-    "backToList": "Back to all positions"
+    "backToList": "Back to all positions",
+    "apply": "Apply"
   },
-  "page": {
-    "fallbackNotice": "Not yet available in this language — showing the 繁體中文 version."
+  "services": {
+    "title": "Services",
+    "empty": "No services published yet."
+  },
+  "about": {
+    "title": "About Us",
+    "missionTitle": "Mission & Objectives",
+    "missionPending": "Full mission and objectives content is pending from the organisation — placeholder shown for this build.",
+    "structureTitle": "Organisation Structure",
+    "structurePending": "Organisation structure content is pending — placeholder shown for this build."
+  },
+  "donate": {
+    "title": "Donate",
+    "pending": "Donation methods and bank details are pending from the organisation — this section will be completed once supplied."
+  },
+  "volunteer": {
+    "title": "Volunteer",
+    "pending": "Volunteer recruitment details are pending from the organisation — this section will be completed once supplied."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "officeHours": "Office hours",
+    "charityRegNo": "Charity registration no."
   },
   "footer": {
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions"
   },
   "post": {
-    "pressLinks": "In the press",
     "prev": "Previous",
     "next": "Next",
-    "notFound": "This post could not be found",
-    "fallbackNotice": "Not yet available in this language — showing the 繁體中文 version."
+    "notFound": "This post could not be found"
   },
   "common": {
     "loading": "Loading…",
     "error": "Something went wrong. Please try again.",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "contentPending": "Content pending"
   }
 }

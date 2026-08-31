@@ -71,16 +71,66 @@ export const adminApi = {
     request("/api/auth/login", { method: "POST", body: { username, password } }),
   me: () => request("/api/auth/me"),
 
-  // reference data
-  categories: () => request("/api/categories"),
+  // blog
+  listBlog: () => request("/api/admin/blog?size=200").then((p) => p.content),
+  getBlog: (id) => request(`/api/admin/blog/${id}`),
+  createBlog: (payload) => request("/api/admin/blog", { method: "POST", body: payload }),
+  updateBlog: (id, payload) => request(`/api/admin/blog/${id}`, { method: "PUT", body: payload }),
+  deleteBlog: (id) => request(`/api/admin/blog/${id}`, { method: "DELETE" }),
 
-  // posts
-  listPosts: () => request("/api/admin/posts"),
-  getPost: (id) => request(`/api/admin/posts/${id}`),
-  savePost: (payload) => request("/api/admin/posts", { method: "POST", body: payload }),
-  publishPost: (id) => request(`/api/admin/posts/${id}/publish`, { method: "POST" }),
-  unpublishPost: (id) => request(`/api/admin/posts/${id}/unpublish`, { method: "POST" }),
-  deletePost: (id) => request(`/api/admin/posts/${id}`, { method: "DELETE" }),
+  // events
+  listEvents: () => request("/api/admin/events?size=200").then((p) => p.content),
+  getEvent: (id) => request(`/api/admin/events/${id}`),
+  createEvent: (payload) => request("/api/admin/events", { method: "POST", body: payload }),
+  updateEvent: (id, payload) => request(`/api/admin/events/${id}`, { method: "PUT", body: payload }),
+  deleteEvent: (id) => request(`/api/admin/events/${id}`, { method: "DELETE" }),
+
+  // event registrations — ADMIN only
+  listRegistrations: (eventId) => request(`/api/admin/registrations/events/${eventId}?size=500`).then((p) => p.content),
+  // A plain <a href> can't carry the bearer token, so this fetches with auth and hands back a
+  // Blob the caller turns into a temporary download link.
+  exportRegistrationsCsv: async (eventId) => {
+    const token = getToken();
+    const res = await fetch(`${API_BASE}/api/admin/registrations/events/${eventId}/export`, {
+      headers: token ? { Authorization: "Bearer " + token } : {},
+    });
+    if (!res.ok) throw new ApiError("Export failed", res.status);
+    return res.blob();
+  },
+
+  // jobs
+  listJobs: () => request("/api/admin/jobs?size=200").then((p) => p.content),
+  getJob: (id) => request(`/api/admin/jobs/${id}`),
+  createJob: (payload) => request("/api/admin/jobs", { method: "POST", body: payload }),
+  updateJob: (id, payload) => request(`/api/admin/jobs/${id}`, { method: "PUT", body: payload }),
+  deleteJob: (id) => request(`/api/admin/jobs/${id}`, { method: "DELETE" }),
+
+  // services (taxonomy)
+  listServices: () => request("/api/admin/services"),
+  getService: (id) => request(`/api/admin/services/${id}`),
+  serviceUsage: (id) => request(`/api/admin/services/${id}/usage`),
+  createService: (payload) => request("/api/admin/services", { method: "POST", body: payload }),
+  updateService: (id, payload) => request(`/api/admin/services/${id}`, { method: "PUT", body: payload }),
+  deleteService: (id, confirm) => request(`/api/admin/services/${id}${confirm ? "?confirm=true" : ""}`, { method: "DELETE" }),
+
+  // company (singleton)
+  getCompany: () => request("/api/admin/company"),
+  saveCompany: (payload) => request("/api/admin/company", { method: "PUT", body: payload }),
+
+  // home blocks
+  listHomeBlocks: () => request("/api/admin/home-blocks"),
+  getHomeBlock: (id) => request(`/api/admin/home-blocks/${id}`),
+  createHomeBlock: (payload) => request("/api/admin/home-blocks", { method: "POST", body: payload }),
+  updateHomeBlock: (id, payload) => request(`/api/admin/home-blocks/${id}`, { method: "PUT", body: payload }),
+  deleteHomeBlock: (id) => request(`/api/admin/home-blocks/${id}`, { method: "DELETE" }),
+
+  // referral groups
+  listReferralGroups: () => request("/api/admin/referral-groups"),
+  getReferralGroup: (id) => request(`/api/admin/referral-groups/${id}`),
+  referralGroupUsage: (id) => request(`/api/admin/referral-groups/${id}/usage`),
+  createReferralGroup: (payload) => request("/api/admin/referral-groups", { method: "POST", body: payload }),
+  updateReferralGroup: (id, payload) => request(`/api/admin/referral-groups/${id}`, { method: "PUT", body: payload }),
+  deleteReferralGroup: (id, confirm) => request(`/api/admin/referral-groups/${id}${confirm ? "?confirm=true" : ""}`, { method: "DELETE" }),
 
   // media
   listMedia: () => request("/api/admin/media"),
@@ -89,13 +139,10 @@ export const adminApi = {
     fd.append("file", file);
     return request("/api/admin/media", { method: "POST", form: fd });
   },
-  updateMedia: (id, altText) => request(`/api/admin/media/${id}`, { method: "PUT", body: { altText } }),
+  updateMediaAlt: (id, altText) => request(`/api/admin/media/${id}`, { method: "PUT", body: { altText } }),
   deleteMedia: (id) => request(`/api/admin/media/${id}`, { method: "DELETE" }),
-  syncMedia: () => request("/api/admin/media/sync", { method: "POST" }),
-
-  // settings
-  getSettings: () => request("/api/settings"),
-  saveSettings: (map) => request("/api/admin/settings", { method: "PUT", body: map }),
+  mediaSweepPreview: () => request("/api/admin/media/sweep-preview"),
+  mediaSweep: () => request("/api/admin/media/sweep?confirm=true", { method: "POST" }),
 
   // users
   listUsers: () => request("/api/admin/users"),
@@ -104,38 +151,4 @@ export const adminApi = {
   changeUserPassword: (id, newPassword) =>
     request(`/api/admin/users/${id}/password`, { method: "PUT", body: { newPassword } }),
   deleteUser: (id) => request(`/api/admin/users/${id}`, { method: "DELETE" }),
-
-  // events
-  listEvents: () => request("/api/admin/events"),
-  getEvent: (id) => request(`/api/admin/events/${id}`),
-  saveEvent: (payload) => request("/api/admin/events", { method: "POST", body: payload }),
-  publishEvent: (id) => request(`/api/admin/events/${id}/publish`, { method: "POST" }),
-  unpublishEvent: (id) => request(`/api/admin/events/${id}/unpublish`, { method: "POST" }),
-  deleteEvent: (id) => request(`/api/admin/events/${id}`, { method: "DELETE" }),
-
-  // jobs
-  listJobs: () => request("/api/admin/jobs"),
-  getJob: (id) => request(`/api/admin/jobs/${id}`),
-  saveJob: (payload) => request("/api/admin/jobs", { method: "POST", body: payload }),
-  publishJob: (id) => request(`/api/admin/jobs/${id}/publish`, { method: "POST" }),
-  unpublishJob: (id) => request(`/api/admin/jobs/${id}/unpublish`, { method: "POST" }),
-  deleteJob: (id) => request(`/api/admin/jobs/${id}`, { method: "DELETE" }),
-
-  // pages
-  listPages: () => request("/api/admin/pages"),
-  getPage: (id) => request(`/api/admin/pages/${id}`),
-  savePage: (payload) => request("/api/admin/pages", { method: "POST", body: payload }),
-  publishPage: (id) => request(`/api/admin/pages/${id}/publish`, { method: "POST" }),
-  unpublishPage: (id) => request(`/api/admin/pages/${id}/unpublish`, { method: "POST" }),
-  deletePage: (id) => request(`/api/admin/pages/${id}`, { method: "DELETE" }),
-
-  // categories (admin)
-  listCategoriesAdmin: () => request("/api/admin/categories"),
-  saveCategory: (payload) => request("/api/admin/categories", { method: "POST", body: payload }),
-  deleteCategory: (id) => request(`/api/admin/categories/${id}`, { method: "DELETE" }),
-
-  // homepage banners
-  listBanners: () => request("/api/admin/banners"),
-  saveBanner: (payload) => request("/api/admin/banners", { method: "POST", body: payload }),
-  deleteBanner: (id) => request(`/api/admin/banners/${id}`, { method: "DELETE" }),
 };

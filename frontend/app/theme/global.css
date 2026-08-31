@@ -1,21 +1,21 @@
-/* LucaBridge theme — direction 1A "Warm Clay" (FINAL).
-   Keep in sync with theme/tokens.js. This file is what components paint with. */
+/* LucaBridge theme — direction 2 "Deep Wine" (design pass 1). See theme/tokens.js
+   for provenance notes. Keep in sync with that file — it's the JS-side source of truth. */
 :root {
   /* Core five */
   --color-paper: #f7f3ec;        /* Linen — page background */
-  --color-ink: #211c15;          /* Ink — text & footer */
-  --color-accent: #b85c3c;       /* Warm Clay — primary action & links */
+  --color-ink: #1c1712;          /* Ink — text & footer */
+  --color-accent: #8a2b2b;       /* Deep Wine — primary action & links */
   --color-gold: #b08534;         /* Ochre gold — 1px rules / small accents only */
   --color-sand: #ddd0bd;         /* Sand — quiet section fills */
 
   /* Supporting tints */
   --color-card: #fffdf8;         /* card surface */
-  --color-photo-idle: #ece1d0;   /* photo / chip idle */
-  --color-accent-hover: #c86f50; /* clay hover */
-  --color-accent-pressed: #9a4a2d; /* clay pressed */
+  --color-photo-idle: #e8c9be;   /* photo / chip idle — dusty blush */
+  --color-accent-hover: #a13a3a; /* wine hover */
+  --color-accent-pressed: #6e2020; /* wine pressed */
   --color-ink-soft: #423c31;     /* body muted */
   --color-muted: #6f6657;        /* captions */
-  --color-line: rgba(33, 28, 21, 0.12);
+  --color-line: rgba(28, 23, 18, 0.12);
   --color-paper-2: #fffdf8;      /* legacy alias -> card surface (used by post.jsx; retire during component pass) */
 
   --font-display: "Noto Serif TC", serif;
@@ -260,6 +260,10 @@ img {
 .masthead-utility__contact { display: inline-flex; gap: 16px; flex-wrap: wrap; }
 .masthead-utility__right { display: inline-flex; align-items: center; gap: 16px; }
 .masthead-brand { display: flex; align-items: center; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
+.masthead-brand__mark {
+  width: 18px; height: 18px; background: var(--color-accent); transform: rotate(45deg); display: inline-block;
+}
+.masthead-brand__name { font-family: var(--font-display); font-weight: 600; font-size: 22px; color: var(--color-ink); }
 @media (max-width: 639px) {
   .masthead-utility__contact { display: none; }
 }
@@ -281,13 +285,15 @@ img {
   padding: 0;
   display: flex;
   align-items: center;
-  gap: 4px;
+  /* Explicit sizing rule (design pass 1): item gap 16px. */
+  gap: 16px;
 }
 .site-nav__item { position: relative; }
 .site-nav__link {
   display: inline-block;
-  padding: 14px 12px;
-  font-size: 15px;
+  padding: 14px 2px;
+  /* Explicit sizing rule (design pass 1): nav link text 13px. */
+  font-size: 13px;
   font-weight: 600;
   color: var(--color-ink);
 }
@@ -319,6 +325,9 @@ img {
 }
 .site-nav__sublink:hover { background: var(--color-photo-idle); text-decoration: none; }
 .site-nav__actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+/* Explicit sizing rule (design pass 1): nav CTA horizontal padding 20px (distinct from the
+   generic .btn 18px used elsewhere on the page). */
+.site-nav__cta { padding: 0 20px; }
 .site-nav__toggle {
   display: none;
   align-items: center;
@@ -561,3 +570,91 @@ img {
   .home-news { padding: 52px 0 64px; }
   .home-news__heading { align-items: flex-start; flex-direction: column; }
 }
+
+/* ── Static content pages (about / donate / volunteer / contact) ── */
+.static-page__hero { padding: 40px 0 8px; }
+.static-page__hero .kicker { display: block; margin-bottom: 8px; }
+.pending-notice {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border: 1px dashed var(--color-gold);
+  border-radius: var(--radius-card);
+  background: var(--color-sand);
+  color: var(--color-ink-soft);
+  font-size: 14px;
+}
+
+/* ── Services page / chip row ── */
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin: 24px 0 48px; }
+.service-card { padding: 24px; border: 1px solid var(--color-line); border-radius: var(--radius-card); background: var(--color-card); }
+.service-card__icon { width: 44px; height: 44px; border-radius: 50%; background: var(--color-photo-idle); margin-bottom: 12px; object-fit: cover; }
+.service-card h3 { margin: 0 0 6px; font-size: 19px; }
+.service-card p { margin: 0; color: var(--color-muted); font-size: 14px; }
+
+/* ── Contact page ── */
+.contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px 40px; margin: 24px 0; }
+.contact-grid dt { font-family: var(--font-kicker); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-accent); margin: 0 0 4px; }
+.contact-grid dd { margin: 0 0 20px; font-size: 15px; }
+
+/* ── Event registration ── */
+.reg-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 600; }
+.reg-badge--open { background: var(--color-photo-idle); color: var(--color-accent-pressed); }
+.reg-badge--almost { background: #f3d9a0; color: #6e4b0a; }
+.reg-badge--full { background: var(--color-sand); color: var(--color-ink-soft); }
+.reg-badge--closed,
+.reg-badge--not-open,
+.reg-badge--not-registerable { background: var(--color-line); color: var(--color-muted); }
+.reg-progress { height: 6px; border-radius: 3px; background: var(--color-photo-idle); overflow: hidden; margin: 8px 0; }
+.reg-progress > span { display: block; height: 100%; background: var(--color-accent); }
+.reg-form { max-width: 560px; margin-top: 24px; }
+.reg-form .admin-field { margin-bottom: 16px; }
+.reg-form .admin-field label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: var(--color-ink); }
+.reg-form input[type="text"],
+.reg-form input[type="email"],
+.reg-form input[type="tel"],
+.reg-form input[type="number"],
+.reg-form select,
+.reg-form textarea {
+  width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--color-line); border-radius: var(--radius-chip);
+  font-family: var(--font-body); font-size: 15px; background: var(--color-card); color: var(--color-ink);
+}
+.reg-form label.checkbox { display: flex; align-items: flex-start; gap: 8px; font-weight: 400; font-size: 14px; }
+.reg-form label.checkbox input { width: auto; margin-top: 3px; }
+.reg-success { padding: 24px; border-radius: var(--radius-card); background: var(--color-photo-idle); }
+.reg-success .code { font-family: var(--font-kicker); font-size: 22px; font-weight: 700; color: var(--color-accent-pressed); }
+
+/* ── Home: upcoming-events timeline, promo strip, quick links ── */
+.home-events { padding-bottom: 56px; }
+.home-events__list { display: grid; gap: 12px; }
+.home-events__row {
+  display: grid; grid-template-columns: 90px 1fr auto; align-items: center; gap: 20px;
+  padding: 18px 20px; border: 1px solid var(--color-line); border-radius: 14px; background: var(--color-card);
+}
+.home-events__date { font-family: var(--font-kicker); font-size: 13px; color: var(--color-accent); text-align: center; line-height: 1.3; }
+.home-events__date b { display: block; font-size: 22px; color: var(--color-ink); }
+.home-events__title { margin: 0 0 4px; font-size: 17px; }
+.home-events__meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+@media (max-width: 639px) {
+  .home-events__row { grid-template-columns: 1fr; text-align: left; }
+  .home-events__date { text-align: left; display: flex; gap: 8px; align-items: baseline; }
+}
+
+.home-promo { padding: 56px 0; }
+.home-promo__grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; }
+.home-promo__card {
+  padding: 40px; border-radius: 20px; background: var(--color-accent); color: #fff8ee;
+}
+.home-promo__card h2 { color: #fff8ee; margin-top: 0; }
+.home-promo__card p { color: rgba(255,248,238,.9); }
+.home-promo__card--light { background: var(--color-photo-idle); color: var(--color-ink); }
+.home-promo__card--light h2 { color: var(--color-ink); }
+.home-promo__card--light p { color: var(--color-ink-soft); }
+@media (max-width: 900px) { .home-promo__grid { grid-template-columns: 1fr; } }
+
+.home-quicklinks { padding-bottom: 56px; }
+.home-quicklinks__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.home-quicklinks__card {
+  padding: 20px; border-radius: 14px; border: 1px solid var(--color-line); background: var(--color-card); color: var(--color-ink);
+}
+.home-quicklinks__card:hover { text-decoration: none; border-color: var(--color-accent); }
+.home-quicklinks__card h3 { margin: 0 0 4px; font-size: 16px; }

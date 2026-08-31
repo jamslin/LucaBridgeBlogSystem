@@ -1,5 +1,5 @@
-// Inline-SVG social icons (Instagram / Facebook / YouTube). URLs come from
-// site settings; a link is only rendered when its URL is present. `size` and
+// Inline-SVG social icons (Instagram / Facebook / YouTube). URLs come from the
+// company record; a link is only rendered when its URL is present. `size` and
 // `color` let the masthead (dark on light) and footer (light on dark) reuse it.
 const ICONS = {
   instagram: (
@@ -25,11 +25,11 @@ function Icon({ kind, href, label, size, color }) {
   );
 }
 
-export default function SocialLinks({ settings = {}, size = 18, color = "var(--color-ink)" }) {
+export default function SocialLinks({ company = {}, size = 18, color = "var(--color-ink)" }) {
   const items = [
-    { kind: "instagram", href: settings.instagram_url, label: "Instagram" },
-    { kind: "facebook",  href: settings.facebook_url,  label: "Facebook" },
-    { kind: "youtube",   href: settings.youtube_url,   label: "YouTube" },
+    { kind: "instagram", href: company.instagramUrl, label: "Instagram" },
+    { kind: "facebook",  href: company.facebookUrl,  label: "Facebook" },
+    { kind: "youtube",   href: company.youtubeUrl,   label: "YouTube" },
   ].filter((i) => i.href);
 
   if (items.length === 0) return null;

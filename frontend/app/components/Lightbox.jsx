@@ -42,7 +42,7 @@ export default function Lightbox({ media, index, onClose, onNavigate }) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(33,28,21,0.92)",
+        background: "rgba(28,23,18,0.92)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -51,15 +51,10 @@ export default function Lightbox({ media, index, onClose, onNavigate }) {
     >
       <img
         src={item.url}
-        alt={item.caption || ""}
+        alt=""
         onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: "90vw", maxHeight: "85vh", borderRadius: 0 }}
       />
-      {item.caption && (
-        <p style={{ position: "absolute", bottom: "24px", color: "var(--color-paper)", fontSize: "13px" }}>
-          {item.caption}
-        </p>
-      )}
     </div>
   );
 }

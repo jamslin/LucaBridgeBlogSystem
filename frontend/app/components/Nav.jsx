@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router";
 
 import { t } from "../i18n";
-import { NAV } from "../nav";
+import { NAV, recruitLabelKey } from "../nav";
 import LanguageSwitch from "./LanguageSwitch";
 
 // Primary navigation. Desktop (>=1024px): horizontal bar; items with children
@@ -37,7 +37,7 @@ export default function Nav() {
           {NAV.map((item) => (
             <li key={item.key} className={`site-nav__item${item.children ? " has-children" : ""}`}>
               <Link to={L(item.to)} className="site-nav__link" onClick={item.children ? undefined : closeAll}>
-                {t(lang, `nav.${item.key}`)}
+                {t(lang, item.key === "recruit" ? recruitLabelKey() : `nav.${item.key}`)}
               </Link>
 
               {item.children && (
@@ -66,12 +66,12 @@ export default function Nav() {
           ))}
 
           <li className="site-nav__item">
-            <Link to={L("/p/contact")} className="site-nav__link" onClick={closeAll}>{t(lang, "nav.contact")}</Link>
+            <Link to={L("/contact")} className="site-nav__link" onClick={closeAll}>{t(lang, "nav.contact")}</Link>
           </li>
         </ul>
 
         <div className="site-nav__actions">
-          <Link to={L("/p/donate")} className="btn btn-primary">{t(lang, "nav.donateCta")}</Link>
+          <Link to={L("/donate")} className="btn btn-primary site-nav__cta">{t(lang, "nav.donateCta")}</Link>
           <LanguageSwitch />
         </div>
       </div>

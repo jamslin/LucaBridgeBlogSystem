@@ -8,14 +8,14 @@ export const meta = () => [{ title: "LucaBridge CMS" }];
 
 const NAV = [
   { to: "/admin", label: "Dashboard", end: true },
-  { to: "/admin/posts", label: "Posts" },
+  { to: "/admin/blog", label: "Blog" },
   { to: "/admin/events", label: "Events" },
   { to: "/admin/jobs", label: "Jobs" },
-  { to: "/admin/pages", label: "Pages" },
-  { to: "/admin/categories", label: "Categories" },
-  { to: "/admin/banners", label: "Homepage banners" },
+  { to: "/admin/services", label: "Services" },
+  { to: "/admin/home-blocks", label: "Home page" },
+  { to: "/admin/referral-groups", label: "Referral groups" },
   { to: "/admin/media", label: "Media" },
-  { to: "/admin/settings", label: "Settings" },
+  { to: "/admin/company", label: "Company", adminOnly: true },
   { to: "/admin/users", label: "Users", adminOnly: true },
 ];
 

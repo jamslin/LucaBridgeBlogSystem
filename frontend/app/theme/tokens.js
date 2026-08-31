@@ -1,25 +1,27 @@
-// Design tokens for LucaBridge — direction 1A "Warm Clay" (FINAL).
-// Source of truth: "LucaBridge UI/UX Design Specification v1.0" + Notion "02 · Design System".
-// Accent decision RESOLVED: warm clay #B85C3C. (1A Warm Clay and 1C Two Pillars dropped.)
+// Design tokens for LucaBridge — direction 2 "Deep Wine" (design pass 1, superseding
+// the earlier "Warm Clay" v1.0 direction below).
+// Source: design-pass-1 mockups (shell, mega-menu, blog detail, gallery). The exact
+// hex values here are read off a compressed thumbnail export, not a Figma/token
+// source of truth — treat as a close approximation pending the real design file.
 // Keep global.css in sync — this file is the source of truth for JS-side logic.
 
 export const colors = {
   // Core five
   paper: "#f7f3ec",       // Linen 亞麻 — page background
-  ink: "#211c15",         // Ink 墨黑 — text & footer
-  accent: "#b85c3c",      // Warm Clay 陶土 — primary action & links
+  ink: "#1c1712",         // Ink 墨黑 — text & footer (near-black, darker than v1.0)
+  accent: "#8a2b2b",      // Deep Wine 酒紅 — primary action & links (was Warm Clay #b85c3c)
   gold: "#b08534",        // Ochre gold 金 — 1px rules & small accents only (never text)
   sand: "#ddd0bd",        // Sand 沙 — quiet section fills
 
   // Supporting tints
   cardSurface: "#fffdf8", // card surface
-  photoIdle: "#ece1d0",   // photo / chip idle fill
-  accentHover: "#c86f50", // clay hover
-  accentPressed: "#9a4a2d", // clay pressed
+  photoIdle: "#e8c9be",   // photo / chip idle fill — dusty blush, matching the mockup's placeholder blocks
+  accentHover: "#a13a3a", // wine hover
+  accentPressed: "#6e2020", // wine pressed
   inkSoft: "#423c31",     // body muted
   captions: "#6f6657",    // captions
   muted: "#423c31",       // alias kept for existing components
-  line: "rgba(33,28,21,.12)",
+  line: "rgba(28,23,18,.12)",
 };
 
 export const typography = {

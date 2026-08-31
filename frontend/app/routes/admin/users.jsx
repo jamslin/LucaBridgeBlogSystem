@@ -10,7 +10,7 @@ export default function Users() {
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({ username: "", password: "", displayName: "", roles: ["EDITOR"] });
+  const [form, setForm] = useState({ username: "", password: "", displayName: "", email: "", roles: ["EDITOR"] });
 
   async function load() {
     try { setUsers(await adminApi.listUsers()); }
@@ -34,24 +34,27 @@ export default function Users() {
         username: form.username.trim(),
         password: form.password,
         displayName: form.displayName.trim() || null,
+        email: form.email.trim() || null,
         roles: form.roles,
+        active: true,
       });
       setOk(`Created ${form.username}.`);
-      setForm({ username: "", password: "", displayName: "", roles: ["EDITOR"] });
+      setForm({ username: "", password: "", displayName: "", email: "", roles: ["EDITOR"] });
       load();
     } catch (err) { setError(err.message); }
     finally { setBusy(false); }
   }
 
-  async function toggleEnabled(u) {
+  async function toggleActive(u) {
     setError(""); setOk("");
-    try { await adminApi.updateUser(u.id, { enabled: !u.enabled }); load(); }
+    try { await adminApi.updateUser(u.id, { displayName: u.displayName, email: u.email, roles: [...u.roles], active: !u.active }); load(); }
     catch (e) { setError(e.message); }
   }
   async function toggleRole(u, r) {
     setError(""); setOk("");
     const roles = u.roles.includes(r) ? u.roles.filter((x) => x !== r) : [...u.roles, r];
-    try { await adminApi.updateUser(u.id, { roles }); load(); }
+    if (roles.length === 0) { setError("A user must have at least one role"); return; }
+    try { await adminApi.updateUser(u.id, { displayName: u.displayName, email: u.email, roles, active: u.active }); load(); }
     catch (e) { setError(e.message); }
   }
   async function resetPw(u) {
@@ -65,7 +68,7 @@ export default function Users() {
     if (!window.confirm(`Delete ${u.username}? This cannot be undone.`)) return;
     setError(""); setOk("");
     try { await adminApi.deleteUser(u.id); load(); }
-    catch (e) { setError(e.message); }
+    catch (e) { setError(e.message); } // backend refuses to delete the last enabled admin
   }
 
   return (
@@ -82,6 +85,7 @@ export default function Users() {
               <div className="admin-field"><label>Username</label><input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} autoComplete="off" /></div>
               <div className="admin-field"><label>Password</label><input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} autoComplete="new-password" /><div className="hint">Min 8 characters</div></div>
               <div className="admin-field"><label>Display name</label><input value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} /></div>
+              <div className="admin-field"><label>Email</label><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
             </div>
             <div className="admin-field">
               <label>Roles</label>
@@ -122,10 +126,10 @@ export default function Users() {
                         </button>
                       ))}
                     </td>
-                    <td><span className={`admin-badge ${u.enabled ? "published" : "draft"}`}>{u.enabled ? "Active" : "Disabled"}</span></td>
+                    <td><span className={`admin-badge ${u.active ? "published" : "draft"}`}>{u.active ? "Active" : "Disabled"}</span></td>
                     <td>
                       <div className="row-actions">
-                        <button className="admin-btn admin-btn-sm" onClick={() => toggleEnabled(u)}>{u.enabled ? "Disable" : "Enable"}</button>
+                        <button className="admin-btn admin-btn-sm" onClick={() => toggleActive(u)}>{u.active ? "Disable" : "Enable"}</button>
                         <button className="admin-btn admin-btn-sm" onClick={() => resetPw(u)}>Reset PW</button>
                         <button className="admin-btn admin-btn-sm danger" disabled={u.username === user.username} onClick={() => del(u)}>Delete</button>
                       </div>

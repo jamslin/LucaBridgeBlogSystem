@@ -7,21 +7,21 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 
 // Lang validation lives in the loader (server-side redirect, no hooks-order
-// pitfalls). Also loads site settings once for the whole shell so the masthead
-// and footer can show contact + social links. Settings failure is non-fatal —
-// the chrome still renders without them.
+// pitfalls). Also loads the company record once for the whole shell so the
+// masthead and footer can show contact + social links. Failure is non-fatal —
+// the chrome still renders without it.
 export async function loader({ params }) {
   if (!SUPPORTED_LANGS.includes(params.lang)) {
     return redirect(`/${DEFAULT_LANG}`, 302);
   }
-  let settings = {};
+  let company = {};
   try {
-    settings = await api.getSettings();
+    company = await api.getCompany(params.lang);
   } catch {
-    settings = {};
+    company = {};
   }
   const currentYear = new Date(Date.now() + 8 * 60 * 60 * 1000).getUTCFullYear();
-  return { settings, currentYear };
+  return { company, currentYear };
 }
 
 export default function LangLayout() {

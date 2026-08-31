@@ -22,20 +22,40 @@ async function get(path, params = {}) {
   return res.json();
 }
 
-export const api = {
-  getCategories: (lang) => get("/api/categories", { lang }),
-  getPosts: ({ lang, category, page = 0, size = 10 } = {}) =>
-    get("/api/posts", { lang, category, page, size }),
-  getPost: (slug, lang) => get(`/api/posts/${encodeURIComponent(slug)}`, { lang }),
+async function post(path, body) {
+  const res = await fetch(API_URL + path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    const message = (data && data.message) || res.statusText || "Request failed";
+    const err = new Error(message);
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
 
-  getPages: (lang) => get("/api/pages", { lang }),
-  getPage: (slug, lang) => get(`/api/pages/${encodeURIComponent(slug)}`, { lang }),
-  getEvents: (lang) => get("/api/events", { lang }),
+export const api = {
+  // The composite home-page call — see backend HomeController for why this exists
+  // alongside the five endpoints below rather than replacing them.
+  getHomePage: (lang) => get("/api/home", { lang }),
+
+  getBlogList: ({ lang, page = 0, size = 10 } = {}) => get("/api/blog", { lang, page, size }),
+  getBlogPost: (slug, lang) => get(`/api/blog/${encodeURIComponent(slug)}`, { lang }),
+
+  getEvents: ({ lang, page = 0, size = 20 } = {}) => get("/api/events", { lang, page, size }),
   getEvent: (slug, lang) => get(`/api/events/${encodeURIComponent(slug)}`, { lang }),
-  getJobs: (lang) => get("/api/jobs", { lang }),
+  registerForEvent: (eventId, payload) => post(`/api/events/${eventId}/registrations`, payload),
+
+  getJobs: ({ lang, page = 0, size = 20 } = {}) => get("/api/jobs", { lang, page, size }),
   getJob: (slug, lang) => get(`/api/jobs/${encodeURIComponent(slug)}`, { lang }),
-  getSettings: () => get("/api/settings"),
-  getBanners: (lang) => get("/api/banners", { lang }),
+
+  getServices: (lang) => get("/api/services", { lang }),
+  getCompany: (lang) => get("/api/company", { lang }),
+  getReferralGroups: (lang) => get("/api/referral-groups", { lang }),
 };
 
 /** Public origin for absolute og:/canonical URLs (behind nginx, request.url is internal). */

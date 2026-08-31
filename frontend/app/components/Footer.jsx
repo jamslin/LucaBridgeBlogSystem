@@ -7,7 +7,7 @@ import SocialLinks from "./SocialLinks";
 export default function Footer() {
   const { lang } = useParams();
   const layoutData = useRouteLoaderData("routes/lang-layout");
-  const settings = layoutData?.settings ?? {};
+  const company = layoutData?.company ?? {};
   const L = (p) => `/${lang}${p}`;
 
   return (
@@ -26,23 +26,26 @@ export default function Footer() {
           </div>
         ))}
         <div className="footer-col">
-          <Link to={L("/p/contact")} className="footer-col__head">{t(lang, "nav.contact")}</Link>
+          <Link to={L("/contact")} className="footer-col__head">{t(lang, "nav.contact")}</Link>
           <ul>
-            {settings.address && <li>{settings.address}</li>}
-            {settings.phone && <li><a href={`tel:${settings.phone}`}>{settings.phone}</a></li>}
-            {settings.email && <li><a href={`mailto:${settings.email}`}>{settings.email}</a></li>}
+            {company.address && <li>{company.address}</li>}
+            {company.phone && <li><a href={`tel:${company.phone}`}>{company.phone}</a></li>}
+            {company.email && <li><a href={`mailto:${company.email}`}>{company.email}</a></li>}
           </ul>
           <div style={{ marginTop: "12px" }}>
-            <SocialLinks settings={settings} size={20} color="var(--color-paper)" />
+            <SocialLinks company={company} size={20} color="var(--color-paper)" />
           </div>
         </div>
       </div>
 
       <div className="shell footer-legal">
-        <span>&copy; {layoutData?.currentYear} 樂橋 LucaBridge</span>
+        <span>
+          &copy; {layoutData?.currentYear} {company.name || "樂橋 LucaBridge"}
+          {company.charityRegNo ? ` · ${company.charityRegNo}` : ""}
+        </span>
         <nav style={{ display: "flex", gap: "16px", fontSize: "14px" }}>
-          <Link to={L("/p/privacy")}>{t(lang, "footer.privacy")}</Link>
-          <Link to={L("/p/terms")}>{t(lang, "footer.terms")}</Link>
+          <Link to={L("/privacy")}>{t(lang, "footer.privacy")}</Link>
+          <Link to={L("/terms")}>{t(lang, "footer.terms")}</Link>
         </nav>
       </div>
     </footer>

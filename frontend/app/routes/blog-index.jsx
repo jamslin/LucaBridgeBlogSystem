@@ -1,4 +1,4 @@
-import { Link, useLoaderData, useParams, useSearchParams } from "react-router";
+import { Link, useLoaderData, useParams } from "react-router";
 
 import { api } from "../lib/api.server";
 import { t } from "../i18n";
@@ -6,14 +6,9 @@ import PostCard from "../components/PostCard";
 
 export async function loader({ params, request }) {
   const url = new URL(request.url);
-  const category = url.searchParams.get("category") || undefined;
   const page = Math.max(Number(url.searchParams.get("page")) || 0, 0);
-
-  const [categories, posts] = await Promise.all([
-    api.getCategories(params.lang),
-    api.getPosts({ lang: params.lang, category, page, size: 10 }),
-  ]);
-  return { categories, posts, category: category ?? "", page };
+  const posts = await api.getBlogList({ lang: params.lang, page, size: 10 });
+  return { posts, page };
 }
 
 export function meta({ params }) {
@@ -21,46 +16,15 @@ export function meta({ params }) {
   return [{ title }, { property: "og:title", content: title }];
 }
 
-// Category filter + pagination are plain links (SSR renders each state as real
-// HTML — crawlable, and works before/without JavaScript).
 export default function BlogIndex() {
   const { lang } = useParams();
-  const { categories, posts, category, page } = useLoaderData();
-  const [searchParams] = useSearchParams();
-
-  const categoryHref = (key) => {
-    const next = new URLSearchParams(searchParams);
-    if (key) next.set("category", key);
-    else next.delete("category");
-    next.delete("page");
-    const qs = next.toString();
-    return `/${lang}/blog${qs ? `?${qs}` : ""}`;
-  };
-
-  const pageHref = (i) => {
-    const next = new URLSearchParams(searchParams);
-    next.set("page", String(i));
-    return `/${lang}/blog?${next.toString()}`;
-  };
+  const { posts, page } = useLoaderData();
 
   return (
     <div className="shell" style={{ padding: "32px 20px" }}>
-      <nav style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "24px" }}>
-        <Link to={categoryHref("")} className={`filter-tag ${category ? "" : "filter-tag--active"}`}>
-          {t(lang, "blog.allCategories")}
-        </Link>
-        {categories.map((c) => (
-          <Link
-            key={c.key}
-            to={categoryHref(c.key)}
-            className={`filter-tag ${category === c.key ? "filter-tag--active" : ""}`}
-          >
-            {c.name}
-          </Link>
-        ))}
-      </nav>
+      <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)", marginBottom: "24px" }}>{t(lang, "nav.blog")}</h1>
 
-      {posts.items.length === 0 && <p>{t(lang, "blog.empty")}</p>}
+      {posts.content.length === 0 && <p>{t(lang, "blog.empty")}</p>}
 
       <div
         style={{
@@ -69,7 +33,7 @@ export default function BlogIndex() {
           gap: "32px",
         }}
       >
-        {posts.items.map((post) => (
+        {posts.content.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
@@ -77,7 +41,7 @@ export default function BlogIndex() {
       {posts.totalPages > 1 && (
         <nav style={{ display: "flex", gap: "8px", justifyContent: "center", marginTop: "32px" }}>
           {Array.from({ length: posts.totalPages }).map((_, i) => (
-            <Link key={i} to={pageHref(i)} style={{ fontWeight: i === page ? 700 : 400 }}>
+            <Link key={i} to={`/${lang}/blog?page=${i}`} style={{ fontWeight: i === page ? 700 : 400 }}>
               {i + 1}
             </Link>
           ))}

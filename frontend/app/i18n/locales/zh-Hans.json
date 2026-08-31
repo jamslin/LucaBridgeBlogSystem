@@ -2,60 +2,110 @@
   "nav": {
     "home": "首页",
     "about": "关于我们",
-    "aboutBackground": "背景与发展",
-    "aboutGoals": "目标与宗旨",
-    "aboutStructure": "组织架构",
-    "aboutCommittee": "委员名单",
-    "services": "服务范围",
-    "news": "最新消息",
-    "newsRecent": "近期消息",
-    "newsInfo": "最新资讯",
+    "services": "服务",
+    "news": "消息",
+    "newsRecent": "最新消息",
+    "newsEvents": "活动",
     "donate": "捐款",
-    "donateMethods": "捐款方法",
-    "donateMaterials": "物资捐赠",
     "recruit": "招募",
-    "recruitVolunteer": "义工",
+    "recruitShort": "加入我们",
+    "recruitVolunteer": "义工招募",
     "recruitJobs": "职位空缺",
     "contact": "联络我们",
     "donateCta": "立即捐款",
     "menu": "菜单",
-    "blog": "文章",
+    "blog": "消息",
     "events": "活动"
   },
   "home": {
-    "latest": "最新文章",
-    "readMore": "阅读更多"
+    "latest": "最新消息",
+    "readMore": "阅读更多",
+    "upcomingEvents": "未来活动",
+    "viewAllEvents": "查看全部活动",
+    "ourServices": "我们的工作"
   },
   "blog": {
-    "allCategories": "所有分类",
-    "empty": "暂无文章"
+    "empty": "暂时未有文章"
   },
   "events": {
-    "empty": "暂无活动"
+    "empty": "暂时未有活动",
+    "registerCta": "立即报名",
+    "notOpenYet": "报名尚未开始",
+    "closed": "报名已截止",
+    "full": "名额已满 — 加入候补名单",
+    "almostFull": "即将额满",
+    "spotsLeft": "个名额",
+    "unlimited": "报名进行中",
+    "notRegisterable": "请联络我们参与此活动",
+    "registrationTitle": "活动报名",
+    "fullName": "姓名",
+    "gender": "性别",
+    "genderM": "男",
+    "genderF": "女",
+    "genderSkip": "不愿透露",
+    "birthYear": "出生年份",
+    "email": "电邮",
+    "phone": "电话",
+    "postalAddress": "通讯地址（可选）",
+    "referral": "您从何得知本活动？",
+    "referralOther": "其他（请注明）",
+    "referralSelect": "请选择",
+    "friendsOptIn": "我希望携同朋友参加 / 接收未来活动信息",
+    "termsAgree": "本人已阅读并同意《条款及细则》及《隐私政策》",
+    "submit": "提交报名",
+    "submitting": "提交中…",
+    "successTitle": "已收到您的报名",
+    "successConfirmed": "报名成功，您的参考编号为",
+    "successWaitlist": "您已加入候补名单，参考编号为",
+    "backToEvents": "返回活动列表"
   },
   "careers": {
-    "empty": "暂无职位空缺",
+    "empty": "暂时未有职位空缺。",
     "closes": "截止日期：",
-    "openUntilFilled": "招满即止",
-    "backToList": "返回职位列表"
+    "openUntilFilled": "额满即止",
+    "backToList": "返回职位列表",
+    "apply": "申请"
   },
-  "page": {
-    "fallbackNotice": "此页面尚未提供此语言版本，显示繁体中文内容。"
+  "services": {
+    "title": "服务",
+    "empty": "暂时未有已发布的服务。"
+  },
+  "about": {
+    "title": "关于我们",
+    "missionTitle": "使命与目标",
+    "missionPending": "完整的使命与目标内容有待机构提供，此处为本次建置的暂代内容。",
+    "structureTitle": "组织架构",
+    "structurePending": "组织架构内容有待机构提供，此处为本次建置的暂代内容。"
+  },
+  "donate": {
+    "title": "捐款",
+    "pending": "捐款方式及银行资料有待机构提供，资料齐备后将补充此部分。"
+  },
+  "volunteer": {
+    "title": "义工招募",
+    "pending": "义工招募详情有待机构提供，资料齐备后将补充此部分。"
+  },
+  "contact": {
+    "title": "联络我们",
+    "address": "地址",
+    "phone": "电话",
+    "email": "电邮",
+    "officeHours": "办公时间",
+    "charityRegNo": "慈善机构注册编号"
   },
   "footer": {
     "privacy": "隐私政策",
-    "terms": "使用条款"
+    "terms": "条款及细则"
   },
   "post": {
-    "pressLinks": "媒体报导",
     "prev": "上一篇",
     "next": "下一篇",
-    "notFound": "找不到这篇文章",
-    "fallbackNotice": "此文章尚未提供此语言版本，显示繁体中文内容。"
+    "notFound": "找不到此文章"
   },
   "common": {
-    "loading": "加载中…",
-    "error": "发生错误，请稍后再试。",
-    "backHome": "返回首页"
+    "loading": "载入中…",
+    "error": "发生错误，请重试。",
+    "backHome": "返回首页",
+    "contentPending": "内容准备中"
   }
 }
