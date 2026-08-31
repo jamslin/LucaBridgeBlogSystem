@@ -6,6 +6,7 @@ import com.lucabridge.core.event.dto.EventRegistrationRequest;
 import com.lucabridge.core.event.dto.EventRegistrationResponse;
 import com.lucabridge.core.event.dto.EventSummaryDto;
 import com.lucabridge.core.i18n.Lang;
+import com.lucabridge.core.security.ClientIp;
 import com.lucabridge.core.security.RegistrationRateLimiter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -75,18 +76,9 @@ public class EventController {
             @PathVariable Long id,
             @Valid @RequestBody EventRegistrationRequest request,
             HttpServletRequest httpRequest) {
-        if (!rateLimiter.tryAcquire(clientIp(httpRequest))) {
+        if (!rateLimiter.tryAcquire(ClientIp.resolve(httpRequest))) {
             throw new TooManyRequestsException("Too many registration attempts — please try again later");
         }
         return registrationService.submit(id, request);
-    }
-
-    /** Prefers X-Forwarded-For (set by the AKS nginx ingress) over the connection's own address. */
-    private String clientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
     }
 }

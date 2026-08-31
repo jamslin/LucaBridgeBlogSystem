@@ -84,7 +84,11 @@ public class SecurityConfig {
                         // cost an afternoon of debugging once already.
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        .requestMatchers("/api/auth/**").permitAll()
+                        // Only login is public. /api/auth/me is deliberately NOT listed here —
+                        // it falls through to anyRequest().authenticated() below, so a missing
+                        // or invalid token 401s automatically instead of AuthController having
+                        // to check for one itself.
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
                         // Public read API, GET only. Every write goes through /api/admin/**.
                         .requestMatchers(HttpMethod.GET,
