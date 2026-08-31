@@ -23,4 +23,7 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
     /** Projection for building the catalogued-keys set — avoids loading every full Media row. */
     @Query("SELECT m.s3Key FROM Media m")
     List<String> findAllS3Keys();
+
+    @Query("SELECT m FROM Media m LEFT JOIN FETCH m.text ORDER BY m.createdAt DESC")
+    List<Media> findAllWithText();
 }

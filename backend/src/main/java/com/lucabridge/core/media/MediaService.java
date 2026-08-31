@@ -50,6 +50,36 @@ public class MediaService {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
+    @Transactional(readOnly = true)
+    public List<Media> list() {
+        return mediaRepository.findAllWithText();
+    }
+
+    @Transactional(readOnly = true)
+    public long usageCount(Long id) {
+        return mediaRepository.countUsage(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Media get(Long id) {
+        return mediaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Media not found: " + id));
+    }
+
+    /** Single-language alt text for now — media_text carries tc/en/sc, but the admin UI only exposes 繁中 today. */
+    @Transactional
+    public Media updateAltText(Long id, String altText) {
+        Media media = get(id);
+        MediaText text = media.getText();
+        if (text == null) {
+            text = new MediaText();
+            text.setMedia(media);
+            media.setText(text);
+        }
+        text.setTcAlt(altText);
+        return media;
+    }
+
     @Transactional
     public Media upload(MultipartFile file, Long uploadedByUserId) {
         MediaStorage.StoredMedia stored = mediaStorage.store(file);
