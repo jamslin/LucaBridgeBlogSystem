@@ -166,5 +166,25 @@ class CoreFoundationTest {
             assertEquals(Visibility.State.DELETED,
                     Visibility.stateOf(PUB, null, null, PAST, NOW));
         }
+
+        @Test
+        @DisplayName("a job past closes_at is EXPIRED even with an open publish window, since JPQL_JOB has already dropped it")
+        void jobPastClosingDateIsExpiredEvenWhileLive() {
+            assertEquals(Visibility.State.EXPIRED,
+                    Visibility.stateOfJob(PUB, PAST, FUTURE, PAST, null, NOW));
+            assertEquals(Visibility.State.LIVE,
+                    Visibility.stateOfJob(PUB, PAST, FUTURE, FUTURE, null, NOW));
+            assertEquals(Visibility.State.LIVE,
+                    Visibility.stateOfJob(PUB, PAST, FUTURE, null, null, NOW));
+        }
+
+        @Test
+        @DisplayName("closesAt never turns a non-LIVE state into EXPIRED")
+        void closesAtOnlyDowngradesLive() {
+            assertEquals(Visibility.State.DRAFT,
+                    Visibility.stateOfJob(PublishStatus.DRAFT, null, null, PAST, null, NOW));
+            assertEquals(Visibility.State.SCHEDULED,
+                    Visibility.stateOfJob(PUB, FUTURE, null, PAST, null, NOW));
+        }
     }
 }

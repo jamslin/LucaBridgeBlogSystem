@@ -93,6 +93,25 @@ public final class Visibility {
         return State.LIVE;
     }
 
+    /**
+     * Job variant of {@link #stateOf}. A role past {@code closesAt} is EXPIRED even when its
+     * publish window is still open — {@link #JPQL_JOB} has already dropped it from the public
+     * query, so the CMS list must not still say LIVE. LIVE is the only state closesAt can
+     * downgrade: a DRAFT, SCHEDULED, ARCHIVED or DELETED role isn't visible either way.
+     */
+    public static State stateOfJob(PublishStatus status,
+                                   Instant publishAt,
+                                   Instant unpublishAt,
+                                   Instant closesAt,
+                                   Instant deletedAt,
+                                   Instant now) {
+        State state = stateOf(status, publishAt, unpublishAt, deletedAt, now);
+        if (state == State.LIVE && closesAt != null && !closesAt.isAfter(now)) {
+            return State.EXPIRED;
+        }
+        return state;
+    }
+
     /** What the CMS badge says. */
     public enum State {
         DRAFT, SCHEDULED, LIVE, EXPIRED, ARCHIVED, DELETED
