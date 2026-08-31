@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface EventRegistrationRepository extends JpaRepository<EventRegistration, Long> {
 
-    long countByEventIdAndStatus(Long eventId, RegistrationStatus status);
+    /** Callers pass RegistrationStatus.OCCUPIES_CAPACITY for a capacity-relevant count — see EventService/EventRegistrationService. */
+    long countByEventIdAndStatusIn(Long eventId, Collection<RegistrationStatus> statuses);
 
     boolean existsByEventIdAndEmailIgnoreCase(Long eventId, String email);
 
@@ -22,16 +24,18 @@ public interface EventRegistrationRepository extends JpaRepository<EventRegistra
 
     /**
      * One aggregate query for a whole page of events, not N+1 per row — see EventService for how
-     * this feeds the list endpoint. CONFIRMED only, matching RegistrationState's contract.
+     * this feeds the list endpoint. CONFIRMED + ATTENDED: both occupy a place against capacity,
+     * see RegistrationStatus.OCCUPIES_CAPACITY.
      */
-    @Query("SELECT r.eventId AS eventId, COUNT(r) AS confirmedCount FROM EventRegistration r "
-            + "WHERE r.eventId IN :eventIds AND r.status = com.lucabridge.core.event.RegistrationStatus.CONFIRMED "
+    @Query("SELECT r.eventId AS eventId, COUNT(r) AS occupiedCount FROM EventRegistration r "
+            + "WHERE r.eventId IN :eventIds AND r.status IN "
+            + "(com.lucabridge.core.event.RegistrationStatus.CONFIRMED, com.lucabridge.core.event.RegistrationStatus.ATTENDED) "
             + "GROUP BY r.eventId")
-    List<ConfirmedCount> countConfirmedByEventIdIn(@Param("eventIds") List<Long> eventIds);
+    List<OccupiedCount> countOccupiedByEventIdIn(@Param("eventIds") List<Long> eventIds);
 
-    interface ConfirmedCount {
+    interface OccupiedCount {
         Long getEventId();
 
-        long getConfirmedCount();
+        long getOccupiedCount();
     }
 }

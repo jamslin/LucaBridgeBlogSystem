@@ -39,9 +39,11 @@ public class EventRegistrationService {
         Event event = eventRepository.findByIdForUpdate(eventId)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found: " + eventId));
 
-        long confirmedCount = registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.CONFIRMED);
+        // CONFIRMED + ATTENDED — see RegistrationStatus.OCCUPIES_CAPACITY. Someone checked in
+        // still occupies the place they registered for.
+        long occupiedCount = registrationRepository.countByEventIdAndStatusIn(eventId, RegistrationStatus.OCCUPIES_CAPACITY);
         RegistrationState state = RegistrationState.of(event.isRegisterable(), event.getRegistrationOpensAt(),
-                event.getRegistrationClosesAt(), event.getCapacity(), confirmedCount, Instant.now());
+                event.getRegistrationClosesAt(), event.getCapacity(), occupiedCount, Instant.now());
 
         if (state == RegistrationState.NOT_REGISTERABLE || state == RegistrationState.NOT_OPEN
                 || state == RegistrationState.CLOSED) {

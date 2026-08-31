@@ -14,11 +14,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * No {@code service_id} here, unlike {@link com.lucabridge.core.blog.Blog} — the schema was
- * never given one. The 6a/6c home mockups show a service/category chip on event cards; there is
- * currently nowhere in the DB to source it from. Flagged for the human, not silently invented.
- */
 @Entity
 @Table(name = "event")
 @Getter
@@ -26,6 +21,10 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 public class Event extends PublishableContent {
+
+    /** Added in V3 — plain FK id, no relation, matching Blog.serviceId; ON DELETE SET NULL since losing the tag is cosmetic. */
+    @Column(name = "service_id")
+    private Long serviceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cover_media_id")

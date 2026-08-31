@@ -8,6 +8,7 @@ import java.util.List;
 public record EventDetailDto(
         Long id,
         String slug,
+        Long serviceId,
         String title,
         String summary,
         String body,

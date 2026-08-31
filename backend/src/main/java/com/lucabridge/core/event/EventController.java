@@ -50,7 +50,7 @@ public class EventController {
         Page<Event> events = eventService.listUpcoming(pageable);
         Instant now = Instant.now();
         List<Long> eventIds = events.getContent().stream().map(Event::getId).toList();
-        Map<Long, Long> counts = eventService.confirmedCounts(eventIds);
+        Map<Long, Long> counts = eventService.registeredCounts(eventIds);
         return events.map(event -> EventMapper.toSummary(event, lang, counts.getOrDefault(event.getId(), 0L), now));
     }
 
@@ -60,7 +60,7 @@ public class EventController {
             @RequestParam(name = "lang", required = false) String rawLang) {
         Lang lang = Lang.orDefault(rawLang);
         Event event = eventService.getPublishedBySlug(slug);
-        long confirmedCount = eventService.confirmedCount(event.getId());
+        long confirmedCount = eventService.registeredCount(event.getId());
         return EventMapper.toDetail(event, lang, confirmedCount, Instant.now());
     }
 

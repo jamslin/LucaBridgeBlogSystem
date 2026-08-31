@@ -69,6 +69,7 @@ public class EventService {
     public Event create(EventUpsertRequest req, Long currentUserId) {
         Event event = Event.builder()
                 .slug(req.slug())
+                .serviceId(req.serviceId())
                 .galleryLayout(req.galleryLayout() == null ? GalleryLayout.NONE : req.galleryLayout())
                 .startsAt(req.startsAt())
                 .endsAt(req.endsAt())
@@ -95,6 +96,7 @@ public class EventService {
         Event event = eventRepository.findActiveById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event not found: " + id));
         event.setSlug(req.slug());
+        event.setServiceId(req.serviceId());
         event.setGalleryLayout(req.galleryLayout() == null ? GalleryLayout.NONE : req.galleryLayout());
         event.setStartsAt(req.startsAt());
         event.setEndsAt(req.endsAt());
@@ -124,24 +126,26 @@ public class EventService {
     }
 
     /**
-     * One aggregate query for a whole page of events, not N+1 per row. No application cache: the
-     * count changes on every submission and this traffic volume doesn't justify the staleness
-     * risk of a cache, so every request queries live.
+     * One aggregate query for a whole page of events, not N+1 per row. CONFIRMED + ATTENDED —
+     * see RegistrationStatus.OCCUPIES_CAPACITY; excluding ATTENDED would free capacity that
+     * isn't actually free. No application cache: the count changes on every submission and this
+     * traffic volume doesn't justify the staleness risk of a cache, so every request queries
+     * live.
      */
     @Transactional(readOnly = true)
-    public Map<Long, Long> confirmedCounts(List<Long> eventIds) {
+    public Map<Long, Long> registeredCounts(List<Long> eventIds) {
         if (eventIds.isEmpty()) {
             return Map.of();
         }
-        return registrationRepository.countConfirmedByEventIdIn(eventIds).stream()
+        return registrationRepository.countOccupiedByEventIdIn(eventIds).stream()
                 .collect(Collectors.toMap(
-                        EventRegistrationRepository.ConfirmedCount::getEventId,
-                        EventRegistrationRepository.ConfirmedCount::getConfirmedCount));
+                        EventRegistrationRepository.OccupiedCount::getEventId,
+                        EventRegistrationRepository.OccupiedCount::getOccupiedCount));
     }
 
     @Transactional(readOnly = true)
-    public long confirmedCount(Long eventId) {
-        return registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.CONFIRMED);
+    public long registeredCount(Long eventId) {
+        return registrationRepository.countByEventIdAndStatusIn(eventId, RegistrationStatus.OCCUPIES_CAPACITY);
     }
 
     private void applyCoverMedia(Event event, Long coverMediaId) {

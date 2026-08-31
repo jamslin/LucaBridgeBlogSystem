@@ -25,7 +25,9 @@ public enum RegistrationState {
     CLOSED;
 
     /**
-     * @param registeredCount CONFIRMED registrations only — see EventRegistrationRepository.
+     * @param registeredCount CONFIRMED + ATTENDED — see RegistrationStatus.OCCUPIES_CAPACITY.
+     *                        Someone checked in still occupies the place they registered for, so
+     *                        excluding ATTENDED would free capacity that isn't actually free.
      */
     public static RegistrationState of(boolean isRegisterable,
                                         Instant registrationOpensAt,

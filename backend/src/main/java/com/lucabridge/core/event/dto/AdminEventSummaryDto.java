@@ -8,6 +8,7 @@ import java.time.Instant;
 public record AdminEventSummaryDto(
         Long id,
         String slug,
+        Long serviceId,
         String tcTitle,
         PublishStatus status,
         Visibility.State state,

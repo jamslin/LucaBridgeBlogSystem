@@ -39,14 +39,14 @@ public class AdminEventController {
         Instant now = Instant.now();
         Page<Event> events = eventService.listActive(pageable);
         List<Long> eventIds = events.getContent().stream().map(Event::getId).toList();
-        Map<Long, Long> counts = eventService.confirmedCounts(eventIds);
+        Map<Long, Long> counts = eventService.registeredCounts(eventIds);
         return events.map(event -> EventMapper.toAdminSummary(event, counts.getOrDefault(event.getId(), 0L), now));
     }
 
     @GetMapping("/{id}")
     public AdminEventDetailDto get(@PathVariable Long id) {
         Event event = eventService.getActiveById(id);
-        return EventMapper.toAdminDetail(event, eventService.confirmedCount(id), Instant.now());
+        return EventMapper.toAdminDetail(event, eventService.registeredCount(id), Instant.now());
     }
 
     @PostMapping
@@ -59,7 +59,7 @@ public class AdminEventController {
     @PutMapping("/{id}")
     public AdminEventDetailDto update(@PathVariable Long id, @Valid @RequestBody EventUpsertRequest request) {
         Event event = eventService.update(id, request, currentUser.id());
-        return EventMapper.toAdminDetail(event, eventService.confirmedCount(id), Instant.now());
+        return EventMapper.toAdminDetail(event, eventService.registeredCount(id), Instant.now());
     }
 
     /** Soft delete only — see EventService.softDelete. */

@@ -6,6 +6,7 @@ import java.time.Instant;
 public record EventSummaryDto(
         Long id,
         String slug,
+        Long serviceId,
         String title,
         String summary,
         String venue,

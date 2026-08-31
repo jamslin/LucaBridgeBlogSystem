@@ -10,6 +10,7 @@ import java.util.List;
 public record AdminEventDetailDto(
         Long id,
         String slug,
+        Long serviceId,
         Long coverMediaId,
         GalleryLayout galleryLayout,
         Instant startsAt,

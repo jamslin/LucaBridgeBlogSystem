@@ -17,20 +17,22 @@ import java.util.List;
 
 /**
  * Entity -> DTO only. Every translated field resolves through {@link Localized#pick}. Every
- * confirmed-registration count is passed in rather than queried here, so a page of summaries
- * costs one aggregate query, not one per row — see EventService.
+ * registered-place count (CONFIRMED + ATTENDED — see RegistrationStatus.OCCUPIES_CAPACITY) is
+ * passed in rather than queried here, so a page of summaries costs one aggregate query, not one
+ * per row — see EventService.
  */
 final class EventMapper {
 
     private EventMapper() {
     }
 
-    static EventSummaryDto toSummary(Event event, Lang lang, long confirmedCount, Instant now) {
+    static EventSummaryDto toSummary(Event event, Lang lang, long registeredCount, Instant now) {
         EventText t = event.getText();
         Media cover = event.getCoverMedia();
         return new EventSummaryDto(
                 event.getId(),
                 event.getSlug(),
+                event.getServiceId(),
                 title(t, lang),
                 summary(t, lang),
                 venue(t, lang),
@@ -39,10 +41,10 @@ final class EventMapper {
                 cover == null ? null : cover.getHeight(),
                 event.getStartsAt(),
                 event.getEndsAt(),
-                registrationInfo(event, confirmedCount, now));
+                registrationInfo(event, registeredCount, now));
     }
 
-    static EventDetailDto toDetail(Event event, Lang lang, long confirmedCount, Instant now) {
+    static EventDetailDto toDetail(Event event, Lang lang, long registeredCount, Instant now) {
         EventText t = event.getText();
         Media cover = event.getCoverMedia();
         List<GalleryImageDto> gallery = event.getGallery().stream()
@@ -51,6 +53,7 @@ final class EventMapper {
         return new EventDetailDto(
                 event.getId(),
                 event.getSlug(),
+                event.getServiceId(),
                 title(t, lang),
                 summary(t, lang),
                 t == null ? null : Localized.pick(lang, t.getTcBody(), t.getEnBody(), t.getScBody()),
@@ -65,29 +68,31 @@ final class EventMapper {
                 event.getRegistrationClosesAt(),
                 event.getGalleryLayout(),
                 gallery,
-                registrationInfo(event, confirmedCount, now));
+                registrationInfo(event, registeredCount, now));
     }
 
-    static AdminEventSummaryDto toAdminSummary(Event event, long confirmedCount, Instant now) {
+    static AdminEventSummaryDto toAdminSummary(Event event, long registeredCount, Instant now) {
         EventText t = event.getText();
         return new AdminEventSummaryDto(
                 event.getId(),
                 event.getSlug(),
+                event.getServiceId(),
                 t == null ? null : t.getTcTitle(),
                 event.getStatus(),
                 stateOf(event, now),
                 event.getStartsAt(),
                 event.getUpdatedAt(),
-                registrationInfo(event, confirmedCount, now));
+                registrationInfo(event, registeredCount, now));
     }
 
-    static AdminEventDetailDto toAdminDetail(Event event, long confirmedCount, Instant now) {
+    static AdminEventDetailDto toAdminDetail(Event event, long registeredCount, Instant now) {
         EventText t = event.getText();
         Media cover = event.getCoverMedia();
         List<Long> galleryIds = event.getGallery().stream().map(g -> g.getMedia().getId()).toList();
         return new AdminEventDetailDto(
                 event.getId(),
                 event.getSlug(),
+                event.getServiceId(),
                 cover == null ? null : cover.getId(),
                 event.getGalleryLayout(),
                 event.getStartsAt(),
@@ -115,7 +120,7 @@ final class EventMapper {
                 t == null ? null : t.getEnVenue(),
                 t == null ? null : t.getScVenue(),
                 galleryIds,
-                registrationInfo(event, confirmedCount, now));
+                registrationInfo(event, registeredCount, now));
     }
 
     static AdminEventRegistrationDto toAdminRegistration(EventRegistration r) {
@@ -138,15 +143,19 @@ final class EventMapper {
                 r.getSubmittedAt());
     }
 
-    /** almostFull is only ever true in OPEN — a full or not-yet-open event has no "almost full" badge to show. */
-    private static RegistrationInfoDto registrationInfo(Event event, long confirmedCount, Instant now) {
+    /**
+     * almostFull is only ever true in OPEN — a full or not-yet-open event has no "almost full"
+     * badge to show. capacity == null (unlimited) short-circuits both remaining and almostFull
+     * to a safe default, so there's no division-by-zero and no bogus badge.
+     */
+    private static RegistrationInfoDto registrationInfo(Event event, long registeredCount, Instant now) {
         RegistrationState state = RegistrationState.of(event.isRegisterable(), event.getRegistrationOpensAt(),
-                event.getRegistrationClosesAt(), event.getCapacity(), confirmedCount, now);
+                event.getRegistrationClosesAt(), event.getCapacity(), registeredCount, now);
         Integer capacity = event.getCapacity();
-        Integer remaining = capacity == null ? null : Math.max(capacity - (int) confirmedCount, 0);
+        Integer remaining = capacity == null ? null : Math.max(capacity - (int) registeredCount, 0);
         boolean almostFull = state == RegistrationState.OPEN && capacity != null
                 && remaining != null && remaining * 5 <= capacity;
-        return new RegistrationInfoDto(state, capacity, confirmedCount, remaining, almostFull);
+        return new RegistrationInfoDto(state, capacity, registeredCount, remaining, almostFull);
     }
 
     private static String title(EventText t, Lang lang) {

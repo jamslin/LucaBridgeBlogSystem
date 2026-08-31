@@ -12,6 +12,7 @@ import java.util.List;
 
 public record EventUpsertRequest(
         @NotBlank @Size(max = 200) String slug,
+        Long serviceId,
         Long coverMediaId,
         GalleryLayout galleryLayout,
         Instant startsAt,

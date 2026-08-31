@@ -4,8 +4,10 @@ import com.lucabridge.core.event.RegistrationState;
 
 /**
  * The backend-computed registration contract (design 7c · 五個報名狀態) — the frontend must
- * never derive {@code state} itself. {@code almostFull} is true when remaining <= 20% of
- * capacity, for the "即將額滿" badge; false whenever capacity is null (unlimited).
+ * never derive {@code state} itself. {@code registeredCount} is CONFIRMED + ATTENDED (see
+ * RegistrationStatus.OCCUPIES_CAPACITY) — anyone who currently occupies a place, not just
+ * whoever hasn't checked in yet. {@code almostFull} is true when remaining <= 20% of capacity,
+ * for the "即將額滿" badge; false whenever capacity is null (unlimited).
  */
 public record RegistrationInfoDto(
         RegistrationState state,
