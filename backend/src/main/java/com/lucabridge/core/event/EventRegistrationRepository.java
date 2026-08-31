@@ -18,6 +18,8 @@ public interface EventRegistrationRepository extends JpaRepository<EventRegistra
 
     boolean existsByReferenceCode(String referenceCode);
 
+    long countByReferralGroupId(Long referralGroupId);
+
     Page<EventRegistration> findByEventId(Long eventId, Pageable pageable);
 
     List<EventRegistration> findByEventIdOrderBySubmittedAtAsc(Long eventId);

@@ -94,7 +94,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,
                                 "/api/blog/**", "/api/events/**", "/api/jobs/**",
                                 "/api/services/**", "/api/home/**", "/api/company",
-                                "/api/media/**").permitAll()
+                                "/api/referral-groups/**", "/api/media/**").permitAll()
 
                         // Event registration is the one place the public may WRITE. It is
                         // rate-limited and spam-guarded in the controller.
