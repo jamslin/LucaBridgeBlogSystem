@@ -132,7 +132,7 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.20.2</version>
+                <version>1.21.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -144,6 +144,25 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!--
+                Failsafe, not Surefire: *IT classes need a real Postgres via Testcontainers
+                (Docker), so they run on `mvn verify`, not the plain `mvn test` every other test
+                in this project already runs under with no external dependency at all. Keeping
+                them off the fast path matters - a contributor without Docker available should
+                still get instant unit test feedback.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
