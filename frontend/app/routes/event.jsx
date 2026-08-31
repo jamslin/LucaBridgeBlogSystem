@@ -88,7 +88,7 @@ export default function EventDetail() {
 
         {event.body && <ReactMarkdown>{event.body}</ReactMarkdown>}
 
-        <Gallery media={event.gallery} />
+        <Gallery media={event.gallery} layout={event.galleryLayout} />
 
         <hr className="rule" />
 

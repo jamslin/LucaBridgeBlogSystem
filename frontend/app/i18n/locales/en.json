@@ -107,5 +107,17 @@
     "error": "Something went wrong. Please try again.",
     "backHome": "Back to home",
     "contentPending": "Content pending"
+  },
+  "gallery": {
+    "label": "Gallery",
+    "title": "Photos from the day",
+    "count": "{count} photos",
+    "viewAll": "View all",
+    "more": "{count} more",
+    "prev": "Previous photo",
+    "next": "Next photo",
+    "close": "Close",
+    "position": "Photo {current} of {total}",
+    "open": "View larger"
   }
 }

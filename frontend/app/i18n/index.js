@@ -11,8 +11,13 @@ const dictionaries = { "zh-Hant": zhHant, en, "zh-Hans": zhHans };
 export const SUPPORTED_LANGS = ["zh-Hant", "en", "zh-Hans"];
 export const DEFAULT_LANG = "zh-Hant";
 
-/** t("en", "nav.home") → "Home"; falls back to the default language, then the key. */
-export function t(lang, path) {
+/**
+ * t("en", "nav.home") → "Home"; falls back to the default language, then the key.
+ * Optional `vars` fill {placeholders}: t(lang, "gallery.count", { count: 15 }).
+ */
+export function t(lang, path, vars) {
   const lookup = (dict) => path.split(".").reduce((node, key) => node?.[key], dict);
-  return lookup(dictionaries[lang]) ?? lookup(dictionaries[DEFAULT_LANG]) ?? path;
+  const value = lookup(dictionaries[lang]) ?? lookup(dictionaries[DEFAULT_LANG]) ?? path;
+  if (!vars || typeof value !== "string") return value;
+  return value.replace(/\{(\w+)\}/g, (match, key) => (key in vars ? String(vars[key]) : match));
 }

@@ -54,7 +54,7 @@ export default function Post() {
 
         <ReactMarkdown>{post.body}</ReactMarkdown>
 
-        <Gallery media={post.gallery} />
+        <Gallery media={post.gallery} layout={post.galleryLayout} />
       </div>
     </article>
   );

@@ -107,5 +107,17 @@
     "error": "發生錯誤，請重試。",
     "backHome": "返回首頁",
     "contentPending": "內容準備中"
+  },
+  "gallery": {
+    "label": "相片集",
+    "title": "活動花絮",
+    "count": "共 {count} 張",
+    "viewAll": "查看全部",
+    "more": "還有 {count} 張",
+    "prev": "上一張",
+    "next": "下一張",
+    "close": "關閉",
+    "position": "第 {current} 張，共 {total} 張",
+    "open": "放大檢視"
   }
 }
