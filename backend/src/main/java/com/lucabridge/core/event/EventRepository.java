@@ -41,6 +41,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     boolean existsByIdAndDeletedAtIsNull(Long id);
 
+    /** How many live events reference a service — used by the service-delete confirmation. */
+    long countByServiceIdAndDeletedAtIsNull(Long serviceId);
+
     @Query("SELECT e FROM Event e "
             + "LEFT JOIN FETCH e.coverMedia LEFT JOIN FETCH e.text "
             + "LEFT JOIN FETCH e.gallery g LEFT JOIN FETCH g.media "

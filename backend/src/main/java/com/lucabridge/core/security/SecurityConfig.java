@@ -109,6 +109,11 @@ public class SecurityConfig {
                         // User management is ADMIN-only.
                         .requestMatchers("/api/admin/users/**").hasRole("ADMIN")
 
+                        // Company holds the charity registration number, the org name and the
+                        // contact details on every page. ADMIN-only, including reads — nothing
+                        // here needs EDITOR-level day-to-day access.
+                        .requestMatchers("/api/admin/company/**").hasRole("ADMIN")
+
                         // Deletion is ADMIN-only across every content type. Placed BEFORE the
                         // general /api/admin/** rule, which would otherwise match first and
                         // let an EDITOR through.

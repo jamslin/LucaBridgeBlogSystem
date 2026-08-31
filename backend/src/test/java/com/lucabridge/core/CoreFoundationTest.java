@@ -186,5 +186,15 @@ class CoreFoundationTest {
             assertEquals(Visibility.State.SCHEDULED,
                     Visibility.stateOfJob(PUB, FUTURE, null, PAST, null, NOW));
         }
+
+        @Test
+        @DisplayName("home_block has no status/deletedAt, just is_active plus the window")
+        void activeVisibilityHasNoStatusOrSoftDelete() {
+            assertTrue(Visibility.isActiveVisible(true, null, null, NOW));
+            assertFalse(Visibility.isActiveVisible(false, null, null, NOW));
+            assertFalse(Visibility.isActiveVisible(true, FUTURE, null, NOW));
+            assertTrue(Visibility.isActiveVisible(true, PAST, FUTURE, NOW));
+            assertFalse(Visibility.isActiveVisible(true, null, PAST, NOW));
+        }
     }
 }

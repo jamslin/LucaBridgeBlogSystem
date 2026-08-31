@@ -33,4 +33,9 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             + "LEFT JOIN FETCH e.gallery g LEFT JOIN FETCH g.media "
             + "WHERE e.id = :id AND e.deletedAt IS NULL")
     Optional<Blog> findActiveById(@Param("id") Long id);
+
+    boolean existsByIdAndDeletedAtIsNull(Long id);
+
+    /** How many live posts reference a service — used by the service-delete confirmation. */
+    long countByServiceIdAndDeletedAtIsNull(Long serviceId);
 }

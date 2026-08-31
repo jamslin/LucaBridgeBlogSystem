@@ -23,8 +23,8 @@ public final class Visibility {
     }
 
     /**
-     * Canonical predicate for blog, event and home_block queries. The entity alias must be
-     * {@code e} and the query must bind {@code :now}.
+     * Canonical predicate for blog, event and job queries. The entity alias must be {@code e}
+     * and the query must bind {@code :now}.
      */
     public static final String JPQL = """
             e.status = com.lucabridge.core.publish.PublishStatus.PUBLISHED
@@ -39,6 +39,18 @@ public final class Visibility {
      */
     public static final String JPQL_JOB = JPQL
             + "and (e.closesAt is null or e.closesAt > :now)\n";
+
+    /**
+     * home_block variant — that table has no {@code status} enum or soft delete, just
+     * {@code is_active} plus the same publish window, so {@link #JPQL} doesn't fit it directly.
+     * The entity alias must be {@code e}, the boolean field must be named {@code active}, and
+     * the query must bind {@code :now}.
+     */
+    public static final String JPQL_ACTIVE = """
+            e.active = true
+            and (e.publishAt is null or e.publishAt <= :now)
+            and (e.unpublishAt is null or e.unpublishAt > :now)
+            """;
 
     /** In-memory equivalent of {@link #JPQL}, for tests and for already-loaded entities. */
     public static boolean isVisible(PublishStatus status,
@@ -64,6 +76,17 @@ public final class Visibility {
                                        Instant now) {
         return isVisible(status, publishAt, unpublishAt, deletedAt, now)
                 && (closesAt == null || closesAt.isAfter(now));
+    }
+
+    /** In-memory equivalent of {@link #JPQL_ACTIVE}. */
+    public static boolean isActiveVisible(boolean active, Instant publishAt, Instant unpublishAt, Instant now) {
+        if (!active) {
+            return false;
+        }
+        if (publishAt != null && publishAt.isAfter(now)) {
+            return false;
+        }
+        return unpublishAt == null || unpublishAt.isAfter(now);
     }
 
     /**
