@@ -25,7 +25,12 @@ function Icon({ kind, href, label, size, color }) {
   );
 }
 
-export default function SocialLinks({ company = {}, size = 18, color = "var(--color-ink)" }) {
+export default function SocialLinks({
+  company = {},
+  size = 18,
+  color = "var(--color-ink)",
+  withLabels = false,
+}) {
   const items = [
     { kind: "instagram", href: company.instagramUrl, label: "Instagram" },
     { kind: "facebook",  href: company.facebookUrl,  label: "Facebook" },
@@ -33,6 +38,20 @@ export default function SocialLinks({ company = {}, size = 18, color = "var(--co
   ].filter((i) => i.href);
 
   if (items.length === 0) return null;
+
+  // The red utility bar spells the networks out rather than using icons, which
+  // is how the comps set it (mockup 8a).
+  if (withLabels) {
+    return (
+      <>
+        {items.map((i) => (
+          <a key={i.kind} href={i.href} target="_blank" rel="noopener noreferrer">
+            {i.label}
+          </a>
+        ))}
+      </>
+    );
+  }
 
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>

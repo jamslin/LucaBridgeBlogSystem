@@ -52,7 +52,12 @@ export default function Post() {
           {post.readMinutes && <span>{post.readMinutes} min</span>}
         </div>
 
-        <ReactMarkdown>{post.body}</ReactMarkdown>
+        <ReactMarkdown
+          components={{
+            // The comps set quotes as a red-ruled pull quote, not an indent.
+            blockquote: ({ children }) => <blockquote className="pull-quote">{children}</blockquote>,
+          }}
+        >{post.body}</ReactMarkdown>
 
         <Gallery media={post.gallery} layout={post.galleryLayout} />
       </div>

@@ -86,7 +86,12 @@ export default function EventDetail() {
           {event.venue && <span>{event.venue}</span>}
         </div>
 
-        {event.body && <ReactMarkdown>{event.body}</ReactMarkdown>}
+        {event.body && <ReactMarkdown
+          components={{
+            // The comps set quotes as a red-ruled pull quote, not an indent.
+            blockquote: ({ children }) => <blockquote className="pull-quote">{children}</blockquote>,
+          }}
+        >{event.body}</ReactMarkdown>}
 
         <Gallery media={event.gallery} layout={event.galleryLayout} />
 

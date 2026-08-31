@@ -15,7 +15,9 @@
     "donateCta": "立即捐款",
     "menu": "選單",
     "blog": "消息",
-    "events": "活動"
+    "events": "活動",
+    "volunteerCta": "成為義工",
+    "closeMenu": "關閉選單"
   },
   "home": {
     "latest": "最新消息",

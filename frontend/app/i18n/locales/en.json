@@ -15,7 +15,9 @@
     "donateCta": "Donate Now",
     "menu": "Menu",
     "blog": "Blog",
-    "events": "Events"
+    "events": "Events",
+    "volunteerCta": "Become a volunteer",
+    "closeMenu": "Close menu"
   },
   "home": {
     "latest": "Latest news",
