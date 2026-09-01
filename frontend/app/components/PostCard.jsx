@@ -1,26 +1,37 @@
 import { Link, useParams } from "react-router";
+
 import { t } from "../i18n";
 import { formatArticleDate } from "../lib/date";
+import Photo from "./Photo";
 
-export default function PostCard({ post }) {
+// A routine news card: cover, date + read time, title, summary.
+//
+// The whole card is deliberately not one link — the cover and the title both
+// point at the post, but the summary stays selectable text. Wrapping the lot in
+// an <a> would make the summary un-selectable and hand screen readers a single
+// enormous link label.
+export default function PostCard({ post, ratio = "cover", headingLevel: H = "h3" }) {
   const { lang } = useParams();
+  const href = `/${lang}/blog/${post.slug}`;
 
   return (
-    <article style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-      <Link to={`/${lang}/blog/${post.slug}`}>
-        {post.coverUrl && <img src={post.coverUrl} alt="" loading="lazy" />}
+    <article className="post-card">
+      <Link to={href} className="post-card__media" tabIndex={-1} aria-hidden="true">
+        <Photo src={post.coverUrl} ratio={ratio} />
       </Link>
-      <h3 style={{ fontSize: "20px" }}>
-        <Link to={`/${lang}/blog/${post.slug}`}>{post.title}</Link>
-      </h3>
-      {post.summary && <p style={{ color: "var(--color-ink-soft)", margin: 0 }}>{post.summary}</p>}
-      <div className="meta" style={{ display: "flex", gap: "12px" }}>
+
+      <div className="post-card__meta">
         {post.publishedAt && <span>{formatArticleDate(post.publishedAt, lang)}</span>}
-        {post.readMinutes && <span>{post.readMinutes} min</span>}
+        {post.readMinutes ? (
+          <span>· {t(lang, "blog.readingTime", { count: post.readMinutes })}</span>
+        ) : null}
       </div>
-      <Link to={`/${lang}/blog/${post.slug}`} className="btn-text">
-        {t(lang, "home.readMore")} <span className="arrow">&rarr;</span>
-      </Link>
+
+      <H className="post-card__title">
+        <Link to={href}>{post.title}</Link>
+      </H>
+
+      {post.summary && <p className="post-card__summary">{post.summary}</p>}
     </article>
   );
 }

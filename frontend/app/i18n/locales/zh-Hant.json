@@ -33,7 +33,10 @@
     "supportNoteMinor": "18 歲以下需家長簽署同意書"
   },
   "blog": {
-    "empty": "暫時未有文章"
+    "empty": "暫時未有文章",
+    "readingTime": "約 {count} 分鐘閱讀",
+    "emptyBody": "第一篇故事正在撰寫中，很快就會在這裡出現。",
+    "featured": "精選"
   },
   "events": {
     "empty": "暫時未有活動",
@@ -65,14 +68,16 @@
     "successTitle": "已收到您的報名",
     "successConfirmed": "報名成功，您的參考編號為",
     "successWaitlist": "您已加入候補名單，參考編號為",
-    "backToEvents": "返回活動列表"
+    "backToEvents": "返回活動列表",
+    "emptyBody": "我們每月開放新的清潔、派發與探訪服務。先登記成為義工，開放報名時我們會通知你。"
   },
   "careers": {
     "empty": "暫時未有職位空缺。",
     "closes": "截止日期：",
     "openUntilFilled": "額滿即止",
     "backToList": "返回職位列表",
-    "apply": "申請"
+    "apply": "申請",
+    "emptyBody": "現時沒有開放的全職崗位。歡迎先登記成為義工，或以電郵向我們投遞履歷。"
   },
   "services": {
     "title": "服務",
@@ -108,7 +113,8 @@
   "post": {
     "prev": "上一篇",
     "next": "下一篇",
-    "notFound": "找不到此文章"
+    "notFound": "找不到此文章",
+    "browseAll": "瀏覽全部消息"
   },
   "common": {
     "loading": "載入中…",

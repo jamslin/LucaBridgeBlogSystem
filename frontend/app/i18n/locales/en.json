@@ -33,7 +33,10 @@
     "supportNoteMinor": "Under 18s need a signed parental consent form"
   },
   "blog": {
-    "empty": "No posts yet"
+    "empty": "No posts yet",
+    "readingTime": "{count} min read",
+    "emptyBody": "The first story is being written and will appear here soon.",
+    "featured": "Featured"
   },
   "events": {
     "empty": "No events yet",
@@ -65,14 +68,16 @@
     "successTitle": "Registration received",
     "successConfirmed": "You're confirmed. Your reference code is",
     "successWaitlist": "You're on the waitlist. Your reference code is",
-    "backToEvents": "Back to all events"
+    "backToEvents": "Back to all events",
+    "emptyBody": "We open new clean-ups, food distributions and home visits every month. Register as a volunteer and we will let you know when sign-ups open."
   },
   "careers": {
     "empty": "No open positions at the moment.",
     "closes": "Closing date: ",
     "openUntilFilled": "Open until filled",
     "backToList": "Back to all positions",
-    "apply": "Apply"
+    "apply": "Apply",
+    "emptyBody": "There are no full-time roles open right now. You are welcome to register as a volunteer, or email us your CV."
   },
   "services": {
     "title": "Services",
@@ -108,7 +113,8 @@
   "post": {
     "prev": "Previous",
     "next": "Next",
-    "notFound": "This post could not be found"
+    "notFound": "This post could not be found",
+    "browseAll": "Browse all news"
   },
   "common": {
     "loading": "Loading…",

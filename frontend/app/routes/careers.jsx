@@ -19,34 +19,50 @@ export default function Careers() {
   const { jobs } = useLoaderData();
 
   return (
-    <div className="shell" style={{ padding: "32px 20px" }}>
-      <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)", marginBottom: "24px" }}>{t(lang, "nav.recruitJobs")}</h1>
+    <div className="shell">
+      <header className="page-head">
+        <span className="kicker">{t(lang, "nav.recruit")}</span>
+        <h1>{t(lang, "nav.recruitJobs")}</h1>
+      </header>
 
-      {jobs.content.length === 0 && <p>{t(lang, "careers.empty")}</p>}
-
-      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: "16px" }}>
-        {jobs.content.map((j) => (
-          <li
-            key={j.id}
-            style={{ background: "var(--color-card)", border: "1px solid var(--color-line)", borderRadius: "8px", padding: "20px 24px" }}
-          >
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", alignItems: "baseline", justifyContent: "space-between" }}>
-              <h3 style={{ margin: 0 }}>
-                <Link to={`/${lang}/careers/${j.slug}`}>{j.title}</Link>
-              </h3>
-              {j.employmentType && <span className="chip">{j.employmentType}</span>}
-            </div>
-            <p className="meta" style={{ margin: "6px 0" }}>
-              {[j.department, j.location].filter(Boolean).join(" · ")}
-            </p>
-            <p className="meta" style={{ marginTop: "10px" }}>
-              {j.closesAt
-                ? `${t(lang, "careers.closes")}${formatHongKongDate(j.closesAt, lang, { long: true })}`
-                : t(lang, "careers.openUntilFilled")}
-            </p>
-          </li>
-        ))}
-      </ul>
+      {jobs.content.length === 0 ? (
+        // A charity this size is often not hiring; the empty state still offers
+        // the two routes that are always open.
+        <div className="empty-state empty-state--cta">
+          <div>
+            <h3>{t(lang, "careers.empty")}</h3>
+            <p>{t(lang, "careers.emptyBody")}</p>
+          </div>
+          <Link to={`/${lang}/volunteer`} className="btn btn-primary">
+            {t(lang, "nav.volunteerCta")}
+          </Link>
+        </div>
+      ) : (
+        <div className="job-list">
+          {jobs.content.map((j) => (
+            <article className="job-card" key={j.id}>
+              <div>
+                <h3><Link to={`/${lang}/careers/${j.slug}`}>{j.title}</Link></h3>
+                <p className="job-card__meta">
+                  {[j.department, j.location, j.employmentType].filter(Boolean).map((part) => (
+                    <span key={part}>{part}</span>
+                  ))}
+                </p>
+              </div>
+              <div className="job-card__aside">
+                <span className="meta">
+                  {j.closesAt
+                    ? `${t(lang, "careers.closes")}${formatHongKongDate(j.closesAt, lang, { long: true })}`
+                    : t(lang, "careers.openUntilFilled")}
+                </span>
+                <Link to={`/${lang}/careers/${j.slug}`} className="btn btn-ghost btn--sm">
+                  {t(lang, "home.readMore")}
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -33,7 +33,10 @@
     "supportNoteMinor": "18 岁以下需家长签署同意书"
   },
   "blog": {
-    "empty": "暂时未有文章"
+    "empty": "暂时未有文章",
+    "readingTime": "约 {count} 分钟阅读",
+    "emptyBody": "第一篇故事正在撰写中，很快就会在这里出现。",
+    "featured": "精选"
   },
   "events": {
     "empty": "暂时未有活动",
@@ -65,14 +68,16 @@
     "successTitle": "已收到您的报名",
     "successConfirmed": "报名成功，您的参考编号为",
     "successWaitlist": "您已加入候补名单，参考编号为",
-    "backToEvents": "返回活动列表"
+    "backToEvents": "返回活动列表",
+    "emptyBody": "我们每月开放新的清洁、派发与探访服务。先登记成为义工，开放报名时我们会通知你。"
   },
   "careers": {
     "empty": "暂时未有职位空缺。",
     "closes": "截止日期：",
     "openUntilFilled": "额满即止",
     "backToList": "返回职位列表",
-    "apply": "申请"
+    "apply": "申请",
+    "emptyBody": "现时没有开放的全职岗位。欢迎先登记成为义工，或以电邮向我们投递履历。"
   },
   "services": {
     "title": "服务",
@@ -108,7 +113,8 @@
   "post": {
     "prev": "上一篇",
     "next": "下一篇",
-    "notFound": "找不到此文章"
+    "notFound": "找不到此文章",
+    "browseAll": "浏览全部消息"
   },
   "common": {
     "loading": "载入中…",

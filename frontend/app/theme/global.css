@@ -1172,3 +1172,161 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
 /* Reversed-out button for use on the red bands — cream ground, red type. */
 .btn-on-red { background: var(--color-cream); color: var(--color-accent-deep); border: 1px solid transparent; }
 .btn-on-red:hover { background: #fff; color: var(--color-accent-deep); }
+
+/* ── Footer brand block + news cards ─────────────────────────────────────── */
+.site-footer {
+  background: var(--color-ink);
+  color: rgba(253, 246, 238, .82);
+  margin-top: clamp(48px, 6vw, 80px);
+  padding: clamp(48px, 6vw, 72px) 0 32px;
+}
+.footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.footer-brand .site-brand__name { color: var(--color-cream); font-size: 20px; }
+.footer-brand__hours {
+  margin: 12px 0 0;
+  font-family: var(--font-label);
+  font-size: 12px;
+  color: rgba(253, 246, 238, .7);
+}
+
+/* Shared by the home news grid and the blog index. */
+.post-card { display: flex; flex-direction: column; }
+.post-card__media { display: block; }
+.post-card__media:hover { text-decoration: none; }
+.post-card .photo { transition: transform var(--motion-standard); }
+.post-card:hover .photo { transform: translateY(-3px); }
+.post-card__meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 14px 0 8px;
+  font-family: var(--font-label);
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.post-card__title { margin: 0 0 8px; font-size: 21px; line-height: 1.35; }
+.post-card__title a { color: var(--color-ink); }
+.post-card__title a:hover { color: var(--color-accent); text-decoration: none; }
+.post-card__summary { margin: 0; font-size: 14px; color: var(--color-muted); }
+
+/* ── Article template (mockup 8d) ────────────────────────────────────────── */
+.article { padding: var(--space-8) 0 0; }
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+  font-family: var(--font-label);
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.breadcrumb a { color: var(--color-muted); }
+.breadcrumb a:hover { color: var(--color-accent); }
+
+.article__head { max-width: 860px; margin: 0 auto var(--space-8); }
+.article__head h1 { margin: var(--space-4) 0; font-size: clamp(30px, 4.6vw, 58px); line-height: 1.12; }
+/* Standfirst: one sentence of why the story exists, set above body size. */
+.article__standfirst {
+  margin: 0;
+  max-width: 40em;
+  font-size: clamp(17px, 1.8vw, 20px);
+  line-height: 1.65;
+  color: var(--color-ink-soft);
+}
+.article__cover { max-width: 1000px; margin: 0 auto var(--space-12); }
+
+.article__body { font-size: 17px; }
+.article__body h2 { font-size: clamp(22px, 2.4vw, 30px); margin: 2em 0 .6em; }
+.article__body h3 { font-size: 20px; margin: 1.7em 0 .5em; }
+.article__body ul, .article__body ol { padding-left: 1.3em; margin: 0 0 1.3em; }
+.article__body li { margin-bottom: .55em; }
+.article__body a { text-decoration: underline; text-underline-offset: 3px; }
+.article__back { margin: var(--space-12) 0 var(--space-16); }
+
+/* ── Index pages ─────────────────────────────────────────────────────────── */
+.page-head { padding: var(--space-12) 0 var(--space-8); }
+.page-head h1 { margin: 8px 0 12px; }
+.page-head p { max-width: 60ch; margin: 0; color: var(--color-muted); }
+
+/* The newest story takes the wide treatment so a reader can tell the flagship
+   from a routine update — the card-grid monotony the brief calls out. */
+.index-featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 56px);
+  align-items: center;
+  padding-bottom: var(--space-12);
+  margin-bottom: var(--space-12);
+  border-bottom: 1px solid var(--color-line);
+}
+.index-featured h2 { font-size: clamp(26px, 3.2vw, 40px); margin: 12px 0 14px; }
+.index-featured h2 a { color: var(--color-ink); }
+.index-featured h2 a:hover { color: var(--color-accent); text-decoration: none; }
+.index-featured p { color: var(--color-ink-soft); }
+
+.card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
+.card-grid--two { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); align-items: start; }
+
+.pagination { display: flex; justify-content: center; gap: 8px; margin: var(--space-12) 0; }
+.pagination a {
+  display: grid;
+  place-items: center;
+  min-width: 44px; min-height: 44px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.pagination a:hover { background: var(--color-cream); text-decoration: none; }
+.pagination a[aria-current="page"] { background: var(--color-accent); color: var(--color-cream); }
+
+.empty-state {
+  padding: var(--space-8);
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-card);
+}
+.empty-state h3 { margin: 0 0 var(--space-2); }
+.empty-state p { margin: 0; max-width: 46ch; color: var(--color-muted); }
+.empty-state--cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1023px) {
+  .index-featured { grid-template-columns: 1fr; }
+  .card-grid, .card-grid--two { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 719px) {
+  .card-grid, .card-grid--two { grid-template-columns: 1fr; }
+}
+
+/* ── Careers ─────────────────────────────────────────────────────────────── */
+.job-list { display: grid; gap: var(--space-4); }
+.job-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-6);
+  align-items: center;
+  padding: var(--space-6);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+  box-shadow: var(--elev-card);
+}
+.job-card h3 { margin: 0 0 8px; font-size: 22px; }
+.job-card h3 a { color: var(--color-ink); }
+.job-card h3 a:hover { color: var(--color-accent); text-decoration: none; }
+.job-card__meta { display: flex; gap: 14px; flex-wrap: wrap; margin: 0; font-size: 14px; color: var(--color-muted); }
+.job-card__aside { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; text-align: right; }
+.btn--sm { min-height: 40px; padding: 0 18px; font-size: 14px; }
+.btn-ghost { background: transparent; color: var(--color-ink); border: 1px solid var(--color-line-strong); }
+.btn-ghost:hover { background: var(--color-cream); border-color: var(--color-ink); color: var(--color-ink); }
+
+@media (max-width: 719px) {
+  .job-card { grid-template-columns: 1fr; }
+  .job-card__aside { align-items: flex-start; text-align: left; }
+}

@@ -11,8 +11,21 @@ export default function Footer() {
   const L = (p) => `/${lang}${p}`;
 
   return (
-    <footer style={{ background: "var(--color-ink)", color: "var(--color-paper)", marginTop: "60px", padding: "48px 0 32px" }}>
+    <footer className="site-footer">
       <div className="shell footer-grid">
+        {/* Brand block. The logo is uploaded in Company; the footer previously
+            ignored it, so an uploaded logo only ever appeared in the nav. */}
+        <div className="footer-brand">
+          <span className="site-brand__mark" aria-hidden="true">
+            {company.logoUrl ? <img src={company.logoUrl} alt="" /> : null}
+          </span>
+          <span className="site-brand__name">{lang === "en" ? "LucaBridge" : "樂橋"}</span>
+          <span className="site-brand__sub">
+            {lang === "en" ? "Charity · Hong Kong" : "LUCA BRIDGE"}
+          </span>
+          {company.officeHours && <p className="footer-brand__hours">{company.officeHours}</p>}
+        </div>
+
         {NAV.map((item) => (
           <div key={item.key} className="footer-col">
             <Link to={L(item.to)} className="footer-col__head">{t(lang, `nav.${item.key}`)}</Link>
