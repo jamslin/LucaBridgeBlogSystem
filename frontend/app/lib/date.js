@@ -33,3 +33,11 @@ export function formatHongKongDateTime(iso, lang) {
   const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
   return lang === "en" ? `${MONTHS_EN[month - 1]} ${day}, ${year}, ${time}` : `${year}年${month}月${day}日 ${time}`;
 }
+
+/** Article meta style: "2025.03.18" in Chinese, "18 Mar 2025" in English. */
+export function formatArticleDate(iso, lang) {
+  if (!iso) return "";
+  const { year, month, day } = hongKongParts(iso);
+  if (lang === "en") return `${day} ${MONTHS_EN_SHORT[month - 1]} ${year}`;
+  return `${year}.${String(month).padStart(2, "0")}.${String(day).padStart(2, "0")}`;
+}

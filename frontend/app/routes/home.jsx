@@ -58,8 +58,8 @@ export default function Home() {
             <span className="home-hero__eyebrow">{company?.name || "LucaBridge"}</span>
             <h1>{hero?.title || heroFallback.title}</h1>
             <p>{hero?.subtitle || heroFallback.subtitle}</p>
-            <Link className="home-hero__cta" to={hero?.linkUrl ? hero.linkUrl : `/${lang}/donate`}>
-              {hero?.buttonLabel || t(lang, "nav.donateCta")}
+            <Link className="home-hero__cta" to={hero?.linkUrl ? hero.linkUrl : `/${lang}/volunteer`}>
+              {hero?.buttonLabel || t(lang, "nav.volunteerCta")}
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -113,8 +113,8 @@ export default function Home() {
                 <h2>{stat.title}</h2>
                 {stat.subtitle && <p>{stat.subtitle}</p>}
                 {stat.linkUrl && (
-                  <Link className="btn" style={{ background: "#fff8ee", color: "var(--color-accent-pressed)" }} to={stat.linkUrl}>
-                    {stat.buttonLabel || t(lang, "nav.donateCta")}
+                  <Link className="btn btn-on-red" to={stat.linkUrl}>
+                    {stat.buttonLabel || t(lang, "nav.volunteerCta")}
                   </Link>
                 )}
               </div>

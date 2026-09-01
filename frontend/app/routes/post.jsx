@@ -4,7 +4,7 @@ import { useLoaderData, useParams } from "react-router";
 import { api, siteOrigin } from "../lib/api.server";
 import { SUPPORTED_LANGS } from "../i18n";
 import Gallery from "../components/Gallery";
-import { formatHongKongDate } from "../lib/date";
+import { formatArticleDate } from "../lib/date";
 
 export async function loader({ params, request }) {
   const post = await api.getBlogPost(params.slug, params.lang); // throws 404 Response for unknown slug
@@ -48,7 +48,7 @@ export default function Post() {
       <div className="reading-column">
         <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>{post.title}</h1>
         <div className="meta" style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
-          {post.publishedAt && <span>{formatHongKongDate(post.publishedAt, lang)}</span>}
+          {post.publishedAt && <span>{formatArticleDate(post.publishedAt, lang)}</span>}
           {post.readMinutes && <span>{post.readMinutes} min</span>}
         </div>
 
