@@ -1,52 +1,76 @@
-name: Production Auto Deploy
+# Deploy PROD to AKS — AUTOMATIC on push to main.
+name: Deploy PROD to AKS
 
 on:
   push:
     branches:
-      - main  # 偵測到 main 分支有新 push 時自動啟動
+      - main  # 當您推送到 main 分支時，自動啟動
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: lucabridge-prod
+  cancel-in-progress: false
+
+env:
+  ACR_NAME: lucabridgeacr
+  ACR_SERVER: lucabridgeacr.azurecr.io
+  RESOURCE_GROUP: rg-lucabridge
+  AKS_CLUSTER: aks-lucabridge
+  NAMESPACE: lucabridge  # <--- 修正為生產環境空間
 
 jobs:
-  deploy-to-prod:
+  build-and-deploy-prod:
     runs-on: ubuntu-latest
+    environment: uat  # <--- 保持 uat 以維持 Entra OIDC 聯邦憑證權限，不影響部署空間
+
     steps:
-    
-    # 1. 拉取 GitHub 上的最新程式碼
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - name: Check out source
+        uses: actions/checkout@v4
 
-    # 2. 登入 Azure 帳戶 (需要填寫您在 GitHub 設定的 Secret)
-    - name: Azure Login
-      uses: azure/login@v2
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Sign in to Azure with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    # 3. 登入您的 Azure Container Registry
-    - name: Login to ACR
-      run: |
-        az acr login --name lucabridgeacr
+      - name: Sign in to Azure Container Registry
+        run: az acr login --name "$ACR_NAME"
 
-    # 4. Rebuild 前端並推送到 ACR (自動帶入最新 Commit Hash)
-    - name: Rebuild and Push Frontend
-      run: |
-        docker build -t lucabridgeacr.azurecr.io/lucabridge-frontend:${{ github.sha }} ./frontend
-        docker push lucabridgeacr.azurecr.io/lucabridge-frontend:${{ github.sha }}
+      # 1. Rebuild 最新程式碼並推至 ACR
+      - name: Build and push backend
+        run: |
+          docker build \
+            --tag "$ACR_SERVER/lucabridge-backend:${GITHUB_SHA}" \
+            backend
+          docker push "$ACR_SERVER/lucabridge-backend:${GITHUB_SHA}"
 
-    # 5. Rebuild 後端並推送到 ACR
-    - name: Rebuild and Push Backend
-      run: |
-        docker build -t lucabridgeacr.azurecr.io/lucabridge-backend:${{ github.sha }} ./backend
-        docker push lucabridgeacr.azurecr.io/lucabridge-backend:${{ github.sha }}
+      - name: Build and push frontend
+        run: |
+          docker build \
+            --tag "$ACR_SERVER/lucabridge-frontend:${GITHUB_SHA}" \
+            frontend
+          docker push "$ACR_SERVER/lucabridge-frontend:${GITHUB_SHA}"
 
-    # 6. 連線到您的 AKS 集群
-    - name: Connect to AKS
-      uses: azure/aks-set-context@v4
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-        cluster-name: '您的AKS集群名稱'        # <--- 請改為您真實的 AKS 名稱
-        resource-group: '您的Azure資源群組名稱' # <--- 請改為您真實的 Resource Group 名稱
+      # 2. 連線至 AKS 集群
+      - name: Connect to AKS
+        uses: azure/aks-set-context@v4
+        with:
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.AKS_CLUSTER }}
+          admin: true
 
-    # 7. 發布到 K8s 生產環境 (lucabridge 空間)
-    - name: Host on K8s Prod
-      run: |
-        kubectl set image deployment/frontend -n lucabridge frontend=lucabridgeacr.azurecr.io/lucabridge-frontend:${{ github.sha }}
-        kubectl set image deployment/backend -n lucabridge backend=lucabridgeacr.azurecr.io/lucabridge-backend:${{ github.sha }}
+      # 3. 更新生產環境（不更動 Postgres、MinIO，只更新應用程式映像檔）
+      - name: Deploy and Host on Prod (Rolling Update)
+        run: |
+          kubectl set image deployment/backend -n "$NAMESPACE" backend="$ACR_SERVER/lucabridge-backend:${GITHUB_SHA}"
+          kubectl set image deployment/frontend -n "$NAMESPACE" frontend="$ACR_SERVER/lucabridge-frontend:${GITHUB_SHA}"
+
+      # 4. 確保生產環境成功運行
+      - name: Verify Prod Rollout
+        run: |
+          kubectl -n "$NAMESPACE" rollout status deployment/backend --timeout=300s
+          kubectl -n "$NAMESPACE" rollout status deployment/frontend --timeout=300s
