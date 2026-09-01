@@ -42,7 +42,7 @@ export default function Home() {
 
   const hero = homeBlocks.HERO?.[0];
   const heroFallback = HERO_FALLBACK[lang] || HERO_FALLBACK.en;
-  const stat = homeBlocks.STAT?.[0];
+  const stats = homeBlocks.STAT || [];
   const support = homeBlocks.SUPPORT?.[0];
   const featured = homeBlocks.FEATURED?.[0];
   const quickLinks = [...(homeBlocks.VOLUNTEER || []), ...(homeBlocks.QUICK_LINK || [])];
@@ -65,6 +65,22 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {services.length > 0 && (
+        <section className="service-row" aria-label={t(lang, "home.servicesLabel")}>
+          <div className="shell service-row__inner">
+            <span className="service-row__label">{t(lang, "home.servicesLabel")}</span>
+            <div className="chip-row">
+              {services.map((s) => (
+                <Link key={s.id} to={`/${lang}/services#${s.code}`} className="chip">
+                  {s.name}
+                  <span className="chip__arrow" aria-hidden="true">→</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {upcomingEvents.length > 0 && (
         <section className="home-events shell" aria-labelledby="home-events-title">
@@ -105,34 +121,52 @@ export default function Home() {
         </section>
       )}
 
-      {(stat || support) && (
-        <section className="home-promo shell">
-          <div className="home-promo__grid">
-            {stat && (
-              <div className="home-promo__card">
-                <h2>{stat.title}</h2>
-                {stat.subtitle && <p>{stat.subtitle}</p>}
-                {stat.linkUrl && (
-                  <Link className="btn btn-on-red" to={stat.linkUrl}>
-                    {stat.buttonLabel || t(lang, "nav.volunteerCta")}
-                  </Link>
-                )}
-              </div>
-            )}
-            {support && (
-              <div className="home-promo__card home-promo__card--light">
-                <h2>{support.title}</h2>
-                {support.subtitle && <p>{support.subtitle}</p>}
-                {support.linkUrl && (
-                  <Link className="btn btn-secondary" to={support.linkUrl}>
-                    {support.buttonLabel || t(lang, "home.readMore")}
-                  </Link>
-                )}
-              </div>
-            )}
+      {/* The one ask on the page, with the proof stats inside it. Falls back to
+          the approved copy so the band still reads before the CMS is filled. */}
+      <section className="home-support shell">
+        <div className="support">
+          <div>
+            <span className="kicker kicker--cream">{t(lang, "home.supportEyebrow")}</span>
+            <h2>
+              {(support?.title || t(lang, "home.supportTitle"))
+                .split("\n")
+                .map((line, i) => <span key={i}>{line}</span>)}
+            </h2>
+            <p className="support__lead">{support?.subtitle || t(lang, "home.supportLead")}</p>
+            <div className="support__actions">
+              <Link className="btn btn-on-red" to={support?.linkUrl || `/${lang}/volunteer`}>
+                {support?.buttonLabel || t(lang, "nav.volunteerCta")}
+                <span aria-hidden="true">→</span>
+              </Link>
+              <p className="support__notes">
+                {t(lang, "home.supportNoteTime")}
+                <br />
+                {t(lang, "home.supportNoteMinor")}
+              </p>
+            </div>
           </div>
-        </section>
-      )}
+
+          {stats.length > 0 && (
+            <div className="support__stats">
+              {stats.map((s) => {
+                // A STAT block carries a number and a label; an optional second
+                // line after a newline in the subtitle gives the comp's
+                // supporting caption without needing a schema change.
+                const [label, sub] = (s.subtitle || "").split("\n");
+                return (
+                  <div className="stat" key={s.id}>
+                    <span className="stat__value">{s.title}</span>
+                    <span className="stat__label">
+                      {label}
+                      {sub && <span className="stat__sub">{sub}</span>}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
 
       {featured && (
         <section className="home-promo shell" style={{ paddingTop: 0 }}>
@@ -145,32 +179,6 @@ export default function Home() {
                 {featured.buttonLabel || t(lang, "home.readMore")}
               </Link>
             </div>
-          </div>
-        </section>
-      )}
-
-      {services.length > 0 && (
-        <section className="home-services shell" aria-labelledby="home-services-title">
-          <div className="home-section-heading">
-            <div>
-              <span className="kicker">{t(lang, "home.ourServices")}</span>
-              <h2 id="home-services-title">{t(lang, "services.title")}</h2>
-            </div>
-            <Link to={`/${lang}/services`} className="btn-text">
-              {t(lang, "home.readMore")} <span className="arrow">→</span>
-            </Link>
-          </div>
-          <div className="home-service-grid">
-            {services.slice(0, 3).map((s, i) => (
-              <Link key={s.id} to={`/${lang}/services`} className="home-service-card">
-                <span className="home-service-card__number">{String(i + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3>{s.name}</h3>
-                  {s.description && <p>{s.description}</p>}
-                </div>
-                <span className="home-service-card__arrow" aria-hidden="true">↗</span>
-              </Link>
-            ))}
           </div>
         </section>
       )}

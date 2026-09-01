@@ -24,7 +24,13 @@
     "readMore": "阅读更多",
     "upcomingEvents": "未来活动",
     "viewAllEvents": "查看全部活动",
-    "ourServices": "我们的工作"
+    "ourServices": "我们的工作",
+    "servicesLabel": "服务范围",
+    "supportEyebrow": "招募义工 · VOLUNTEER",
+    "supportTitle": "登记一次，\n全年都能上场。",
+    "supportLead": "填一次义工表格，之后每次活动只需回复 WhatsApp 就能报名。无需经验，我们提供培训、工具与保险。",
+    "supportNoteTime": "约 5 分钟 · 11 个栏位",
+    "supportNoteMinor": "18 岁以下需家长签署同意书"
   },
   "blog": {
     "empty": "暂时未有文章"

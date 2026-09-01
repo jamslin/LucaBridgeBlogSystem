@@ -26,7 +26,9 @@ export default function Services() {
 
       <div className="services-grid">
         {services.map((s) => (
-          <div key={s.id} className="service-card">
+          // id matches the code the home page's chip row links to, so a chip
+          // lands on its own service rather than the top of the page.
+          <div key={s.id} id={s.code} className="service-card">
             {s.iconUrl && <img className="service-card__icon" src={s.iconUrl} alt="" />}
             <h3>{s.name}</h3>
             {s.description && <p>{s.description}</p>}

@@ -24,7 +24,13 @@
     "readMore": "Read more",
     "upcomingEvents": "Upcoming events",
     "viewAllEvents": "View all events",
-    "ourServices": "What we do"
+    "ourServices": "What we do",
+    "servicesLabel": "Services",
+    "supportEyebrow": "Volunteer",
+    "supportTitle": "Register once,\njoin us all year.",
+    "supportLead": "Fill in the volunteer form once, then sign up for any event with a single WhatsApp reply. No experience needed — we provide training, equipment and insurance.",
+    "supportNoteTime": "About 5 minutes · 11 fields",
+    "supportNoteMinor": "Under 18s need a signed parental consent form"
   },
   "blog": {
     "empty": "No posts yet"
