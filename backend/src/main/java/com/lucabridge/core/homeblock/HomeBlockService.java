@@ -3,6 +3,7 @@ package com.lucabridge.core.homeblock;
 import com.lucabridge.core.blog.Blog;
 import com.lucabridge.core.blog.BlogRepository;
 import com.lucabridge.core.error.BadRequestException;
+import com.lucabridge.core.error.ConflictException;
 import com.lucabridge.core.error.ResourceNotFoundException;
 import com.lucabridge.core.homeblock.dto.HomeBlockUpsertRequest;
 import com.lucabridge.core.media.Media;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class HomeBlockService {
@@ -43,8 +46,23 @@ public class HomeBlockService {
                 .orElseThrow(() -> new ResourceNotFoundException("Home block not found: " + id));
     }
 
+    /**
+     * Slots the home page reads exactly one of. Creating a second HERO produced a
+     * row the page silently ignored — the editor's work simply never appeared,
+     * with nothing to explain why. STAT and QUICK_LINK are genuinely repeatable
+     * (three stat tiles, three quick links), so they are absent from this set.
+     */
+    private static final Set<HomeBlockSlot> SINGLE_BLOCK_SLOTS =
+            EnumSet.of(HomeBlockSlot.HERO, HomeBlockSlot.SUPPORT, HomeBlockSlot.FEATURED);
+
     @Transactional
     public HomeBlock create(HomeBlockUpsertRequest req, Long currentUserId) {
+        if (SINGLE_BLOCK_SLOTS.contains(req.slot()) && homeBlockRepository.countBySlot(req.slot()) > 0) {
+            throw new ConflictException(
+                    "There is already a " + req.slot() + " block. Edit the existing one instead — "
+                    + "the home page only ever shows the first block in this slot.");
+        }
+
         HomeBlock block = HomeBlock.builder()
                 .slot(req.slot())
                 .linkUrl(req.linkUrl())

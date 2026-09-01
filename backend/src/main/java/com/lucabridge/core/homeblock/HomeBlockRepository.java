@@ -21,6 +21,9 @@ public interface HomeBlockRepository extends JpaRepository<HomeBlock, Long> {
             + "ORDER BY e.slot ASC, e.sortOrder ASC")
     List<HomeBlock> findAllForAdmin();
 
+    /** Used to enforce the one-per-slot rule on HERO, SUPPORT and FEATURED. */
+    long countBySlot(HomeBlockSlot slot);
+
     @Query("SELECT e FROM HomeBlock e LEFT JOIN FETCH e.media LEFT JOIN FETCH e.text LEFT JOIN FETCH e.blog "
             + "WHERE e.id = :id")
     Optional<HomeBlock> findByIdWithText(@Param("id") Long id);

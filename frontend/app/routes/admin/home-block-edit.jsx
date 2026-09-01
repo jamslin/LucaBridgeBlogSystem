@@ -11,6 +11,17 @@ const LANGS = [
 // What each slot does with these fields on the public home page. Keeping this
 // next to the form is the difference between "Title" meaning something and an
 // editor guessing.
+
+const SLOT_CAPABILITIES = {
+  HERO:       { media: true,  link: true,  blog: false, button: true,  eyebrow: true,  note: false, repeatable: false },
+  SUPPORT:    { media: false, link: true,  blog: false, button: true,  eyebrow: true,  note: true,  repeatable: false },
+  FEATURED:   { media: true,  link: true,  blog: true,  button: true,  eyebrow: false, note: false, repeatable: false },
+  STAT:       { media: false, link: false, blog: false, button: false, eyebrow: false, note: false, repeatable: true },
+  QUICK_LINK: { media: false, link: true,  blog: false, button: false, eyebrow: false, note: false, repeatable: true },
+  VOLUNTEER:  { media: true,  link: true,  blog: false, button: true,  eyebrow: false, note: false, repeatable: true },
+};
+const capsFor = (slot) => SLOT_CAPABILITIES[slot] || SLOT_CAPABILITIES.QUICK_LINK;
+
 const EYEBROW_HINT = {
   HERO: "Small label over the headline, e.g. 與社區同行.",
   SUPPORT: "Small label over the red band's headline, e.g. 招募義工 · VOLUNTEER.",
@@ -62,6 +73,7 @@ export default function HomeBlockEdit() {
   const [error, setError] = useState(""); const [ok, setOk] = useState("");
   const [busy, setBusy] = useState(false); const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(!isNew);
+  const [takenSlots, setTakenSlots] = useState([]);
   const mediaRef = useRef(null);
 
   useEffect(() => {
@@ -82,6 +94,24 @@ export default function HomeBlockEdit() {
     })();
     return () => { alive = false; };
   }, [id, isNew]);
+
+  // Which single-block slots are already used. Fetched only when creating, so
+  // editing an existing HERO never hides its own slot.
+  useEffect(() => {
+    if (!isNew) return undefined;
+    let alive = true;
+    adminApi.listHomeBlocks()
+      .then((blocks) => {
+        if (!alive) return;
+        const taken = [...new Set(blocks.map((b) => b.slot).filter((sl) => !capsFor(sl).repeatable))];
+        setTakenSlots(taken);
+        // Land on a slot that can actually take a new block.
+        const firstFree = SLOTS.find((sl) => capsFor(sl).repeatable || !taken.includes(sl));
+        if (firstFree) setSlot(firstFree);
+      })
+      .catch(() => { /* the save path enforces this server-side regardless */ });
+    return () => { alive = false; };
+  }, [isNew]);
 
   const setField = (lang, f, v) => setTr((p) => ({ ...p, [lang]: { ...p[lang], [f]: v } }));
 
@@ -115,6 +145,7 @@ export default function HomeBlockEdit() {
 
   if (loading) return (<><div className="admin-topbar"><h1>Edit block</h1></div><div className="admin-content"><div className="admin-empty">Loading…</div></div></>);
   const a = tr[activeLang];
+  const caps = capsFor(slot);
 
   return (
     <>
@@ -129,10 +160,22 @@ export default function HomeBlockEdit() {
           <div className="admin-row">
             <div className="admin-field"><label>Slot</label>
               <select value={slot} onChange={(e) => setSlot(e.target.value)}>
-                {SLOTS.map((s) => <option key={s} value={s}>{s}</option>)}
+                {SLOTS.filter((sl) => !isNew || capsFor(sl).repeatable || !takenSlots.includes(sl))
+                  .map((sl) => <option key={sl} value={sl}>{sl}</option>)}
               </select>
+              <p className="admin-hint">
+                {caps.repeatable
+                  ? "This slot shows every block you add, in sort order."
+                  : "The home page shows one block in this slot, so there can only be one."}
+              </p>
             </div>
-            <div className="admin-field"><label>Sort order (within slot)</label><input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} /></div>
+            {caps.repeatable && (
+              <div className="admin-field">
+                <label>Sort order (within slot)</label>
+                <input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
+                <p className="admin-hint">Low numbers first. Only this slot shows more than one block.</p>
+              </div>
+            )}
             <div className="admin-field">
               <label className="checkbox" style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 400 }}>
                 <input type="checkbox" style={{ width: "auto" }} checked={active} onChange={(e) => setActive(e.target.checked)} /> Active
@@ -140,9 +183,22 @@ export default function HomeBlockEdit() {
             </div>
           </div>
           <div className="admin-row">
-            <div className="admin-field"><label>Link URL</label><input value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="/tc/donate" /></div>
-            <div className="admin-field"><label>Pin a blog post (FEATURED)</label><input type="number" value={blogId} onChange={(e) => setBlogId(e.target.value)} placeholder="Blog post ID" /></div>
+            {caps.link && (
+              <div className="admin-field">
+                <label>Link URL</label>
+                <input value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="/volunteer" />
+                <p className="admin-hint">Where the block's button or card goes. Start with / for a page on this site.</p>
+              </div>
+            )}
+            {caps.blog && (
+              <div className="admin-field">
+                <label>Pin a blog post</label>
+                <input type="number" value={blogId} onChange={(e) => setBlogId(e.target.value)} placeholder="Blog post ID" />
+                <p className="admin-hint">The story this block links to. Find the id in the Blog list.</p>
+              </div>
+            )}
           </div>
+          {caps.media && (
           <div className="admin-field">
             <label>Media</label>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -152,6 +208,7 @@ export default function HomeBlockEdit() {
             </div>
             {mediaUrl ? <img src={mediaUrl} alt="" style={{ marginTop: 10, maxHeight: 120, borderRadius: "var(--radius-photo)", border: "1px solid var(--color-line)" }} /> : null}
           </div>
+          )}
         </div>
         <div className="admin-card">
           <div className="lang-tabs">
@@ -161,11 +218,13 @@ export default function HomeBlockEdit() {
               fields — a HERO/SUPPORT headline wraps where the editor breaks it,
               and a STAT's caption is the second line of its subtitle. An <input>
               cannot produce either. */}
+          {caps.eyebrow && (
           <div className="admin-field">
             <label>Eyebrow</label>
             <input value={a.eyebrow} onChange={(e) => setField(activeLang, "eyebrow", e.target.value)} />
             <p className="admin-hint">{EYEBROW_HINT[slot] || "Small label above the title. Leave blank to hide it."}</p>
           </div>
+          )}
           <div className="admin-field">
             <label>Title{activeLang === "zh-Hant" ? " (required)" : ""}</label>
             <textarea className="compact" rows={2} value={a.title} onChange={(e) => setField(activeLang, "title", e.target.value)} />
@@ -176,12 +235,19 @@ export default function HomeBlockEdit() {
             <textarea className="compact" rows={2} value={a.subtitle} onChange={(e) => setField(activeLang, "subtitle", e.target.value)} />
             <p className="admin-hint">{SUBTITLE_HINT[slot] || "Supporting line under the title."}</p>
           </div>
-          <div className="admin-field"><label>Button label</label><input value={a.buttonLabel} onChange={(e) => setField(activeLang, "buttonLabel", e.target.value)} /></div>
+          {caps.button && (
+            <div className="admin-field">
+              <label>Button label</label>
+              <input value={a.buttonLabel} onChange={(e) => setField(activeLang, "buttonLabel", e.target.value)} />
+            </div>
+          )}
+          {caps.note && (
           <div className="admin-field">
             <label>Note (beside the button)</label>
             <textarea className="compact" rows={2} value={a.note} onChange={(e) => setField(activeLang, "note", e.target.value)} />
             <p className="admin-hint">{NOTE_HINT[slot] || "Fine print next to the button. Press Enter for a second line."}</p>
           </div>
+          )}
         </div>
         <div className="admin-actions">
           <button className="admin-btn primary" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save"}</button>
