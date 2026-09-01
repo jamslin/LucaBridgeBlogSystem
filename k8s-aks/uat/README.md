@@ -52,7 +52,10 @@ kubectl -n lucabridge-uat get pods -w
 ## Notes / known follow-ups
 
 - **Media:** `/blog-media` is routed to UAT MinIO and the demo bucket must allow anonymous
-  downloads. Run `mc anonymous set download m/blog-media` after rebuilding MinIO storage.
+  downloads. For the `lucabridge` namespace this is now automatic — the backend Deployment
+  has an `ensure-media-bucket` initContainer that creates the bucket and sets the download
+  policy on every rollout. This UAT manifest is standalone and does NOT have it, so here you
+  still run `mc anonymous set download m/blog-media` after rebuilding MinIO storage.
   Download each source image to a file before `mc cp`; avoid `mc pipe`, which can exceed
   UAT's memory limit. Do not use public-read buckets for private uploads.
 - **NetworkPolicy not applied** — the cluster has no network-policy engine; enabling it

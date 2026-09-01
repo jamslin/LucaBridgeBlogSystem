@@ -57,6 +57,40 @@ spec:
       labels:
         app: backend
     spec:
+      # MinIO starts with no buckets and the backend never creates one, so a
+      # fresh cluster (or a rebuilt MinIO PVC) fails every upload with S3 404
+      # NoSuchBucket. This runs before the app on every rollout — both commands
+      # are idempotent, so it is a no-op once the bucket exists.
+      #
+      # `anonymous set download` is required, not cosmetic: media URLs are plain
+      # public links and the upload path sets no per-object ACL, so on a private
+      # bucket images 403 in the browser even though the upload succeeded.
+      initContainers:
+        - name: ensure-media-bucket
+          image: minio/mc:latest
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_PASSWORD
+            - name: BUCKET
+              value: "blog-media"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              until mc alias set local http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null 2>&1; do
+                echo "waiting for minio..."; sleep 3
+              done
+              mc mb --ignore-existing "local/$BUCKET"
+              mc anonymous set download "local/$BUCKET"
+              echo "bucket $BUCKET ready"
       containers:
         - name: backend
           # CHANGE to your GHCR path + tag (CI pushes this).
