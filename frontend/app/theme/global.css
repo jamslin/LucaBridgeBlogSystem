@@ -585,7 +585,9 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
 /* Footer columns */
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  /* Brand column wider than the link columns, and a fixed count so the columns
+     cannot reflow into a ragged second row. */
+  grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(0, 1fr));
   gap: 24px 32px;
   padding-bottom: 32px;
   border-bottom: 1px solid rgba(245, 244, 236, 0.18);
@@ -1152,7 +1154,10 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
   margin-top: clamp(48px, 6vw, 80px);
   padding: clamp(48px, 6vw, 72px) 0 32px;
 }
-.footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+/* Mark left, wordmark right — the same lockup as the nav. Stacking them made
+   the footer look like a second, different brand. */
+.footer-brand { display: flex; align-items: center; gap: 12px; }
+.footer-brand__text { display: flex; flex-direction: column; }
 .footer-brand .site-brand__name { color: var(--color-cream); font-size: 20px; }
 .footer-brand__hours {
   margin: 12px 0 0;
@@ -1558,4 +1563,16 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
      and the language switch are what matter there. */
   .masthead-utility__social { display: none; }
   .masthead-utility__divider { display: none; }
+}
+
+.footer-brandcol { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.footer-brand__hours { margin: 0; font-family: var(--font-label); font-size: 12px; color: rgba(253, 246, 238, .7); }
+.footer-social { display: flex; gap: 14px; }
+
+@media (max-width: 900px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brandcol { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+  .footer-grid { grid-template-columns: 1fr; }
 }

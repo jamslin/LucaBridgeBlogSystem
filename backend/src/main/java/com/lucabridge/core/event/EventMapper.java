@@ -10,6 +10,7 @@ import com.lucabridge.core.event.dto.RegistrationInfoDto;
 import com.lucabridge.core.i18n.Lang;
 import com.lucabridge.core.i18n.Localized;
 import com.lucabridge.core.media.Media;
+import com.lucabridge.core.media.dto.MediaRefDto;
 import com.lucabridge.core.publish.Visibility;
 
 import java.time.Instant;
@@ -89,6 +90,9 @@ final class EventMapper {
         EventText t = event.getText();
         Media cover = event.getCoverMedia();
         List<Long> galleryIds = event.getGallery().stream().map(g -> g.getMedia().getId()).toList();
+        List<MediaRefDto> galleryRefs = event.getGallery().stream()
+                .map(g -> new MediaRefDto(g.getMedia().getId(), g.getMedia().getUrl()))
+                .toList();
         return new AdminEventDetailDto(
                 event.getId(),
                 event.getSlug(),
@@ -120,6 +124,7 @@ final class EventMapper {
                 t == null ? null : t.getEnVenue(),
                 t == null ? null : t.getScVenue(),
                 galleryIds,
+                galleryRefs,
                 registrationInfo(event, registeredCount, now));
     }
 

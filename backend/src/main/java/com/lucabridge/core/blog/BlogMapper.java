@@ -8,6 +8,7 @@ import com.lucabridge.core.blog.dto.GalleryImageDto;
 import com.lucabridge.core.i18n.Lang;
 import com.lucabridge.core.i18n.Localized;
 import com.lucabridge.core.media.Media;
+import com.lucabridge.core.media.dto.MediaRefDto;
 import com.lucabridge.core.publish.Visibility;
 
 import java.time.Instant;
@@ -77,6 +78,9 @@ final class BlogMapper {
         BlogText t = blog.getText();
         Media cover = blog.getCoverMedia();
         List<Long> galleryIds = blog.getGallery().stream().map(g -> g.getMedia().getId()).toList();
+        List<MediaRefDto> galleryRefs = blog.getGallery().stream()
+                .map(g -> new MediaRefDto(g.getMedia().getId(), g.getMedia().getUrl()))
+                .toList();
         return new AdminBlogDetailDto(
                 blog.getId(),
                 blog.getSlug(),
@@ -99,7 +103,8 @@ final class BlogMapper {
                 t == null ? null : t.getTcBody(),
                 t == null ? null : t.getEnBody(),
                 t == null ? null : t.getScBody(),
-                galleryIds);
+                galleryIds,
+                galleryRefs);
     }
 
     private static String title(BlogText t, Lang lang) {

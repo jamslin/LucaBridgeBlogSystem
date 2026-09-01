@@ -10,7 +10,8 @@ export default function Volunteer() {
   const { lang } = useParams();
 
   return (
-    <div className="shell static-page__hero reading-column" style={{ paddingBottom: "48px" }}>
+    <div className="shell static-page__hero" style={{ paddingBottom: "48px" }}>
+      <div className="reading-column">
       <span className="kicker">LucaBridge</span>
       <h1>{t(lang, "volunteer.title")}</h1>
       <div className="pending-notice">{t(lang, "volunteer.pending")}</div>
@@ -19,6 +20,7 @@ export default function Volunteer() {
           {t(lang, "nav.recruitJobs")} <span className="arrow">→</span>
         </Link>
       </p>
+      </div>
     </div>
   );
 }

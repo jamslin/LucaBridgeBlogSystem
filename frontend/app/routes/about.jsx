@@ -16,7 +16,8 @@ export default function About() {
   const company = layoutData?.company ?? {};
 
   return (
-    <div className="shell static-page__hero reading-column" style={{ paddingBottom: "48px" }}>
+    <div className="shell static-page__hero" style={{ paddingBottom: "48px" }}>
+      <div className="reading-column">
       <span className="kicker">LucaBridge</span>
       <h1>{t(lang, "about.title")}</h1>
 
@@ -29,6 +30,7 @@ export default function About() {
 
       <h2>{t(lang, "about.structureTitle")}</h2>
       <div className="pending-notice">{t(lang, "about.structurePending")}</div>
+      </div>
     </div>
   );
 }

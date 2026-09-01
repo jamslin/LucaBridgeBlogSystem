@@ -5,6 +5,8 @@ import com.lucabridge.core.publish.PublishStatus;
 import com.lucabridge.core.publish.Visibility;
 
 import java.time.Instant;
+import com.lucabridge.core.media.dto.MediaRefDto;
+
 import java.util.List;
 
 public record AdminEventDetailDto(
@@ -38,5 +40,7 @@ public record AdminEventDetailDto(
         String enVenue,
         String scVenue,
         List<Long> galleryMediaIds,
+        /** Same images as galleryMediaIds, with URLs so the editor can preview them. */
+        List<MediaRefDto> galleryMedia,
         RegistrationInfoDto registration) {
 }

@@ -12,7 +12,8 @@ export default function Donate() {
   const company = layoutData?.company ?? {};
 
   return (
-    <div className="shell static-page__hero reading-column" style={{ paddingBottom: "48px" }}>
+    <div className="shell static-page__hero" style={{ paddingBottom: "48px" }}>
+      <div className="reading-column">
       <span className="kicker">LucaBridge</span>
       <h1>{t(lang, "donate.title")}</h1>
       <div className="pending-notice">{t(lang, "donate.pending")}</div>
@@ -23,6 +24,7 @@ export default function Donate() {
           {company.phone && <a href={`tel:${company.phone}`}>{company.phone}</a>}
         </p>
       )}
+      </div>
     </div>
   );
 }

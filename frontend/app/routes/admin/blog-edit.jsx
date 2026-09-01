@@ -54,7 +54,13 @@ export default function BlogEdit() {
           });
           // Media detail (URL) isn't in AdminBlogDetailDto — only ids. Show ids as a lightweight
           // reference list; the media library screen is the source of truth for previews.
-          setGalleryMedia((b.galleryMediaIds || []).map((mid) => ({ id: mid, url: null })));
+          // Prefer the URL-carrying list so existing images show a thumbnail;
+          // fall back to bare ids for an older API response.
+          setGalleryMedia(
+            b.galleryMedia?.length
+              ? b.galleryMedia.map((m) => ({ id: m.id, url: m.url }))
+              : (b.galleryMediaIds || []).map((mid) => ({ id: mid, url: null })),
+          );
         }
       } catch (e) { if (alive) setError(e.message); }
       finally { if (alive) setLoading(false); }

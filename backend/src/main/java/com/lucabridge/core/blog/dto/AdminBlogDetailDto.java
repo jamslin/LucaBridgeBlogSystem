@@ -5,6 +5,8 @@ import com.lucabridge.core.publish.PublishStatus;
 import com.lucabridge.core.publish.Visibility;
 
 import java.time.Instant;
+import com.lucabridge.core.media.dto.MediaRefDto;
+
 import java.util.List;
 
 /** Every language at once — this is the editor's payload, not a rendered page. */
@@ -30,5 +32,7 @@ public record AdminBlogDetailDto(
         String tcBody,
         String enBody,
         String scBody,
-        List<Long> galleryMediaIds) {
+        List<Long> galleryMediaIds,
+        /** Same images as galleryMediaIds, with URLs so the editor can preview them. */
+        List<MediaRefDto> galleryMedia) {
 }
