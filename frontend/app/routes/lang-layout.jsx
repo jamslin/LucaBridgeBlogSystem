@@ -28,19 +28,20 @@ export default function LangLayout() {
   const { lang } = useParams();
   const location = useLocation();
 
-  // The home page's hero runs edge to edge and starts at the very top, with the
-  // utility bar and nav floating over it as glass. Every other page keeps the
-  // header in normal flow, so the chrome sits on paper as usual. Detected from
-  // the path rather than with :has() so it works in every browser and is
-  // obvious to the next reader.
+  // On the home page the hero runs edge to edge and starts behind the nav, so
+  // the glass panel has a photograph to sit on. Detected from the path rather
+  // than with :has() so it works in every browser and is obvious to read.
+  //
+  // Masthead and Nav are siblings in normal flow, not wrapped in a positioned
+  // container: that is what lets the nav be `position: sticky`. The utility bar
+  // scrolls away with the page — keeping both pinned would eat ~120px of a
+  // phone screen permanently.
   const isHome = location.pathname === `/${lang}` || location.pathname === `/${lang}/`;
 
   return (
     <>
-      <div className={`site-top${isHome ? " site-top--overlay" : ""}`}>
-        <Masthead />
-        <Nav />
-      </div>
+      <Masthead />
+      <Nav overHero={isHome} />
       <main className={isHome ? "has-full-bleed-hero" : undefined}>
         <Outlet />
       </main>

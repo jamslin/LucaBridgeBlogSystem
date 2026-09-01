@@ -32,6 +32,23 @@
 
 BEGIN;
 
+-- Precondition: migrations V4 and V5 must have run, since this seed writes the
+-- eyebrow and note columns V5 adds. Without this guard the failure is a raw
+-- "column tc_eyebrow does not exist", which says nothing about what to do.
+-- Flyway applies migrations when the backend starts, so the fix is to restart it.
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'home_block_text' AND column_name = 'tc_eyebrow'
+    ) THEN
+        RAISE EXCEPTION
+            'This seed needs migration V5, which has not been applied to this database yet. '
+            'Restart the backend so Flyway runs it (rebuild the image if the backend runs in '
+            'Docker), then run this file again.';
+    END IF;
+END $$;
+
 -- ---------------------------------------------------------------------------
 -- HERO — the headline over the hero image. The newline in tc_title/en_title is
 -- meaningful: the home page breaks the headline exactly where the editor does.

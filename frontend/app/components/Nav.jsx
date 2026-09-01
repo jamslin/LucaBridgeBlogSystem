@@ -19,7 +19,7 @@ import SocialLinks from "./SocialLinks";
 // The CTA points at volunteering, not donation. There is no online payment in
 // this phase (design brief §3), so "Donate Now" would promise a checkout that
 // does not exist; §5 is explicit that 成為義工 is the single primary conversion.
-export default function Nav() {
+export default function Nav({ overHero = false }) {
   const { lang } = useParams();
   const location = useLocation();
   const layoutData = useRouteLoaderData("routes/lang-layout");
@@ -27,9 +27,22 @@ export default function Nav() {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openSection, setOpenSection] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
 
   const L = (path) => `/${lang}${path}`;
   const closeDrawer = () => { setDrawerOpen(false); setOpenSection(null); };
+
+  // Over the hero the nav is transparent so the photograph shows through. Once
+  // it sticks over ordinary content that transparency lets cards scroll past
+  // either side of the pill, which reads as broken — so past the fold it takes
+  // a background. CSS has no "is stuck" selector, hence the listener.
+  useEffect(() => {
+    if (!overHero) return undefined;
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [overHero]);
 
   // Any navigation closes the drawer, and Escape does too.
   useEffect(() => { closeDrawer(); }, [location.pathname]);
@@ -69,7 +82,7 @@ export default function Nav() {
   );
 
   return (
-    <header className="site-nav">
+    <header className={`site-nav${overHero ? " site-nav--over-hero" : ""}${scrolled ? " site-nav--scrolled" : ""}`}>
       <div className="shell">
         <nav className="site-nav__bar" aria-label="Primary">
           {brand}

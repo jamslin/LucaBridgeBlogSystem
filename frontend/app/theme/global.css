@@ -50,6 +50,9 @@
   /* Radius — the comps are soft-cornered throughout: pills for anything
      clickable, 12-22px for surfaces. */
   --radius-chip: 999px; --radius-photo: 12px; --radius-card: 16px;
+  /* Text inputs are never pills — a lozenge around a multi-line textarea
+     wastes its corners and reads as a button. */
+  --radius-input: 10px;
   --radius-panel: 22px; --radius-pill: 999px;
 
   /* Elevation */
@@ -80,7 +83,10 @@ html[lang="en"] body { line-height: 1.7; }
 
 html,
 body {
-  height: 100%;
+  /* min-height, not height: a fixed 100% makes body the sticky containing block
+     at exactly viewport height, so `position: sticky` on the nav would scroll
+     away after one screen instead of pinning. */
+  min-height: 100%;
 }
 
 body {
@@ -620,28 +626,28 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
    banner and service hierarchy, expressed in LucaBridge's own warm palette. */
 .home-page { overflow: hidden; }
 /* ── Hero ────────────────────────────────────────────────────────────────
-   Edge to edge and starting at the very top: the utility bar and nav float
-   over the photograph rather than sitting on paper above it. That is the only
-   place on the site glass appears over an image, and it is why the nav's
-   frosted panel reads as glass at all — over a flat background it just looks
-   like a light box. */
-.site-top--overlay {
-  position: absolute;
+   Edge to edge, starting behind the nav so the glass panel has a photograph to
+   sit on — over flat paper it just looks like a light box.
+
+   The nav is sticky rather than absolutely positioned, so it stays reachable
+   the whole way down the page. The utility bar above it is left in normal flow
+   and scrolls away: pinning both would cost ~120px of a phone screen for the
+   entire visit, and the phone number is not worth that. */
+:root { --nav-h: 90px; }
+
+.site-nav {
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   z-index: 60;
 }
-.site-top--overlay .site-nav { background: none; }
-/* Over a photo the bar keeps its red identity but lets the image through. */
-.site-top--overlay .masthead-utility { background: rgba(172, 49, 42, .86); }
-@supports (backdrop-filter: blur(8px)) {
-  .site-top--overlay .masthead-utility {
-    background: rgba(172, 49, 42, .68);
-    backdrop-filter: blur(10px) saturate(1.15);
-  }
+/* Over the hero the nav's own background must not hide the photograph; the
+   frosted pill inside it provides all the contrast the links need. */
+.site-nav--over-hero { background: none; }
+
+.has-full-bleed-hero .home-hero {
+  /* Pull the hero up under the nav's resting position. */
+  margin-top: calc(-1 * var(--nav-h));
 }
-.has-full-bleed-hero { position: relative; }
 
 .home-hero { padding: 0; }
 .home-hero__slide,
@@ -651,7 +657,7 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
   align-items: flex-end;
   /* Tall enough that the overlaid header never crowds the headline. */
   min-height: clamp(560px, 64vw, 780px);
-  padding-top: 140px;
+  padding-top: calc(var(--nav-h) + 48px);
   overflow: hidden;
   background: var(--color-ink);
   isolation: isolate;
@@ -676,7 +682,7 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
   z-index: -1;
   background:
     linear-gradient(90deg, rgba(42, 26, 24, .88) 0%, rgba(42, 26, 24, .62) 42%, rgba(42, 26, 24, .12) 78%, rgba(42, 26, 24, .04) 100%),
-    linear-gradient(180deg, rgba(42, 26, 24, .55) 0%, rgba(42, 26, 24, 0) 190px);
+    linear-gradient(180deg, rgba(42, 26, 24, .5) 0%, rgba(42, 26, 24, 0) 160px);
 }
 .home-hero__empty {
   background: linear-gradient(135deg, var(--color-accent-deep), var(--color-accent) 58%, #c8734f);
@@ -774,7 +780,7 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
 
 @media (max-width: 719px) {
   .home-hero__slide,
-  .home-hero__empty { min-height: 0; padding-top: 128px; }
+  .home-hero__empty { min-height: 0; padding-top: calc(var(--nav-h) + 24px); }
   .home-hero__content { padding-bottom: 48px; }
   .home-hero__actions .home-hero__cta { width: 100%; }
 }
@@ -1493,7 +1499,7 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
 .reg-form input[type="number"],
 .reg-form select,
 .reg-form textarea {
-  width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--color-line); border-radius: var(--radius-chip);
+  width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--color-line); border-radius: var(--radius-input);
   font-family: var(--font-body); font-size: 15px; background: var(--color-card); color: var(--color-ink);
 }
 .reg-form label.checkbox { display: flex; align-items: flex-start; gap: 8px; font-weight: 400; font-size: 14px; }
@@ -1514,4 +1520,42 @@ a.drawer__row:hover { text-decoration: none; color: var(--color-cream); }
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
+}
+
+/* ── Narrow screens: nothing touches the edge ────────────────────────────
+   Several surfaces set their own padding and were tighter than the shell's
+   gutter on a phone, so text ran to the screen edge. */
+@media (max-width: 719px) {
+  :root { --nav-h: 78px; }
+  .shell { padding-left: 18px; padding-right: 18px; }
+  .home-hero__content { padding-left: 18px; padding-right: 18px; }
+  .support { padding: 28px 20px; }
+  .event-card,
+  .job-card,
+  .quick-link,
+  .empty-state { padding: 20px; }
+  .article__head,
+  .article__cover { padding-left: 0; padding-right: 0; }
+  .pull-quote { padding: 18px 18px 18px 22px; }
+  .form-section { padding: 20px; }
+  .site-footer__legal { gap: 12px; }
+}
+
+/* Past the fold the nav needs a ground of its own: while transparent, cards
+   scrolling either side of the floating pill read as a rendering fault. */
+.site-nav--over-hero.site-nav--scrolled {
+  background: linear-gradient(180deg, rgba(251, 245, 242, .96) 0%, rgba(251, 245, 242, .82) 100%);
+}
+@supports (backdrop-filter: blur(8px)) {
+  .site-nav--over-hero.site-nav--scrolled {
+    background: linear-gradient(180deg, rgba(251, 245, 242, .86) 0%, rgba(251, 245, 242, .62) 100%);
+    backdrop-filter: blur(12px) saturate(1.1);
+  }
+}
+
+@media (max-width: 719px) {
+  /* Three stacked rows of utility bar is too much on a phone; the phone number
+     and the language switch are what matter there. */
+  .masthead-utility__social { display: none; }
+  .masthead-utility__divider { display: none; }
 }
