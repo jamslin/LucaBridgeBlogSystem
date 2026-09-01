@@ -34,10 +34,12 @@ WITH new_block AS (
     WHERE NOT EXISTS (SELECT 1 FROM home_block WHERE slot = 'HERO')
     RETURNING id
 )
-INSERT INTO home_block_text (home_block_id, tc_title, en_title, sc_title,
+INSERT INTO home_block_text (home_block_id, tc_eyebrow, en_eyebrow, sc_eyebrow,
+                             tc_title, en_title, sc_title,
                              tc_subtitle, en_subtitle, sc_subtitle,
                              tc_button_label, en_button_label, sc_button_label)
 SELECT id,
+       '與社區同行', 'Walking with the community', '与社区同行',
        E'用愛築橋\n連結希望',
        E'Bridging hearts,\nbuilding hope',
        E'用爱筑桥\n连结希望',
@@ -88,17 +90,25 @@ WITH new_block AS (
     WHERE NOT EXISTS (SELECT 1 FROM home_block WHERE slot = 'SUPPORT')
     RETURNING id
 )
-INSERT INTO home_block_text (home_block_id, tc_title, en_title, sc_title,
+INSERT INTO home_block_text (home_block_id, tc_eyebrow, en_eyebrow, sc_eyebrow,
+                             tc_title, en_title, sc_title,
                              tc_subtitle, en_subtitle, sc_subtitle,
-                             tc_button_label, en_button_label, sc_button_label)
+                             tc_button_label, en_button_label, sc_button_label,
+                             tc_note, en_note, sc_note)
 SELECT id,
+       '招募義工 · VOLUNTEER', 'Volunteer', '招募义工 · VOLUNTEER',
        E'登記一次，\n全年都能上場。',
        E'Register once,\njoin us all year.',
        E'登记一次，\n全年都能上场。',
        '填一次義工表格，之後每次活動只需回覆 WhatsApp 就能報名。無需經驗，我們提供培訓、工具與保險。',
        'Fill in the volunteer form once, then sign up for any event with a single WhatsApp reply. No experience needed — we provide training, equipment and insurance.',
        '填一次义工表格，之后每次活动只需回复 WhatsApp 就能报名。无需经验，我们提供培训、工具与保险。',
-       '成為義工', 'Become a volunteer', '成为义工'
+       '成為義工', 'Become a volunteer', '成为义工',
+       -- Fine print beside the button. The field count is a claim about the
+       -- registration form, so it lives here where staff can correct it.
+       E'約 5 分鐘 · 11 個欄位\n18 歲以下需家長簽署同意書',
+       E'About 5 minutes · 11 fields\nUnder 18s need a signed parental consent form',
+       E'约 5 分钟 · 11 个栏位\n18 岁以下需家长签署同意书'
 FROM new_block;
 
 -- ---------------------------------------------------------------------------

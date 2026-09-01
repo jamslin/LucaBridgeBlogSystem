@@ -55,7 +55,7 @@ export default function Home() {
           style={hero?.mediaUrl ? { "--hero-image": `url(${hero.mediaUrl})` } : undefined}
         >
           <div className="home-hero__content">
-            <span className="home-hero__eyebrow">{company?.name || "LucaBridge"}</span>
+            <span className="home-hero__eyebrow">{hero?.eyebrow || company?.name || "LucaBridge"}</span>
             <h1>{hero?.title || heroFallback.title}</h1>
             <p>{hero?.subtitle || heroFallback.subtitle}</p>
             <Link className="home-hero__cta" to={hero?.linkUrl ? hero.linkUrl : `/${lang}/volunteer`}>
@@ -126,7 +126,7 @@ export default function Home() {
       <section className="home-support shell">
         <div className="support">
           <div>
-            <span className="kicker kicker--cream">{t(lang, "home.supportEyebrow")}</span>
+            <span className="kicker kicker--cream">{support?.eyebrow || t(lang, "home.supportEyebrow")}</span>
             <h2>
               {(support?.title || t(lang, "home.supportTitle"))
                 .split("\n")
@@ -139,9 +139,10 @@ export default function Home() {
                 <span aria-hidden="true">→</span>
               </Link>
               <p className="support__notes">
-                {t(lang, "home.supportNoteTime")}
-                <br />
-                {t(lang, "home.supportNoteMinor")}
+                {(support?.note
+                  || `${t(lang, "home.supportNoteTime")}\n${t(lang, "home.supportNoteMinor")}`)
+                  .split("\n")
+                  .map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
               </p>
             </div>
           </div>

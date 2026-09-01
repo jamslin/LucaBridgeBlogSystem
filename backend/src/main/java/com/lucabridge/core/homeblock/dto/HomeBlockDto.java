@@ -6,9 +6,11 @@ import com.lucabridge.core.homeblock.HomeBlockSlot;
 public record HomeBlockDto(
         Long id,
         HomeBlockSlot slot,
+        String eyebrow,
         String title,
         String subtitle,
         String buttonLabel,
+        String note,
         String mediaUrl,
         Integer mediaWidth,
         Integer mediaHeight,

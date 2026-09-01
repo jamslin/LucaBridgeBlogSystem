@@ -39,6 +39,25 @@ public class HomeBlockText {
     @Column(name = "sc_subtitle", length = 600)
     private String scSubtitle;
 
+    @Column(name = "tc_eyebrow", length = 120)
+    private String tcEyebrow;
+
+    @Column(name = "en_eyebrow", length = 120)
+    private String enEyebrow;
+
+    @Column(name = "sc_eyebrow", length = 120)
+    private String scEyebrow;
+
+    /** Fine print beside the CTA. A newline renders as a second line. */
+    @Column(name = "tc_note", length = 300)
+    private String tcNote;
+
+    @Column(name = "en_note", length = 300)
+    private String enNote;
+
+    @Column(name = "sc_note", length = 300)
+    private String scNote;
+
     @Column(name = "tc_button_label", length = 100)
     private String tcButtonLabel;
 

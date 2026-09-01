@@ -16,6 +16,9 @@ public record HomeBlockUpsertRequest(
         boolean active,
         Instant publishAt,
         Instant unpublishAt,
+        @Size(max = 120) String tcEyebrow,
+        @Size(max = 120) String enEyebrow,
+        @Size(max = 120) String scEyebrow,
         @NotBlank @Size(max = 300) String tcTitle,
         @Size(max = 300) String enTitle,
         @Size(max = 300) String scTitle,
@@ -24,5 +27,8 @@ public record HomeBlockUpsertRequest(
         @Size(max = 600) String scSubtitle,
         @Size(max = 100) String tcButtonLabel,
         @Size(max = 100) String enButtonLabel,
-        @Size(max = 100) String scButtonLabel) {
+        @Size(max = 100) String scButtonLabel,
+        @Size(max = 300) String tcNote,
+        @Size(max = 300) String enNote,
+        @Size(max = 300) String scNote) {
 }

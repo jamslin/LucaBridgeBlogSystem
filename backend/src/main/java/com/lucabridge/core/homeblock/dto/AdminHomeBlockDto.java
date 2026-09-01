@@ -15,6 +15,9 @@ public record AdminHomeBlockDto(
         Instant publishAt,
         Instant unpublishAt,
         Instant updatedAt,
+        String tcEyebrow,
+        String enEyebrow,
+        String scEyebrow,
         String tcTitle,
         String enTitle,
         String scTitle,
@@ -23,5 +26,8 @@ public record AdminHomeBlockDto(
         String scSubtitle,
         String tcButtonLabel,
         String enButtonLabel,
-        String scButtonLabel) {
+        String scButtonLabel,
+        String tcNote,
+        String enNote,
+        String scNote) {
 }

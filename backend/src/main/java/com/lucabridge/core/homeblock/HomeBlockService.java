@@ -109,6 +109,9 @@ public class HomeBlockService {
             block.setText(text);
             text.setHomeBlock(block);
         }
+        text.setTcEyebrow(req.tcEyebrow());
+        text.setEnEyebrow(req.enEyebrow());
+        text.setScEyebrow(req.scEyebrow());
         text.setTcTitle(req.tcTitle());
         text.setEnTitle(req.enTitle());
         text.setScTitle(req.scTitle());
@@ -118,5 +121,8 @@ public class HomeBlockService {
         text.setTcButtonLabel(req.tcButtonLabel());
         text.setEnButtonLabel(req.enButtonLabel());
         text.setScButtonLabel(req.scButtonLabel());
+        text.setTcNote(req.tcNote());
+        text.setEnNote(req.enNote());
+        text.setScNote(req.scNote());
     }
 }

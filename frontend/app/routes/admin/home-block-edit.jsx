@@ -11,6 +11,20 @@ const LANGS = [
 // What each slot does with these fields on the public home page. Keeping this
 // next to the form is the difference between "Title" meaning something and an
 // editor guessing.
+const EYEBROW_HINT = {
+  HERO: "Small label over the headline, e.g. 與社區同行.",
+  SUPPORT: "Small label over the red band's headline, e.g. 招募義工 · VOLUNTEER.",
+  STAT: "Not shown on stat tiles — leave blank.",
+  QUICK_LINK: "Not shown on quick links — leave blank.",
+};
+
+const NOTE_HINT = {
+  SUPPORT: "Fine print beside the button — the form's length and the under-18 consent note. Press Enter for a second line.",
+  HERO: "Not shown on the hero — leave blank.",
+  STAT: "Not shown on stat tiles — leave blank.",
+  QUICK_LINK: "Not shown on quick links — leave blank.",
+};
+
 const TITLE_HINT = {
   HERO: "The big headline over the hero image. Press Enter to control where it breaks.",
   STAT: "The number only — e.g. 895, 5, 2021.",
@@ -29,7 +43,7 @@ const SUBTITLE_HINT = {
   VOLUNTEER: "The small line under the label.",
 };
 
-const empty = () => { const o = {}; for (const l of LANGS) o[l.code] = { title: "", subtitle: "", buttonLabel: "" }; return o; };
+const empty = () => { const o = {}; for (const l of LANGS) o[l.code] = { eyebrow: "", title: "", subtitle: "", buttonLabel: "", note: "" }; return o; };
 
 export default function HomeBlockEdit() {
   const { id } = useParams();
@@ -60,9 +74,9 @@ export default function HomeBlockEdit() {
         setSlot(b.slot || "HERO"); setMediaId(b.mediaId || null); setBlogId(b.blogId != null ? String(b.blogId) : "");
         setLinkUrl(b.linkUrl || ""); setSortOrder(String(b.sortOrder ?? 0)); setActive(!!b.active);
         setTr({
-          "zh-Hant": { title: b.tcTitle || "", subtitle: b.tcSubtitle || "", buttonLabel: b.tcButtonLabel || "" },
-          en: { title: b.enTitle || "", subtitle: b.enSubtitle || "", buttonLabel: b.enButtonLabel || "" },
-          "zh-Hans": { title: b.scTitle || "", subtitle: b.scSubtitle || "", buttonLabel: b.scButtonLabel || "" },
+          "zh-Hant": { eyebrow: b.tcEyebrow || "", title: b.tcTitle || "", subtitle: b.tcSubtitle || "", buttonLabel: b.tcButtonLabel || "", note: b.tcNote || "" },
+          en: { eyebrow: b.enEyebrow || "", title: b.enTitle || "", subtitle: b.enSubtitle || "", buttonLabel: b.enButtonLabel || "", note: b.enNote || "" },
+          "zh-Hans": { eyebrow: b.scEyebrow || "", title: b.scTitle || "", subtitle: b.scSubtitle || "", buttonLabel: b.scButtonLabel || "", note: b.scNote || "" },
         });
       } catch (e) { if (alive) setError(e.message); } finally { if (alive) setLoading(false); }
     })();
@@ -87,7 +101,9 @@ export default function HomeBlockEdit() {
       slot, mediaId, blogId: blogId ? Number(blogId) : null, linkUrl: linkUrl.trim() || null,
       sortOrder: Number(sortOrder) || 0, active, publishAt: null, unpublishAt: null,
       tcTitle: tr["zh-Hant"].title, enTitle: tr.en.title, scTitle: tr["zh-Hans"].title,
+      tcEyebrow: tr["zh-Hant"].eyebrow, enEyebrow: tr.en.eyebrow, scEyebrow: tr["zh-Hans"].eyebrow,
       tcSubtitle: tr["zh-Hant"].subtitle, enSubtitle: tr.en.subtitle, scSubtitle: tr["zh-Hans"].subtitle,
+      tcNote: tr["zh-Hant"].note, enNote: tr.en.note, scNote: tr["zh-Hans"].note,
       tcButtonLabel: tr["zh-Hant"].buttonLabel, enButtonLabel: tr.en.buttonLabel, scButtonLabel: tr["zh-Hans"].buttonLabel,
     };
     try {
@@ -146,6 +162,11 @@ export default function HomeBlockEdit() {
               and a STAT's caption is the second line of its subtitle. An <input>
               cannot produce either. */}
           <div className="admin-field">
+            <label>Eyebrow</label>
+            <input value={a.eyebrow} onChange={(e) => setField(activeLang, "eyebrow", e.target.value)} />
+            <p className="admin-hint">{EYEBROW_HINT[slot] || "Small label above the title. Leave blank to hide it."}</p>
+          </div>
+          <div className="admin-field">
             <label>Title{activeLang === "zh-Hant" ? " (required)" : ""}</label>
             <textarea className="compact" rows={2} value={a.title} onChange={(e) => setField(activeLang, "title", e.target.value)} />
             <p className="admin-hint">{TITLE_HINT[slot] || "Shown as the block heading."}</p>
@@ -156,6 +177,11 @@ export default function HomeBlockEdit() {
             <p className="admin-hint">{SUBTITLE_HINT[slot] || "Supporting line under the title."}</p>
           </div>
           <div className="admin-field"><label>Button label</label><input value={a.buttonLabel} onChange={(e) => setField(activeLang, "buttonLabel", e.target.value)} /></div>
+          <div className="admin-field">
+            <label>Note (beside the button)</label>
+            <textarea className="compact" rows={2} value={a.note} onChange={(e) => setField(activeLang, "note", e.target.value)} />
+            <p className="admin-hint">{NOTE_HINT[slot] || "Fine print next to the button. Press Enter for a second line."}</p>
+          </div>
         </div>
         <div className="admin-actions">
           <button className="admin-btn primary" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save"}</button>

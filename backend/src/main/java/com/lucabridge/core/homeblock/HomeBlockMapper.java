@@ -24,9 +24,11 @@ final class HomeBlockMapper {
         return new HomeBlockDto(
                 block.getId(),
                 block.getSlot(),
+                t == null ? null : Localized.pick(lang, t.getTcEyebrow(), t.getEnEyebrow(), t.getScEyebrow()),
                 t == null ? null : Localized.pick(lang, t.getTcTitle(), t.getEnTitle(), t.getScTitle()),
                 t == null ? null : Localized.pick(lang, t.getTcSubtitle(), t.getEnSubtitle(), t.getScSubtitle()),
                 t == null ? null : Localized.pick(lang, t.getTcButtonLabel(), t.getEnButtonLabel(), t.getScButtonLabel()),
+                t == null ? null : Localized.pick(lang, t.getTcNote(), t.getEnNote(), t.getScNote()),
                 media == null ? null : media.getUrl(),
                 media == null ? null : media.getWidth(),
                 media == null ? null : media.getHeight(),
@@ -64,6 +66,9 @@ final class HomeBlockMapper {
                 block.getPublishAt(),
                 block.getUnpublishAt(),
                 block.getUpdatedAt(),
+                t == null ? null : t.getTcEyebrow(),
+                t == null ? null : t.getEnEyebrow(),
+                t == null ? null : t.getScEyebrow(),
                 t == null ? null : t.getTcTitle(),
                 t == null ? null : t.getEnTitle(),
                 t == null ? null : t.getScTitle(),
@@ -72,6 +77,9 @@ final class HomeBlockMapper {
                 t == null ? null : t.getScSubtitle(),
                 t == null ? null : t.getTcButtonLabel(),
                 t == null ? null : t.getEnButtonLabel(),
-                t == null ? null : t.getScButtonLabel());
+                t == null ? null : t.getScButtonLabel(),
+                t == null ? null : t.getTcNote(),
+                t == null ? null : t.getEnNote(),
+                t == null ? null : t.getScNote());
     }
 }
