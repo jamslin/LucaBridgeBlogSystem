@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="LucaBridge">
+  <!--
+    Placeholder favicon: a bridge on the brand red, drawn as paths so it needs no
+    font (a CJK glyph would render differently on every OS, or not at all).
+    Colours are the palette's CTA red and cream.
+
+    Tuned for 16px, the size that actually shows in a browser tab: heavy strokes
+    and a tall arch, so the opening under the span stays visible when the whole
+    mark is sixteen pixels wide. It is correspondingly plain at 96px, which is
+    the right trade for a favicon.
+
+    Replace with the client's real mark when it exists — it is referenced by
+    filename from root.jsx, so dropping in a new favicon.svg is the whole change.
+  -->
+  <rect width="32" height="32" rx="7" fill="#c0302a"/>
+  <path d="M5 22.5q11-14 22 0" stroke="#fdf6ee" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+  <rect x="4" y="22.2" width="24" height="3.4" rx="1.7" fill="#fdf6ee"/>
+</svg>

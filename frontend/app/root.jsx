@@ -25,6 +25,9 @@ export const links = () => [
     href: "https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+Mono:wght@400;500&display=swap",
   },
   { rel: "stylesheet", href: globalStylesHref },
+  // Served from public/. SVG covers every current browser; a PNG fallback can be
+  // added for older Safari if it ever matters.
+  { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
 ];
 
 const CJK_FONT_HREF = {
