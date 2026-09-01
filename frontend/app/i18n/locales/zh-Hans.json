@@ -30,7 +30,12 @@
     "supportTitle": "登记一次，\n全年都能上场。",
     "supportLead": "填一次义工表格，之后每次活动只需回复 WhatsApp 就能报名。无需经验，我们提供培训、工具与保险。",
     "supportNoteTime": "约 5 分钟 · 11 个栏位",
-    "supportNoteMinor": "18 岁以下需家长签署同意书"
+    "supportNoteMinor": "18 岁以下需家长签署同意书",
+    "heroSecondary": "认识乐桥",
+    "charityLine": "非牟利慈善团体",
+    "charityOrdinance": "税务条例第 88 条",
+    "upcomingEyebrow": "最新资讯 · UPCOMING",
+    "upcomingTitle": "未来几周，你可以参与的事"
   },
   "blog": {
     "empty": "暂时未有文章",
@@ -69,7 +74,12 @@
     "successConfirmed": "报名成功，您的参考编号为",
     "successWaitlist": "您已加入候补名单，参考编号为",
     "backToEvents": "返回活动列表",
-    "emptyBody": "我们每月开放新的清洁、派发与探访服务。先登记成为义工，开放报名时我们会通知你。"
+    "emptyBody": "我们每月开放新的清洁、派发与探访服务。先登记成为义工，开放报名时我们会通知你。",
+    "spotsLeftCount": "尚余 {count} 个名额",
+    "capacityLine": "{total} 个名额 · 已报 {count} 人",
+    "joinWaitlist": "加入候补名单",
+    "details": "活动详情",
+    "contactUs": "请联络我们参与此活动"
   },
   "careers": {
     "empty": "暂时未有职位空缺。",
@@ -133,5 +143,10 @@
     "close": "关闭",
     "position": "第 {current} 张，共 {total} 张",
     "open": "放大检视"
+  },
+  "timeline": {
+    "thisWeek": "本周",
+    "nextWeek": "下周",
+    "month": "{month}"
   }
 }

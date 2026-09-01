@@ -30,7 +30,12 @@
     "supportTitle": "登記一次，\n全年都能上場。",
     "supportLead": "填一次義工表格，之後每次活動只需回覆 WhatsApp 就能報名。無需經驗，我們提供培訓、工具與保險。",
     "supportNoteTime": "約 5 分鐘 · 11 個欄位",
-    "supportNoteMinor": "18 歲以下需家長簽署同意書"
+    "supportNoteMinor": "18 歲以下需家長簽署同意書",
+    "heroSecondary": "認識樂橋",
+    "charityLine": "非牟利慈善團體",
+    "charityOrdinance": "稅務條例第 88 條",
+    "upcomingEyebrow": "最新資訊 · UPCOMING",
+    "upcomingTitle": "未來幾週，你可以參與的事"
   },
   "blog": {
     "empty": "暫時未有文章",
@@ -69,7 +74,12 @@
     "successConfirmed": "報名成功，您的參考編號為",
     "successWaitlist": "您已加入候補名單，參考編號為",
     "backToEvents": "返回活動列表",
-    "emptyBody": "我們每月開放新的清潔、派發與探訪服務。先登記成為義工，開放報名時我們會通知你。"
+    "emptyBody": "我們每月開放新的清潔、派發與探訪服務。先登記成為義工，開放報名時我們會通知你。",
+    "spotsLeftCount": "尚餘 {count} 個名額",
+    "capacityLine": "{total} 個名額 · 已報 {count} 人",
+    "joinWaitlist": "加入候補名單",
+    "details": "活動詳情",
+    "contactUs": "請聯絡我們參與此活動"
   },
   "careers": {
     "empty": "暫時未有職位空缺。",
@@ -133,5 +143,10 @@
     "close": "關閉",
     "position": "第 {current} 張，共 {total} 張",
     "open": "放大檢視"
+  },
+  "timeline": {
+    "thisWeek": "本週",
+    "nextWeek": "下週",
+    "month": "{month}"
   }
 }

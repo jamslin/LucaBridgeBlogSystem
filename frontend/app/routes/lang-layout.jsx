@@ -1,4 +1,4 @@
-import { Outlet, redirect } from "react-router";
+import { Outlet, redirect, useLocation, useParams } from "react-router";
 
 import { DEFAULT_LANG, SUPPORTED_LANGS } from "../i18n";
 import { api } from "../lib/api.server";
@@ -25,11 +25,23 @@ export async function loader({ params }) {
 }
 
 export default function LangLayout() {
+  const { lang } = useParams();
+  const location = useLocation();
+
+  // The home page's hero runs edge to edge and starts at the very top, with the
+  // utility bar and nav floating over it as glass. Every other page keeps the
+  // header in normal flow, so the chrome sits on paper as usual. Detected from
+  // the path rather than with :has() so it works in every browser and is
+  // obvious to the next reader.
+  const isHome = location.pathname === `/${lang}` || location.pathname === `/${lang}/`;
+
   return (
     <>
-      <Masthead />
-      <Nav />
-      <main>
+      <div className={`site-top${isHome ? " site-top--overlay" : ""}`}>
+        <Masthead />
+        <Nav />
+      </div>
+      <main className={isHome ? "has-full-bleed-hero" : undefined}>
         <Outlet />
       </main>
       <Footer />
