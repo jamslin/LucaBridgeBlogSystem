@@ -152,6 +152,8 @@
   box-sizing: border-box;
 }
 .admin-field textarea { min-height: 160px; resize: vertical; line-height: 1.6; }
+/* Short fields (a headline, a stat label) that only need room for a line break. */
+.admin-field textarea.compact { min-height: 0; }
 .admin-field input:focus, .admin-field textarea:focus, .admin-field select:focus {
   outline: none;
   border-color: var(--color-accent);
@@ -247,4 +249,12 @@
   .admin-sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; }
   .admin-nav { flex-direction: row; flex-wrap: wrap; }
   .admin-sidebar-foot { margin: 0 0 0 auto; padding: 0; border: none; }
+}
+
+/* Field-level guidance in the CMS — what a slot actually does with this field. */
+.admin-hint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-muted);
 }

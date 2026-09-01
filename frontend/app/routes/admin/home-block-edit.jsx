@@ -8,6 +8,27 @@ const LANGS = [
   { code: "en", label: "EN" },
   { code: "zh-Hans", label: "简中" },
 ];
+// What each slot does with these fields on the public home page. Keeping this
+// next to the form is the difference between "Title" meaning something and an
+// editor guessing.
+const TITLE_HINT = {
+  HERO: "The big headline over the hero image. Press Enter to control where it breaks.",
+  STAT: "The number only — e.g. 895, 5, 2021.",
+  SUPPORT: "The headline in the red band. Press Enter to control where it breaks.",
+  FEATURED: "Headline for the featured story card.",
+  QUICK_LINK: "The quick-link's label, e.g. 物資捐贈.",
+  VOLUNTEER: "The quick-link's label.",
+};
+
+const SUBTITLE_HINT = {
+  HERO: "The intro paragraph under the headline.",
+  STAT: "First line is the label (位支持者); an optional second line is the caption (已與我們同行).",
+  SUPPORT: "The paragraph under the red band's headline.",
+  FEATURED: "One-sentence summary on the card.",
+  QUICK_LINK: "The small line under the label.",
+  VOLUNTEER: "The small line under the label.",
+};
+
 const empty = () => { const o = {}; for (const l of LANGS) o[l.code] = { title: "", subtitle: "", buttonLabel: "" }; return o; };
 
 export default function HomeBlockEdit() {
@@ -120,8 +141,20 @@ export default function HomeBlockEdit() {
           <div className="lang-tabs">
             {LANGS.map((l) => <button key={l.code} type="button" className={`lang-tab ${activeLang === l.code ? "active" : ""}`} onClick={() => setActiveLang(l.code)}>{l.label}{l.required ? <span className="req"> *</span> : null}</button>)}
           </div>
-          <div className="admin-field"><label>Title{activeLang === "zh-Hant" ? " (required)" : ""}</label><input value={a.title} onChange={(e) => setField(activeLang, "title", e.target.value)} /></div>
-          <div className="admin-field"><label>Subtitle</label><input value={a.subtitle} onChange={(e) => setField(activeLang, "subtitle", e.target.value)} /></div>
+          {/* Textareas, not inputs: the home page keeps line breaks in these two
+              fields — a HERO/SUPPORT headline wraps where the editor breaks it,
+              and a STAT's caption is the second line of its subtitle. An <input>
+              cannot produce either. */}
+          <div className="admin-field">
+            <label>Title{activeLang === "zh-Hant" ? " (required)" : ""}</label>
+            <textarea className="compact" rows={2} value={a.title} onChange={(e) => setField(activeLang, "title", e.target.value)} />
+            <p className="admin-hint">{TITLE_HINT[slot] || "Shown as the block heading."}</p>
+          </div>
+          <div className="admin-field">
+            <label>Subtitle</label>
+            <textarea className="compact" rows={2} value={a.subtitle} onChange={(e) => setField(activeLang, "subtitle", e.target.value)} />
+            <p className="admin-hint">{SUBTITLE_HINT[slot] || "Supporting line under the title."}</p>
+          </div>
           <div className="admin-field"><label>Button label</label><input value={a.buttonLabel} onChange={(e) => setField(activeLang, "buttonLabel", e.target.value)} /></div>
         </div>
         <div className="admin-actions">
