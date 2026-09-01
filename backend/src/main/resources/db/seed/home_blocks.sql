@@ -8,10 +8,18 @@
 -- for you, in any environment.
 --
 -- Run it once against an empty home_block table to get the home page the comps
--- show, then edit everything in the CMS afterwards:
+-- show, then edit everything in the CMS afterwards.
 --
---   docker compose exec -T postgres psql -U lucabridge -d lucabridge \
---     < backend/src/main/resources/db/seed/home_blocks.sql
+-- Copy the file in and run it there. This works the same on macOS, Linux and
+-- Windows, and — unlike piping — cannot re-encode the file on the way in, which
+-- matters because every string here is Chinese:
+--
+--   docker compose cp backend/src/main/resources/db/seed/home_blocks.sql postgres:/tmp/seed.sql
+--   docker compose exec postgres psql -U lucabridge -d lucabridge -f /tmp/seed.sql
+--
+-- Avoid `psql ... < file` in PowerShell: `<` is a reserved operator there, and
+-- `Get-Content | psql` re-encodes the text (PowerShell 5.1 pipes to native
+-- commands as ASCII by default), which turns the Chinese into question marks.
 --
 -- Safe to run twice: every insert is guarded on the slot already being empty, so
 -- it will not duplicate blocks or touch anything you have edited.
