@@ -893,6 +893,27 @@ a.drawer__row:hover {
   }
 }
 
+/* Below this the brand (210px) plus the donate CTA (199px) cannot both fit the
+   bar, and neither may shrink, so the page gained a horizontal scroll. The
+   drawer carries its own donate CTA, so dropping the bar one loses nothing. */
+@media (max-width: 640px) {
+  .site-nav__cta {
+    display: none;
+  }
+}
+
+/* Last-resort guard: a longer brand name in any language truncates inside the
+   bar rather than pushing the toggle off-screen. */
+.site-brand {
+  min-width: 0;
+}
+
+.site-brand__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (min-width: 1024px) {
   .drawer {
     display: none !important;
@@ -924,6 +945,9 @@ a.drawer__row:hover {
 
 .footer-col a {
   color: var(--color-paper);
+  /* A long email address is one unbreakable token and would otherwise push
+     past its column at the narrower grid widths. */
+  overflow-wrap: anywhere;
 }
 
 .footer-col a:hover {
@@ -2988,7 +3012,6 @@ a.drawer__row:hover {
     grid-template-columns: 1fr;
   }
 }
-}
 
 /* ─────────────────────────────────────────────────────────────────────────
    Contact
@@ -3074,6 +3097,12 @@ a.drawer__row:hover {
   padding: clamp(24px, 3.5vw, 40px);
   border-radius: var(--radius-card);
   background: var(--color-tan);
+}
+
+/* The standard accent lands at 4.48:1 on the tan card — just under AA for text
+   this size. The deep accent carries the same hue at 5.53:1. */
+.visit-card .kicker:not(.kicker--muted) {
+  color: var(--color-accent-deep);
 }
 .visit-card--hours { background: var(--color-cream); }
 .visit-card__address {

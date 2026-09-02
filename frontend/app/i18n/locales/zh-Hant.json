@@ -141,7 +141,8 @@
   "footer": {
     "privacy": "私隱政策",
     "terms": "條款及細則",
-    "involvedHead": "參與"
+    "involvedHead": "參與",
+    "founded": "成立於 {year} 年"
   },
   "post": {
     "prev": "上一篇",

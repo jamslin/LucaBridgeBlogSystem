@@ -141,7 +141,9 @@ export default function Contact() {
           {company.charityRegNo && (
             <span>{t(lang, "contact.charityRegNo")} {company.charityRegNo}</span>
           )}
-          {company.foundedYear && <span>{t(lang, "footer.founded")}</span>}
+          {company.foundedYear && (
+            <span>{t(lang, "footer.founded", { year: company.foundedYear })}</span>
+          )}
         </p>
       </section>
     </div>

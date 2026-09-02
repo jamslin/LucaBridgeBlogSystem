@@ -141,7 +141,8 @@
   "footer": {
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions",
-    "involvedHead": "Get involved"
+    "involvedHead": "Get involved",
+    "founded": "Founded in {year}"
   },
   "post": {
     "prev": "Previous",

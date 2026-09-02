@@ -66,7 +66,16 @@ export default function Footer() {
           <ul>
             {company.address && <li>{company.address}</li>}
             {company.phone && <li><a href={`tel:${company.phone.replace(/\s+/g, "")}`}>{company.phone}</a></li>}
-            {company.email && <li><a href={`mailto:${company.email}`}>{company.email}</a></li>}
+            {company.email && (
+              <li>
+                <a href={`mailto:${company.email}`}>
+                  {/* The address is wider than this column, so it has to wrap. The
+                      break opportunity after "@" keeps it splitting at a boundary a
+                      reader expects rather than mid-domain. */}
+                  {company.email.split("@")[0]}@<wbr />{company.email.split("@").slice(1).join("@")}
+                </a>
+              </li>
+            )}
           </ul>
         </div>
       </div>
