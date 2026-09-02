@@ -2,7 +2,7 @@ import ReactMarkdown from "react-markdown";
 import { Link, useLoaderData, useParams } from "react-router";
 
 import { api, siteOrigin } from "../lib/api.server";
-import { SUPPORTED_LANGS, t } from "../i18n";
+import { SUPPORTED_LANGS, t, DEFAULT_LANG } from "../i18n";
 import Gallery from "../components/Gallery";
 import Photo from "../components/Photo";
 import { formatArticleDate } from "../lib/date";
@@ -35,6 +35,14 @@ export function meta({ data, params }) {
       hrefLang: l,
       href: `${origin}/${l}/blog/${post.slug}`,
     })),
+    // Where a searcher's locale matches none of the three, send them to the base language
+    // rather than letting Google pick.
+    {
+      tagName: "link",
+      rel: "alternate",
+      hrefLang: "x-default",
+      href: `${origin}/${DEFAULT_LANG}/blog/${post.slug}`,
+    },
   ];
 }
 

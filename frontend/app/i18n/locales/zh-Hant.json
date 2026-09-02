@@ -41,7 +41,8 @@
     "empty": "暫時未有文章",
     "readingTime": "約 {count} 分鐘閱讀",
     "emptyBody": "第一篇故事正在撰寫中，很快就會在這裡出現。",
-    "featured": "精選"
+    "featured": "精選",
+    "metaDescription": "樂橋 LucaBridge 的活動記錄與最新消息：海岸清潔、長者關懷、福袋派發與社區送暖，記錄我們與義工、街坊同行的每一步。"
   },
   "events": {
     "empty": "暫時未有活動",

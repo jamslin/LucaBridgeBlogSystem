@@ -41,7 +41,8 @@
     "empty": "暂时未有文章",
     "readingTime": "约 {count} 分钟阅读",
     "emptyBody": "第一篇故事正在撰写中，很快就会在这里出现。",
-    "featured": "精选"
+    "featured": "精选",
+    "metaDescription": "乐桥 LucaBridge 的活动记录与最新消息：海岸清洁、长者关怀、福袋派发与社区送暖，记录我们与义工、街坊同行的每一步。"
   },
   "events": {
     "empty": "暂时未有活动",

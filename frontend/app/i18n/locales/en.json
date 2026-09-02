@@ -41,7 +41,8 @@
     "empty": "No posts yet",
     "readingTime": "{count} min read",
     "emptyBody": "The first story is being written and will appear here soon.",
-    "featured": "Featured"
+    "featured": "Featured",
+    "metaDescription": "News and event reports from LucaBridge: coastal clean-ups, elderly care visits, care package distributions and community outreach across Hong Kong."
   },
   "events": {
     "empty": "No events yet",
