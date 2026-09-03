@@ -61,7 +61,8 @@ export default function Footer() {
         <div className="footer-col">
           <span className="footer-col__head">{t(lang, "footer.involvedHead")}</span>
           <ul>
-            <li><Link to={L("/donate")}>{t(lang, "nav.donate")}</Link></li>
+            <li><Link to={L("/donate")}>{t(lang, "nav.donateMoney")}</Link></li>
+            <li><Link to={L("/donate/goods")}>{t(lang, "nav.donateGoods")}</Link></li>
             <li><Link to={L("/volunteer")}>{t(lang, "nav.recruitVolunteer")}</Link></li>
             <li><Link to={L("/careers")}>{t(lang, "nav.recruitJobs")}</Link></li>
           </ul>

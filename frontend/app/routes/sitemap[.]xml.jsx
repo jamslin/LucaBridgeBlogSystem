@@ -70,7 +70,7 @@ export async function loader({ request }) {
 
   const staticPaths = [
     "", "/blog", "/events", "/careers", "/services",
-    "/about", "/donate", "/volunteer", "/contact",
+    "/about", "/donate", "/donate/goods", "/volunteer", "/contact",
   ];
 
   const urls = [

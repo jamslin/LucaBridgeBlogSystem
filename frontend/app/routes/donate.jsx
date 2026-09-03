@@ -12,140 +12,49 @@ export function meta({ params }) {
 }
 
 /**
- * 物資捐贈 / Donate goods.
+ * 捐款 / Donate (money) — the parent tab's own landing page, restored at the
+ * user's request as a sibling of 物資捐贈 (/donate/goods) rather than being
+ * replaced by it, per mockup 8a's original two-child menu (捐款方法 + 物資捐贈).
  *
- * This replaces the money-donation placeholder. The organisation runs on
- * in-kind giving — the home block, the service copy and the imported write-ups
- * all describe 糧食、日用品、全新校服 going straight to Yuen Long families —
- * so the page a visitor needs is "what do you want, and how do I hand it over",
- * not bank details for a transfer the site cannot take.
- *
- * The structure follows what someone with a box in their hand actually asks,
- * in order: is my thing wanted (needs), what do I do (steps), is there a catch
- * (requirements), where do I bring it (drop-off), who do I tell (CTA).
- *
- * There is deliberately no form and no pickup promise: the backend has no
- * endpoint to receive one, and collection is an operational commitment only the
- * organisation can make. WhatsApp leads, as it does on the contact page.
+ * The Company record carries no bank-details or payment-method field, so this
+ * stays an honest placeholder rather than inventing figures — the same content
+ * the site shipped with before, restyled to the current design system, with a
+ * direct route to the goods page and to a person, so a donor with cash in hand
+ * right now is not left with nothing to do.
  */
 export default function Donate() {
   const { lang } = useParams();
   const layoutData = useRouteLoaderData("routes/lang-layout");
   const company = layoutData?.company ?? {};
 
-  const waHref = company.phone ? `https://wa.me/${company.phone.replace(/\D/g, "")}` : null;
-  const mapHref = company.address
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(company.address)}`
-    : null;
-
-  const needs = [1, 2, 3, 4];
-  const steps = [1, 2, 3];
-  const notes = [1, 2, 3, 4];
-
   return (
     <div className="goods-page">
       <header className="shell goods-hero">
         <span className="kicker">{t(lang, "donate.eyebrow")}</span>
-        <h1>
-          {t(lang, "donate.heading").split("\n").map((line, i) => (
-            <span key={i} style={{ display: "block" }}>{line}</span>
-          ))}
-        </h1>
+        <h1>{t(lang, "donate.title")}</h1>
         <p className="goods-hero__lead">{t(lang, "donate.lead")}</p>
       </header>
 
-      <section className="shell goods-needs" aria-labelledby="goods-needs-title">
-        <div className="section-head">
-          <div>
-            <span className="kicker">{t(lang, "donate.needsEyebrow")}</span>
-            <h2 id="goods-needs-title">{t(lang, "donate.needsTitle")}</h2>
-          </div>
-        </div>
-        <div className="need-grid">
-          {needs.map((n) => (
-            <article className="need-card" key={n}>
-              <span className="need-card__num" aria-hidden="true">
-                {String(n).padStart(2, "0")}
-              </span>
-              <h3 className="need-card__title">{t(lang, `donate.need${n}`)}</h3>
-              <p className="need-card__desc">{t(lang, `donate.need${n}Desc`)}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="shell goods-steps" aria-labelledby="goods-steps-title">
-        <div className="section-head">
-          <div>
-            <span className="kicker">{t(lang, "donate.stepsEyebrow")}</span>
-            <h2 id="goods-steps-title">{t(lang, "donate.stepsTitle")}</h2>
-          </div>
-        </div>
-        {/* An ordered list, not divs: the sequence is the content. */}
-        <ol className="step-list">
-          {steps.map((n) => (
-            <li className="step" key={n}>
-              <span className="step__num" aria-hidden="true">{n}</span>
-              <div>
-                <h3 className="step__title">{t(lang, `donate.step${n}`)}</h3>
-                <p className="step__desc">{t(lang, `donate.step${n}Desc`)}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="shell goods-visit" aria-labelledby="goods-notes-title">
+      <section className="shell goods-visit" aria-label={t(lang, "donate.title")}>
         <div className="visit-card">
-          <span className="kicker">{t(lang, "donate.dropoffLabel")}</span>
-          <p className="visit-card__address">
-            {company.address || t(lang, "contact.addressPending")}
-          </p>
-          {company.officeHours && (
-            <p className="visit-card__hours">{company.officeHours}</p>
-          )}
-          <p className="visit-card__note">{t(lang, "donate.hoursNote")}</p>
-          {mapHref && (
-            <a className="btn btn-ghost" href={mapHref} target="_blank" rel="noopener noreferrer">
-              {t(lang, "contact.openMap")} <span aria-hidden="true">↗</span>
-            </a>
+          <span className="kicker">{t(lang, "donate.title")}</span>
+          <p className="visit-card__note">{t(lang, "donate.pending")}</p>
+          {(company.email || company.phone) && (
+            <p className="visit-card__hours">
+              {company.email && <a href={`mailto:${company.email}`}>{company.email}</a>}
+              {company.email && company.phone && " · "}
+              {company.phone && <a href={`tel:${company.phone}`}>{company.phone}</a>}
+            </p>
           )}
         </div>
 
         <div className="visit-card visit-card--hours">
-          <span className="kicker kicker--muted">{t(lang, "donate.notesEyebrow")}</span>
-          <h2 id="goods-notes-title" className="goods-notes__title">
-            {t(lang, "donate.notesTitle")}
-          </h2>
-          <ul className="goods-notes">
-            {notes.map((n) => <li key={n}>{t(lang, `donate.note${n}`)}</li>)}
-          </ul>
-        </div>
-      </section>
-
-      <section className="shell goods-cta">
-        <div className="cta-band">
-          <div>
-            <h2>{t(lang, "donate.ctaTitle")}</h2>
-            <p className="goods-cta__lead">{t(lang, "donate.ctaLead")}</p>
-          </div>
-          {waHref ? (
-            <a className="btn btn-on-accent" href={waHref} target="_blank" rel="noopener noreferrer">
-              {t(lang, "donate.ctaButton")} <span aria-hidden="true">→</span>
-            </a>
-          ) : (
-            <Link className="btn btn-on-accent" to={`/${lang}/contact`}>
-              {t(lang, "nav.contact")} <span aria-hidden="true">→</span>
-            </Link>
-          )}
-        </div>
-
-        <p className="goods-cta__alt">
-          {t(lang, "donate.otherWays")}{" "}
-          <Link to={`/${lang}/volunteer`} className="btn-text">
-            {t(lang, "donate.otherWaysLink")} <span aria-hidden="true">→</span>
+          <span className="kicker kicker--muted">{t(lang, "donate.goodsCrossLabel")}</span>
+          <p className="visit-card__hours">{t(lang, "donate.goodsCrossLead")}</p>
+          <Link className="btn btn-ghost" to={`/${lang}/donate/goods`}>
+            {t(lang, "nav.donateGoods")} <span aria-hidden="true">→</span>
           </Link>
-        </p>
+        </div>
       </section>
     </div>
   );

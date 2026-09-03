@@ -3714,3 +3714,16 @@ a.drawer__row:hover {
     gap: var(--space-3);
   }
 }
+
+/* .visit-card__note (--color-muted, 4.25:1) and the default link colour inside
+   .visit-card__hours (--color-accent, 4.48:1) both clear AA on the cream
+   .visit-card--hours variant but fall short on the plain tan card — the same
+   gap the kicker fix above already covers for .kicker. Both are cream-only
+   tokens; the tan variant needs the darker ones instead. */
+.visit-card:not(.visit-card--hours) .visit-card__note {
+  color: var(--color-ink-soft);
+}
+
+.visit-card:not(.visit-card--hours) .visit-card__hours a {
+  color: var(--color-accent-deep);
+}

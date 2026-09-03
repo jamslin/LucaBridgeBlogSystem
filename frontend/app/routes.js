@@ -16,6 +16,7 @@ export default [
     route("services", "routes/services.jsx"),
     route("about", "routes/about.jsx"),
     route("donate", "routes/donate.jsx"),
+    route("donate/goods", "routes/donate-goods.jsx"),
     route("volunteer", "routes/volunteer.jsx"),
     route("contact", "routes/contact.jsx"),
     route("privacy", "routes/privacy.jsx"),

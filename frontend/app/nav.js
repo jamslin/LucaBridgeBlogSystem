@@ -22,7 +22,10 @@ export const NAV = [
     { key: "newsRecent", to: "/blog" },
     { key: "newsEvents", to: "/events" },
   ] },
-  { key: "donate", to: "/donate" },
+  { key: "donate", to: "/donate", children: [
+    { key: "donateMoney", to: "/donate" },
+    { key: "donateGoods", to: "/donate/goods" },
+  ] },
   { key: "recruit", to: "/careers", children: [
     { key: "recruitVolunteer", to: "/volunteer" },
     { key: "recruitJobs", to: "/careers" },

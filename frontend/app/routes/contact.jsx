@@ -43,7 +43,7 @@ export default function Contact() {
 
   const routes = [
     { to: "/volunteer", key: "routeVolunteer" },
-    { to: "/donate", key: "routeDonate" },
+    { to: "/donate/goods", key: "routeDonate" },
     { to: "/careers", key: "routeCareers" },
   ];
 
