@@ -1,7 +1,7 @@
 import { Link, useLoaderData, useParams } from "react-router";
 
-import { api } from "../lib/api.server";
-import { t } from "../i18n";
+import { api, siteOrigin } from "../lib/api.server";
+import { t, SUPPORTED_LANGS, DEFAULT_LANG } from "../i18n";
 import { formatArticleDate } from "../lib/date";
 import Photo from "../components/Photo";
 import PostCard from "../components/PostCard";
@@ -10,12 +10,29 @@ export async function loader({ params, request }) {
   const url = new URL(request.url);
   const page = Math.max(Number(url.searchParams.get("page")) || 0, 0);
   const posts = await api.getBlogList({ lang: params.lang, page, size: 10 });
-  return { posts, page };
+  return { posts, page, origin: siteOrigin(request) };
 }
 
-export function meta({ params }) {
+// Canonical + the full hreflang set. Without these the three language listings compete
+// with each other in search instead of being read as one page in three languages.
+// hrefLang values must be real BCP-47 tags — Google silently ignores invalid ones.
+export function meta({ params, data }) {
   const title = `${t(params.lang, "nav.blog")} — 樂橋 LucaBridge`;
-  return [{ title }, { property: "og:title", content: title }];
+  const origin = data?.origin ?? "";
+  const url = `${origin}/${params.lang}/blog`;
+  return [
+    { title },
+    { name: "description", content: t(params.lang, "blog.metaDescription") },
+    { property: "og:title", content: title },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: url },
+    { tagName: "link", rel: "canonical", href: url },
+    ...SUPPORTED_LANGS.map((l) => ({
+      tagName: "link", rel: "alternate", hrefLang: l, href: `${origin}/${l}/blog`,
+    })),
+    { tagName: "link", rel: "alternate", hrefLang: "x-default",
+      href: `${origin}/${DEFAULT_LANG}/blog` },
+  ];
 }
 
 // Blog index. The newest story on the first page takes the wide treatment and

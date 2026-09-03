@@ -2,7 +2,7 @@ import ReactMarkdown from "react-markdown";
 import { Link, useLoaderData, useParams } from "react-router";
 
 import { api, siteOrigin } from "../lib/api.server";
-import { SUPPORTED_LANGS, t } from "../i18n";
+import { SUPPORTED_LANGS, t, DEFAULT_LANG } from "../i18n";
 import Gallery from "../components/Gallery";
 import Photo from "../components/Photo";
 import { formatArticleDate } from "../lib/date";
@@ -35,6 +35,14 @@ export function meta({ data, params }) {
       hrefLang: l,
       href: `${origin}/${l}/blog/${post.slug}`,
     })),
+    // Where a searcher's locale matches none of the three, send them to the base language
+    // rather than letting Google pick.
+    {
+      tagName: "link",
+      rel: "alternate",
+      hrefLang: "x-default",
+      href: `${origin}/${DEFAULT_LANG}/blog/${post.slug}`,
+    },
   ];
 }
 
@@ -59,7 +67,8 @@ export default function Post() {
         </nav>
 
         <header className="article__head">
-          <span className="meta">
+          <span className="article__meta">
+            {post.serviceName && <span className="badge-tag">{post.serviceName}</span>}
             {formatArticleDate(post.publishedAt, lang)}
             {post.readMinutes
               ? ` · ${t(lang, "blog.readingTime", { count: post.readMinutes })}`
@@ -85,6 +94,52 @@ export default function Post() {
         </div>
 
         <Gallery media={post.gallery} layout={post.galleryLayout} headingId="post-gallery" />
+
+        {/* 上一篇 / 下一篇 (mockup 8d). Either side can be absent — the newest
+            post has no newer neighbour — so the pair is a grid that keeps its
+            columns rather than a flex row that would recentre a lone card. */}
+        {(post.prev || post.next) && (
+          <nav className="article-nav" aria-label={t(lang, "nav.news")}>
+            {post.prev ? (
+              <Link to={`/${lang}/blog/${post.prev.slug}`} className="article-nav__card">
+                <span className="article-nav__label">← {t(lang, "post.prev")}</span>
+                <span className="article-nav__meta">
+                  {post.prev.serviceName && (
+                    <span className="badge-tag">{post.prev.serviceName}</span>
+                  )}
+                  <span>{formatArticleDate(post.prev.publishedAt, lang)}</span>
+                </span>
+                <span className="article-nav__title">{post.prev.title}</span>
+              </Link>
+            ) : <span />}
+
+            {post.next ? (
+              <Link
+                to={`/${lang}/blog/${post.next.slug}`}
+                className="article-nav__card article-nav__card--next"
+              >
+                <span className="article-nav__label">{t(lang, "post.next")} →</span>
+                <span className="article-nav__meta">
+                  <span>{formatArticleDate(post.next.publishedAt, lang)}</span>
+                  {post.next.serviceName && (
+                    <span className="badge-tag">{post.next.serviceName}</span>
+                  )}
+                </span>
+                <span className="article-nav__title">{post.next.title}</span>
+              </Link>
+            ) : <span />}
+          </nav>
+        )}
+
+        <div className="cta-band article-cta">
+          <div>
+            <h2>{t(lang, "post.ctaTitle")}</h2>
+            <p className="article-cta__lead">{t(lang, "post.ctaLead")}</p>
+          </div>
+          <Link to={`/${lang}/volunteer`} className="btn btn-on-accent">
+            {t(lang, "nav.volunteerCta")} <span aria-hidden="true">→</span>
+          </Link>
+        </div>
 
         <p className="article__back">
           <Link to={`/${lang}/blog`} className="btn-text">

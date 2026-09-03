@@ -25,3 +25,14 @@ infra/prometheus-data/
 
 # Local-only compose overrides (host port publishing for dev)
 docker-compose.override.yml
+
+# Content-import runtime state.
+# Maps local file paths -> media row ids in ONE specific environment's database.
+# Committing it would make someone else's load.py skip uploads that do not exist
+# in their database, leaving posts with no images and no error.
+tools/content-import/.load-state-*.json
+tools/content-import/__pycache__/
+
+# Local data snapshots from backup-data.bat / .sh. These contain the real
+# database and every uploaded image — never commit them.
+backups/

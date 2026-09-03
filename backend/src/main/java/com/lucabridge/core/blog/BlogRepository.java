@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
@@ -22,6 +23,21 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             + "LEFT JOIN FETCH e.gallery g LEFT JOIN FETCH g.media "
             + "WHERE e.slug = :slug AND " + Visibility.JPQL)
     Optional<Blog> findVisibleBySlug(@Param("slug") String slug, @Param("now") Instant now);
+
+    /**
+     * Nearest visible post published before :at, newest first — take the first row. Pageable
+     * rather than a derived limit so the same query serves both directions by ordering.
+     */
+    @Query("SELECT e FROM Blog e LEFT JOIN FETCH e.text "
+            + "WHERE e.publishedAt < :at AND " + Visibility.JPQL
+            + "ORDER BY e.publishedAt DESC")
+    List<Blog> findOlderThan(@Param("at") Instant at, @Param("now") Instant now, Pageable pageable);
+
+    /** Nearest visible post published after :at, oldest first. */
+    @Query("SELECT e FROM Blog e LEFT JOIN FETCH e.text "
+            + "WHERE e.publishedAt > :at AND " + Visibility.JPQL
+            + "ORDER BY e.publishedAt ASC")
+    List<Blog> findNewerThan(@Param("at") Instant at, @Param("now") Instant now, Pageable pageable);
 
     // ---- admin reads: every status, soft-deleted rows excluded ----
 

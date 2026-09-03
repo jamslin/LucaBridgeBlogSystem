@@ -81,7 +81,8 @@ export default function EventDetail() {
 
       <div className="reading-column">
         <h1 style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>{event.title}</h1>
-        <div className="meta" style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
+        <div className="meta" style={{ display: "flex", gap: "12px", marginBottom: "24px", alignItems: "center" }}>
+          {event.serviceName && <span className="badge-tag">{event.serviceName}</span>}
           {event.startsAt && <span>{formatHongKongDateTime(event.startsAt, lang)}</span>}
           {event.venue && <span>{event.venue}</span>}
         </div>

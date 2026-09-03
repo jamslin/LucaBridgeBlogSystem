@@ -9,6 +9,8 @@ public record EventDetailDto(
         Long id,
         String slug,
         Long serviceId,
+        /** Localised name of that service — the event's tag. */
+        String serviceName,
         String title,
         String summary,
         String body,

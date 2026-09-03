@@ -91,7 +91,7 @@ export default function Nav({ overHero = false }) {
             {items.map((item) => (
               <li
                 key={item.key}
-                className={`site-nav__item${isActive(item) ? " site-nav__item--active" : ""}`}
+                className={`site-nav__item${isActive(item) ? " site-nav__item--active" : ""}${item.intro ? " site-nav__item--wide" : ""}`}
               >
                 <Link to={L(item.to)} className="site-nav__link">
                   {labelFor(item)}
@@ -99,20 +99,48 @@ export default function Nav({ overHero = false }) {
                 </Link>
 
                 {item.children && (
-                  <div className="mega">
-                    <div
-                      className="mega__cards"
-                      style={{ "--mega-cols": Math.min(item.children.length, 4) }}
-                    >
-                      {item.children.map((child, index) => (
-                        <Link key={child.key} to={L(child.to)} className="mega__card">
-                          <span className="mega__card-index">
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                          <span className="mega__card-title">{t(lang, `nav.${child.key}`)}</span>
+                  <div className={`mega${item.intro ? " mega--intro" : ""}`}>
+                    {/* Comps 8a/8b give About an intro column — eyebrow in the
+                        other language, lead and an overview link — and describe
+                        each card. The remaining menus are a plain heading and
+                        link list on the same glass panel. */}
+                    {item.intro && (
+                      <div className="mega__intro">
+                        <span className="kicker">
+                          {lang === "en" ? "關於我們" : "ABOUT US"}
+                        </span>
+                        <h2 className="mega__intro-title">{labelFor(item)}</h2>
+                        <p className="mega__intro-lead">{t(lang, `nav.${item.key}Lead`)}</p>
+                        <Link to={L(item.to)} className="btn-text">
+                          {t(lang, `nav.${item.key}Overview`)} <span aria-hidden="true">→</span>
                         </Link>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+
+                    {item.intro ? (
+                      <div className="mega__cards" style={{ "--mega-cols": item.children.length }}>
+                        {item.children.map((child, index) => (
+                          <Link key={child.key} to={L(child.to)} className="mega__card">
+                            <span className="mega__card-index">
+                              {String(index + 1).padStart(2, "0")}
+                            </span>
+                            <span className="mega__card-title">{t(lang, `nav.${child.key}`)}</span>
+                            <span className="mega__card-desc">{t(lang, `nav.${child.key}Desc`)}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="mega__list">
+                        <span className="mega__list-head">{labelFor(item)}</span>
+                        <ul>
+                          {item.children.map((child) => (
+                            <li key={child.key}>
+                              <Link to={L(child.to)}>{t(lang, `nav.${child.key}`)}</Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 )}
               </li>

@@ -3,6 +3,7 @@ package com.lucabridge.core.blog;
 import com.lucabridge.core.blog.dto.AdminBlogDetailDto;
 import com.lucabridge.core.blog.dto.AdminBlogSummaryDto;
 import com.lucabridge.core.blog.dto.BlogDetailDto;
+import com.lucabridge.core.blog.dto.BlogNeighbourDto;
 import com.lucabridge.core.blog.dto.BlogSummaryDto;
 import com.lucabridge.core.blog.dto.GalleryImageDto;
 import com.lucabridge.core.i18n.Lang;
@@ -24,12 +25,13 @@ final class BlogMapper {
     private BlogMapper() {
     }
 
-    static BlogSummaryDto toSummary(Blog blog, Lang lang) {
+    static BlogSummaryDto toSummary(Blog blog, Lang lang, String serviceName) {
         BlogText t = blog.getText();
         Media cover = blog.getCoverMedia();
         return new BlogSummaryDto(
                 blog.getId(),
                 blog.getSlug(),
+                serviceName,
                 title(t, lang),
                 summary(t, lang),
                 cover == null ? null : cover.getUrl(),
@@ -39,7 +41,8 @@ final class BlogMapper {
                 blog.getReadMinutes());
     }
 
-    static BlogDetailDto toDetail(Blog blog, Lang lang) {
+    static BlogDetailDto toDetail(Blog blog, Lang lang, String serviceName,
+                                  BlogNeighbourDto prev, BlogNeighbourDto next) {
         BlogText t = blog.getText();
         Media cover = blog.getCoverMedia();
         List<GalleryImageDto> gallery = blog.getGallery().stream()
@@ -48,6 +51,7 @@ final class BlogMapper {
         return new BlogDetailDto(
                 blog.getId(),
                 blog.getSlug(),
+                serviceName,
                 title(t, lang),
                 summary(t, lang),
                 t == null ? null : Localized.pick(lang, t.getTcBody(), t.getEnBody(), t.getScBody()),
@@ -57,7 +61,9 @@ final class BlogMapper {
                 blog.getPublishedAt(),
                 blog.getReadMinutes(),
                 blog.getGalleryLayout(),
-                gallery);
+                gallery,
+                prev,
+                next);
     }
 
     static AdminBlogSummaryDto toAdminSummary(Blog blog, Instant now) {
@@ -105,6 +111,12 @@ final class BlogMapper {
                 t == null ? null : t.getScBody(),
                 galleryIds,
                 galleryRefs);
+    }
+
+    /** Null-safe: the caller passes whatever the neighbour query returned, including nothing. */
+    static BlogNeighbourDto toNeighbour(Blog blog, Lang lang, String serviceName) {
+        return blog == null ? null : new BlogNeighbourDto(
+                blog.getSlug(), title(blog.getText(), lang), serviceName, blog.getPublishedAt());
     }
 
     private static String title(BlogText t, Lang lang) {

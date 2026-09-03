@@ -10,14 +10,26 @@
     "recruit": "Recruitment",
     "recruitShort": "Join us",
     "recruitVolunteer": "Volunteer",
-    "recruitJobs": "Job Vacancies",
+    "recruitJobs": "Job openings",
     "contact": "Contact Us",
     "donateCta": "Donate Now",
     "menu": "Menu",
     "blog": "Blog",
     "events": "Events",
     "volunteerCta": "Become a volunteer",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "aboutLead": "Founded in 2021, LucaBridge is a charity registered under Section 88 of the Inland Revenue Ordinance.",
+    "aboutOverview": "Organisation overview",
+    "aboutBackground": "Background & development",
+    "aboutBackgroundDesc": "How we started and where we serve",
+    "aboutMission": "Mission & objectives",
+    "aboutMissionDesc": "Our five service areas",
+    "aboutStructure": "Organisation structure",
+    "aboutStructureDesc": "Board, staff and volunteer teams",
+    "aboutCommittee": "Committee members",
+    "aboutCommitteeDesc": "Current members and terms",
+    "donateMoney": "Ways to donate",
+    "donateGoods": "Donate goods"
   },
   "home": {
     "latest": "Latest news",
@@ -41,7 +53,8 @@
     "empty": "No posts yet",
     "readingTime": "{count} min read",
     "emptyBody": "The first story is being written and will appear here soon.",
-    "featured": "Featured"
+    "featured": "Featured",
+    "metaDescription": "News and event reports from LucaBridge: coastal clean-ups, elderly care visits, care package distributions and community outreach across Hong Kong."
   },
   "events": {
     "empty": "No events yet",
@@ -98,11 +111,10 @@
     "missionTitle": "Mission & Objectives",
     "missionPending": "Full mission and objectives content is pending from the organisation — placeholder shown for this build.",
     "structureTitle": "Organisation Structure",
-    "structurePending": "Organisation structure content is pending — placeholder shown for this build."
-  },
-  "donate": {
-    "title": "Donate",
-    "pending": "Donation methods and bank details are pending from the organisation — this section will be completed once supplied."
+    "structurePending": "Organisation structure content is pending — placeholder shown for this build.",
+    "eyebrow": "About us",
+    "backgroundPending": "How we started, our milestones and where we serve — content pending from the organisation.",
+    "committeePending": "The current committee list and terms are pending from the organisation."
   },
   "volunteer": {
     "title": "Volunteer",
@@ -114,18 +126,43 @@
     "phone": "Phone",
     "email": "Email",
     "officeHours": "Office hours",
-    "charityRegNo": "Charity registration no."
+    "charityRegNo": "Charity registration no.",
+    "eyebrow": "Contact",
+    "heading": "Got a question?\nCome straight to us.",
+    "lead": "Whether you want to join a service, donate goods, or ask about working together, we reply within one working day.",
+    "channelsLabel": "Ways to reach us",
+    "whatsappHint": "The fastest route. Event confirmations happen here too.",
+    "phoneHint": "A person answers during office hours.",
+    "emailHint": "Best for longer questions or anything with attachments.",
+    "visitLabel": "Our office",
+    "openMap": "Open in Maps",
+    "addressPending": "Address to be confirmed",
+    "hoursNote": "Closed on public holidays. Please call or WhatsApp before visiting.",
+    "routesEyebrow": "Or maybe you are here to",
+    "routesTitle": "Three things you do not need to write in about",
+    "routeVolunteer": "Become a volunteer",
+    "routeVolunteerDesc": "Fill the form once, then join any event with a WhatsApp reply.",
+    "routeDonate": "Donate goods",
+    "routeDonateDesc": "Rice, daily necessities and new school uniforms — or ask about other ways to give.",
+    "routeCareers": "Job openings",
+    "routeCareersDesc": "See the full-time roles open right now and apply directly.",
+    "followEyebrow": "Follow us",
+    "followTitle": "See what volunteers are doing each week"
   },
   "footer": {
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions",
-    "involvedHead": "Get involved"
+    "involvedHead": "Get involved",
+    "founded": "Founded in {year}",
+    "followHead": "Follow us"
   },
   "post": {
     "prev": "Previous",
     "next": "Next",
     "notFound": "This post could not be found",
-    "browseAll": "Browse all news"
+    "browseAll": "Browse all news",
+    "ctaTitle": "Give three hours next weekend.",
+    "ctaLead": "No experience needed. Training, equipment and insurance provided. Under 18s need a signed parental consent form."
   },
   "common": {
     "loading": "Loading…",
@@ -149,5 +186,50 @@
     "thisWeek": "This week",
     "nextWeek": "Next week",
     "month": "{month}"
+  },
+  "donateGoods": {
+    "title": "Donate goods",
+    "eyebrow": "Get involved",
+    "heading": "A box of rice, a school uniform —\nstraight to a family in Yuen Long.",
+    "lead": "We collect food, daily necessities and new school uniforms and take them directly to low-income families in Yuen Long. Contact us before donating so we can confirm what is needed now and how to hand it over.",
+    "needsEyebrow": "Needed now",
+    "needsTitle": "What we are collecting",
+    "need1": "Food",
+    "need1Desc": "Unopened rice, cooking oil, canned food and noodles.",
+    "need2": "Daily necessities",
+    "need2Desc": "Detergent, cleaning supplies, tissues and personal hygiene items.",
+    "need3": "New school uniforms",
+    "need3Desc": "Unused uniforms, school bags and stationery.",
+    "need4": "Care-pack items",
+    "need4Desc": "Healthy food and everyday essentials for our distribution days.",
+    "stepsEyebrow": "How it works",
+    "stepsTitle": "Three steps",
+    "step1": "Message us first",
+    "step1Desc": "Tell us on WhatsApp or by email what you have and roughly how much.",
+    "step2": "We reply",
+    "step2Desc": "We confirm whether it is needed now and how to hand it over.",
+    "step3": "Hand it over",
+    "step3Desc": "Bring it to the office at the agreed time, or follow the arrangement we suggest.",
+    "notesEyebrow": "Before you donate",
+    "notesTitle": "A few simple requirements",
+    "note1": "Food must be unopened with at least three months before its expiry date.",
+    "note2": "Uniforms, stationery and hygiene items should be new and unused.",
+    "note3": "We cannot accept opened food, expired items or second-hand clothing.",
+    "note4": "For a large quantity, contact us first so we can arrange help to receive it.",
+    "dropoffLabel": "Drop-off point",
+    "hoursNote": "Closed on public holidays. Please WhatsApp or call before dropping anything off.",
+    "ctaTitle": "Got something to give? Tell us first.",
+    "ctaLead": "We usually reply within one working day.",
+    "ctaButton": "Message us on WhatsApp",
+    "otherWays": "Want to help another way?",
+    "otherWaysLink": "Become a volunteer"
+  },
+  "donate": {
+    "title": "Donate",
+    "eyebrow": "Get involved",
+    "lead": "Support our work directly with money — bank transfer and e-payment details are being finalised.",
+    "pending": "Donation methods and bank details are pending from the organisation — this section will be completed once supplied. For an immediate donation, please contact us first.",
+    "goodsCrossLabel": "Or",
+    "goodsCrossLead": "Want to give rice, daily necessities or school uniforms instead?"
   }
 }

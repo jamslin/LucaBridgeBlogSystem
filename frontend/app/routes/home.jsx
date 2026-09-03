@@ -281,7 +281,8 @@ function EventRow({ event, lead, lang, services = [] }) {
   const showCapacity = reg && reg.capacity != null && (reg.state === "OPEN" || reg.state === "FULL");
   // The comp tags every event with its service area — the same taxonomy that
   // drives the chip row and blog tagging, so the site reads as one system.
-  const service = services.find((s) => s.id === event.serviceId);
+  const serviceName = event.serviceName
+    ?? services.find((s) => s.id === event.serviceId)?.name;
   const timeRange = formatTimeRange(event.startsAt, event.endsAt);
   const pct = showCapacity ? Math.min(100, Math.round((reg.registeredCount / reg.capacity) * 100)) : 0;
 
@@ -289,7 +290,7 @@ function EventRow({ event, lead, lang, services = [] }) {
     <article className={`event-card${lead ? " event-card--lead" : ""}`}>
       <div>
         <div className="event-card__badges">
-          {service && <span className="badge-tag">{service.name}</span>}
+          {serviceName && <span className="badge-tag">{serviceName}</span>}
           {reg && (
             <span className={`reg-badge reg-badge--${reg.state.toLowerCase().replace(/_/g, "-")}`}>
               {reg.almostFull && reg.state === "OPEN"

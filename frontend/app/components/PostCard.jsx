@@ -21,6 +21,7 @@ export default function PostCard({ post, ratio = "cover", headingLevel: H = "h3"
       </Link>
 
       <div className="post-card__meta">
+        {post.serviceName && <span className="badge-tag">{post.serviceName}</span>}
         {post.publishedAt && <span>{formatArticleDate(post.publishedAt, lang)}</span>}
         {post.readMinutes ? (
           <span>· {t(lang, "blog.readingTime", { count: post.readMinutes })}</span>

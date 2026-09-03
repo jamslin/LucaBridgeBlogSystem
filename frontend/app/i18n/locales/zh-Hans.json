@@ -2,14 +2,14 @@
   "nav": {
     "home": "首页",
     "about": "关于我们",
-    "services": "服务",
-    "news": "消息",
-    "newsRecent": "最新消息",
+    "services": "服务范围",
+    "news": "最新消息",
+    "newsRecent": "近期消息",
     "newsEvents": "活动",
     "donate": "捐款",
     "recruit": "招募",
     "recruitShort": "加入我们",
-    "recruitVolunteer": "义工招募",
+    "recruitVolunteer": "义工",
     "recruitJobs": "职位空缺",
     "contact": "联络我们",
     "donateCta": "立即捐款",
@@ -17,7 +17,19 @@
     "blog": "消息",
     "events": "活动",
     "volunteerCta": "成为义工",
-    "closeMenu": "关闭菜单"
+    "closeMenu": "关闭菜单",
+    "aboutLead": "乐桥成立于 2021 年，是受《税务条例》第 88 条监管的慈善机构。",
+    "aboutOverview": "机构总览",
+    "aboutBackground": "背景与发展",
+    "aboutBackgroundDesc": "成立经过、里程碑与服务足迹",
+    "aboutMission": "目标与宗旨",
+    "aboutMissionDesc": "五大服务范畴的方向与承诺",
+    "aboutStructure": "组织架构",
+    "aboutStructureDesc": "董事会、执行团队与义工队",
+    "aboutCommittee": "委员名单",
+    "aboutCommitteeDesc": "现届委员及任期",
+    "donateMoney": "捐款方法",
+    "donateGoods": "物资捐赠"
   },
   "home": {
     "latest": "最新消息",
@@ -41,7 +53,8 @@
     "empty": "暂时未有文章",
     "readingTime": "约 {count} 分钟阅读",
     "emptyBody": "第一篇故事正在撰写中，很快就会在这里出现。",
-    "featured": "精选"
+    "featured": "精选",
+    "metaDescription": "乐桥 LucaBridge 的活动记录与最新消息：海岸清洁、长者关怀、福袋派发与社区送暖，记录我们与义工、街坊同行的每一步。"
   },
   "events": {
     "empty": "暂时未有活动",
@@ -98,11 +111,10 @@
     "missionTitle": "使命与目标",
     "missionPending": "完整的使命与目标内容有待机构提供，此处为本次建置的暂代内容。",
     "structureTitle": "组织架构",
-    "structurePending": "组织架构内容有待机构提供，此处为本次建置的暂代内容。"
-  },
-  "donate": {
-    "title": "捐款",
-    "pending": "捐款方式及银行资料有待机构提供，资料齐备后将补充此部分。"
+    "structurePending": "组织架构内容有待机构提供，此处为本次建置的暂代内容。",
+    "eyebrow": "关于我们",
+    "backgroundPending": "成立经过、里程碑与服务足迹的内容有待机构提供。",
+    "committeePending": "现届委员名单及任期有待机构提供。"
   },
   "volunteer": {
     "title": "义工招募",
@@ -114,18 +126,43 @@
     "phone": "电话",
     "email": "电邮",
     "officeHours": "办公时间",
-    "charityRegNo": "慈善机构注册编号"
+    "charityRegNo": "慈善机构注册编号",
+    "eyebrow": "联络我们",
+    "heading": "有事想问，\n直接找我们。",
+    "lead": "无论是想参与服务、捐出物资，还是替机构查询合作，我们都会在一个工作天内回复。",
+    "channelsLabel": "联络方法",
+    "whatsappHint": "最快的方法。活动报名确认也在这里进行。",
+    "phoneHint": "办公时间内有人接听。",
+    "emailHint": "适合较长的查询或需要附件的事宜。",
+    "visitLabel": "办事处",
+    "openMap": "在地图打开",
+    "addressPending": "地址稍后公布",
+    "hoursNote": "公众假期休息。到访前请先致电或以 WhatsApp 联络我们。",
+    "routesEyebrow": "或者你想找的是",
+    "routesTitle": "这几件事不用先写信",
+    "routeVolunteer": "成为义工",
+    "routeVolunteerDesc": "填一次表格，之后每次活动只需回复 WhatsApp。",
+    "routeDonate": "捐赠物资",
+    "routeDonateDesc": "米粮、日用品及全新校服，或查询其他捐赠方式。",
+    "routeCareers": "职位空缺",
+    "routeCareersDesc": "查看现时开放的全职岗位并直接申请。",
+    "followEyebrow": "追踪我们",
+    "followTitle": "看看义工每星期在做什么"
   },
   "footer": {
     "privacy": "隐私政策",
     "terms": "条款及细则",
-    "involvedHead": "参与"
+    "involvedHead": "参与",
+    "founded": "成立于 {year} 年",
+    "followHead": "追踪我们"
   },
   "post": {
     "prev": "上一篇",
     "next": "下一篇",
     "notFound": "找不到此文章",
-    "browseAll": "浏览全部消息"
+    "browseAll": "浏览全部消息",
+    "ctaTitle": "下个周末，把三小时交给社区。",
+    "ctaLead": "无需经验，提供培训、工具与保险。18 岁以下需家长签署同意书。"
   },
   "common": {
     "loading": "载入中…",
@@ -149,5 +186,50 @@
     "thisWeek": "本周",
     "nextWeek": "下周",
     "month": "{month}"
+  },
+  "donateGoods": {
+    "title": "物资捐赠",
+    "eyebrow": "参与",
+    "heading": "一箱米、一套校服，\n直接送到元朗的家庭手上。",
+    "lead": "我们收集粮食、日用品及全新校服，直接送到元朗区的基层家庭。捐赠前请先联络我们，确认现时最需要的物资和交收安排。",
+    "needsEyebrow": "现时需要",
+    "needsTitle": "我们正在收集的物资",
+    "need1": "粮食",
+    "need1Desc": "白米、食油、罐头、面食等未开封的干粮。",
+    "need2": "日用品",
+    "need2Desc": "洗衣液、清洁用品、纸巾及个人卫生用品。",
+    "need3": "全新校服",
+    "need3Desc": "未使用的校服、书包及文具。",
+    "need4": "福袋物资",
+    "need4Desc": "派发活动用的健康食品及日常必需品。",
+    "stepsEyebrow": "捐赠流程",
+    "stepsTitle": "三步就行",
+    "step1": "先联络我们",
+    "step1Desc": "用 WhatsApp 或电邮告诉我们物资种类和大约数量。",
+    "step2": "等我们回覆",
+    "step2Desc": "我们会回覆现时是否需要，以及交收或送递的安排。",
+    "step3": "按约定交收",
+    "step3Desc": "按约定时间送到办公室，或按我们建议的方式交收。",
+    "notesEyebrow": "捐赠前请留意",
+    "notesTitle": "几项简单要求",
+    "note1": "食品必须未开封，并距离到期日至少三个月。",
+    "note2": "校服、文具及个人卫生用品请以全新为准。",
+    "note3": "恕不接收已开封食品、过期物资及二手衣物。",
+    "note4": "数量较多请先联络，好让我们安排人手接收。",
+    "dropoffLabel": "送递地点",
+    "hoursNote": "公众假期休息。送递前请先 WhatsApp 或致电确认。",
+    "ctaTitle": "有物资想捐？先跟我们说一声。",
+    "ctaLead": "回覆时间通常在一个工作天内。",
+    "ctaButton": "WhatsApp 联络我们",
+    "otherWays": "想以其他方式支持？",
+    "otherWaysLink": "成为义工"
+  },
+  "donate": {
+    "title": "捐款",
+    "eyebrow": "参与",
+    "lead": "以金钱直接支持我们的服务，银行过账及电子支付详情正在整理。",
+    "pending": "捐款方式及银行资料有待机构提供，资料齐备后将补充此部分。如需即时捐款，欢迎先联络我们。",
+    "goodsCrossLabel": "或者",
+    "goodsCrossLead": "想直接捐米粮、日用品或校服？"
   }
 }

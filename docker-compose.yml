@@ -6,6 +6,14 @@
 #   docker compose --profile monitoring up -d     → prometheus :9090 + grafana :3001
 #
 # Profiles combine: --profile app --profile monitoring = everything.
+#
+# Data lives in named volumes and survives `docker compose down`. It does NOT
+# survive `down -v`. Back it up with backup-data.bat / .sh before anything risky.
+
+# Pinned so the volume names never depend on the folder this is checked out into.
+# Without it Compose derives the project from the directory name, and a rename or
+# a fresh clone silently starts against empty volumes.
+name: lucabridge
 
 services:
   postgres:
@@ -20,6 +28,9 @@ services:
       - "5432:5432"
     volumes:
       - lucabridge-postgres-data:/var/lib/postgresql/data
+      # pg_dump/pg_restore write and read here directly, so no binary ever passes
+      # through host shell redirection.
+      - ./backups:/backups
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U lucabridge -d lucabridge"]
       interval: 5s
@@ -65,6 +76,22 @@ services:
       mc anonymous set download local/${STORAGE_BUCKET:-blog-media} &&
       echo 'bucket ${STORAGE_BUCKET:-blog-media} ready'
       "
+
+  # ---------- profile: tools (one-shot data backup/restore) ----------
+
+  # Never started by `up`. The backup/restore scripts invoke it with
+  # `docker compose --profile tools run --rm mc "<mc command>"`.
+  mc:
+    profiles: ["tools"]
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MC_HOST_local: http://${MINIO_USER:-minioadmin}:${MINIO_PASSWORD:-minioadmin}@minio:9000
+    entrypoint: ["/bin/sh", "-c"]
+    volumes:
+      - ./backups:/backups
 
   # ---------- profile: app (prod-shaped full stack) ----------
 
