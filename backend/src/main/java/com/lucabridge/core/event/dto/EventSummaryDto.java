@@ -7,6 +7,8 @@ public record EventSummaryDto(
         Long id,
         String slug,
         Long serviceId,
+        /** Localised name of that service — the card's tag. */
+        String serviceName,
         String title,
         String summary,
         String venue,

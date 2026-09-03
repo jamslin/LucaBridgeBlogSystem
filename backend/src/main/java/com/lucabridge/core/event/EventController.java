@@ -1,5 +1,7 @@
 package com.lucabridge.core.event;
 
+import com.lucabridge.core.service.ServiceLabels;
+
 import com.lucabridge.core.error.TooManyRequestsException;
 import com.lucabridge.core.event.dto.EventDetailDto;
 import com.lucabridge.core.event.dto.EventRegistrationRequest;
@@ -28,12 +30,14 @@ public class EventController {
     private final EventService eventService;
     private final EventRegistrationService registrationService;
     private final RegistrationRateLimiter rateLimiter;
+    private final ServiceLabels serviceLabels;
 
     public EventController(EventService eventService, EventRegistrationService registrationService,
-                            RegistrationRateLimiter rateLimiter) {
+                            RegistrationRateLimiter rateLimiter, ServiceLabels serviceLabels) {
         this.eventService = eventService;
         this.registrationService = registrationService;
         this.rateLimiter = rateLimiter;
+        this.serviceLabels = serviceLabels;
     }
 
     /**
@@ -52,7 +56,9 @@ public class EventController {
         Instant now = Instant.now();
         List<Long> eventIds = events.getContent().stream().map(Event::getId).toList();
         Map<Long, Long> counts = eventService.registeredCounts(eventIds);
-        return events.map(event -> EventMapper.toSummary(event, lang, counts.getOrDefault(event.getId(), 0L), now));
+        Map<Long, String> serviceNames = serviceLabels.namesBy(lang);
+        return events.map(event -> EventMapper.toSummary(event, lang,
+                serviceNames.get(event.getServiceId()), counts.getOrDefault(event.getId(), 0L), now));
     }
 
     @GetMapping("/{slug}")
@@ -62,7 +68,8 @@ public class EventController {
         Lang lang = Lang.orDefault(rawLang);
         Event event = eventService.getPublishedBySlug(slug);
         long confirmedCount = eventService.registeredCount(event.getId());
-        return EventMapper.toDetail(event, lang, confirmedCount, Instant.now());
+        return EventMapper.toDetail(event, lang, serviceLabels.nameOf(event.getServiceId(), lang),
+                confirmedCount, Instant.now());
     }
 
     /**

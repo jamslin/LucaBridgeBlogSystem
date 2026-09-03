@@ -1,7 +1,6 @@
 import { Link, useParams, useRouteLoaderData } from "react-router";
 
 import { t } from "../i18n";
-import { NAV } from "../nav";
 import SocialLinks from "./SocialLinks";
 
 export default function Footer() {
@@ -27,45 +26,11 @@ export default function Footer() {
               </span>
             </span>
           </div>
-          {company.officeHours && <p className="footer-brand__hours">{company.officeHours}</p>}
-          <div className="footer-social">
-            <SocialLinks company={company} size={20} color="currentColor" />
-          </div>
-        </div>
-
-        {/* Explicit columns rather than one per NAV entry: mapping the nav gave
-            a column each to Services and Donate, which have no children, so the
-            footer rendered two empty headings and wrapped onto a second row. */}
-        <div className="footer-col">
-          <span className="footer-col__head">{t(lang, "nav.about")}</span>
-          <ul>
-            <li><Link to={L("/about")}>{t(lang, "nav.about")}</Link></li>
-            <li><Link to={L("/services")}>{t(lang, "nav.services")}</Link></li>
-          </ul>
-        </div>
-
-        <div className="footer-col">
-          <span className="footer-col__head">{t(lang, "nav.news")}</span>
-          <ul>
-            <li><Link to={L("/blog")}>{t(lang, "nav.newsRecent")}</Link></li>
-            <li><Link to={L("/events")}>{t(lang, "nav.newsEvents")}</Link></li>
-          </ul>
-        </div>
-
-        <div className="footer-col">
-          <span className="footer-col__head">{t(lang, "footer.involvedHead")}</span>
-          <ul>
-            <li><Link to={L("/volunteer")}>{t(lang, "nav.recruitVolunteer")}</Link></li>
-            <li><Link to={L("/careers")}>{t(lang, "nav.recruitJobs")}</Link></li>
-            <li><Link to={L("/donate")}>{t(lang, "nav.donate")}</Link></li>
-          </ul>
-        </div>
-
-        <div className="footer-col">
-          <Link to={L("/contact")} className="footer-col__head">{t(lang, "nav.contact")}</Link>
-          <ul>
+          <ul className="footer-brand__contact">
             {company.address && <li>{company.address}</li>}
-            {company.phone && <li><a href={`tel:${company.phone.replace(/\s+/g, "")}`}>{company.phone}</a></li>}
+            {company.phone && (
+              <li><a href={`tel:${company.phone.replace(/\s+/g, "")}`}>{company.phone}</a></li>
+            )}
             {company.email && (
               <li>
                 <a href={`mailto:${company.email}`}>
@@ -76,7 +41,37 @@ export default function Footer() {
                 </a>
               </li>
             )}
+            {company.officeHours && <li>{company.officeHours}</li>}
           </ul>
+        </div>
+
+        {/* Comps 8a/8b: About (its four mega-menu destinations), Get involved,
+            and the networks as text links. News is not a footer column there —
+            it keeps its own dropdown in the primary nav. */}
+        <div className="footer-col">
+          <Link to={L("/about")} className="footer-col__head">{t(lang, "nav.about")}</Link>
+          <ul>
+            <li><Link to={L("/about#background")}>{t(lang, "nav.aboutBackground")}</Link></li>
+            <li><Link to={L("/about#mission")}>{t(lang, "nav.aboutMission")}</Link></li>
+            <li><Link to={L("/about#structure")}>{t(lang, "nav.aboutStructure")}</Link></li>
+            <li><Link to={L("/about#committee")}>{t(lang, "nav.aboutCommittee")}</Link></li>
+          </ul>
+        </div>
+
+        <div className="footer-col">
+          <span className="footer-col__head">{t(lang, "footer.involvedHead")}</span>
+          <ul>
+            <li><Link to={L("/donate")}>{t(lang, "nav.donate")}</Link></li>
+            <li><Link to={L("/volunteer")}>{t(lang, "nav.recruitVolunteer")}</Link></li>
+            <li><Link to={L("/careers")}>{t(lang, "nav.recruitJobs")}</Link></li>
+          </ul>
+        </div>
+
+        <div className="footer-col">
+          <span className="footer-col__head">{t(lang, "footer.followHead")}</span>
+          <div className="footer-col__social">
+            <SocialLinks company={company} withLabels />
+          </div>
         </div>
       </div>
 

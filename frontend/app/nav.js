@@ -7,7 +7,16 @@
 // us" — see recruitLabelKey() below, computed rather than hardcoded so a future
 // 7th item trips it automatically instead of needing a manual relabel.
 export const NAV = [
-  { key: "about", to: "/about" },
+  // About is the one item the comps give a full mega-menu: an intro column plus
+  // four numbered cards. The backend has no CMS page table, so the four are
+  // sections of /about addressed by anchor rather than routes of their own —
+  // the reader gets the same four destinations either way.
+  { key: "about", to: "/about", intro: true, children: [
+    { key: "aboutBackground", to: "/about#background" },
+    { key: "aboutMission", to: "/about#mission" },
+    { key: "aboutStructure", to: "/about#structure" },
+    { key: "aboutCommittee", to: "/about#committee" },
+  ] },
   { key: "services", to: "/services" },
   { key: "news", to: "/blog", children: [
     { key: "newsRecent", to: "/blog" },

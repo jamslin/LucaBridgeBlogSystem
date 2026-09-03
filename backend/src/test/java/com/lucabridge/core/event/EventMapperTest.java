@@ -20,7 +20,7 @@ class EventMapperTest {
     @DisplayName("remaining at exactly 20% of capacity is almost full")
     void almostFullAtExactlyTwentyPercent() {
         // capacity 10, confirmed 8 -> remaining 2 -> 2/10 == 20%
-        EventSummaryDto dto = EventMapper.toSummary(openEvent(10), Lang.TC, 8, NOW);
+        EventSummaryDto dto = EventMapper.toSummary(openEvent(10), Lang.TC, null, 8, NOW);
         assertTrue(dto.registration().almostFull());
     }
 
@@ -28,14 +28,14 @@ class EventMapperTest {
     @DisplayName("remaining just above 20% of capacity is not almost full")
     void notAlmostFullJustAboveTwentyPercent() {
         // capacity 50, confirmed 39 -> remaining 11 -> 22%, matches the design's own example card
-        EventSummaryDto dto = EventMapper.toSummary(openEvent(50), Lang.TC, 39, NOW);
+        EventSummaryDto dto = EventMapper.toSummary(openEvent(50), Lang.TC, null, 39, NOW);
         assertFalse(dto.registration().almostFull());
     }
 
     @Test
     @DisplayName("a full event is FULL, not almost-full — the badges are mutually exclusive")
     void fullEventIsNeverAlmostFull() {
-        EventSummaryDto dto = EventMapper.toSummary(openEvent(10), Lang.TC, 10, NOW);
+        EventSummaryDto dto = EventMapper.toSummary(openEvent(10), Lang.TC, null, 10, NOW);
         assertFalse(dto.registration().almostFull());
         assertTrue(dto.registration().state() == RegistrationState.FULL);
     }
@@ -44,7 +44,7 @@ class EventMapperTest {
     @DisplayName("unlimited capacity is never almost full")
     void unlimitedCapacityIsNeverAlmostFull() {
         Event event = openEvent(null);
-        EventSummaryDto dto = EventMapper.toSummary(event, Lang.TC, 1_000_000, NOW);
+        EventSummaryDto dto = EventMapper.toSummary(event, Lang.TC, null, 1_000_000, NOW);
         assertFalse(dto.registration().almostFull());
     }
 

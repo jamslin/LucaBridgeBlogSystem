@@ -27,13 +27,14 @@ final class EventMapper {
     private EventMapper() {
     }
 
-    static EventSummaryDto toSummary(Event event, Lang lang, long registeredCount, Instant now) {
+    static EventSummaryDto toSummary(Event event, Lang lang, String serviceName, long registeredCount, Instant now) {
         EventText t = event.getText();
         Media cover = event.getCoverMedia();
         return new EventSummaryDto(
                 event.getId(),
                 event.getSlug(),
                 event.getServiceId(),
+                serviceName,
                 title(t, lang),
                 summary(t, lang),
                 venue(t, lang),
@@ -45,7 +46,7 @@ final class EventMapper {
                 registrationInfo(event, registeredCount, now));
     }
 
-    static EventDetailDto toDetail(Event event, Lang lang, long registeredCount, Instant now) {
+    static EventDetailDto toDetail(Event event, Lang lang, String serviceName, long registeredCount, Instant now) {
         EventText t = event.getText();
         Media cover = event.getCoverMedia();
         List<GalleryImageDto> gallery = event.getGallery().stream()
@@ -55,6 +56,7 @@ final class EventMapper {
                 event.getId(),
                 event.getSlug(),
                 event.getServiceId(),
+                serviceName,
                 title(t, lang),
                 summary(t, lang),
                 t == null ? null : Localized.pick(lang, t.getTcBody(), t.getEnBody(), t.getScBody()),

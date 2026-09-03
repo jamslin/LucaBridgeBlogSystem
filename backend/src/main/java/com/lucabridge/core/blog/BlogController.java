@@ -1,5 +1,9 @@
 package com.lucabridge.core.blog;
 
+import java.util.Map;
+
+import com.lucabridge.core.service.ServiceLabels;
+
 import com.lucabridge.core.blog.dto.BlogDetailDto;
 import com.lucabridge.core.blog.dto.BlogSummaryDto;
 import com.lucabridge.core.i18n.Lang;
@@ -19,9 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class BlogController {
 
     private final BlogService blogService;
+    private final ServiceLabels serviceLabels;
 
-    public BlogController(BlogService blogService) {
+    public BlogController(BlogService blogService, ServiceLabels serviceLabels) {
         this.blogService = blogService;
+        this.serviceLabels = serviceLabels;
     }
 
     @GetMapping
@@ -29,7 +35,10 @@ public class BlogController {
             @RequestParam(name = "lang", required = false) String rawLang,
             @PageableDefault(size = 20, sort = "publishedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Lang lang = Lang.orDefault(rawLang);
-        return blogService.listPublished(pageable).map(blog -> BlogMapper.toSummary(blog, lang));
+        // Resolved once for the page rather than per row.
+        Map<Long, String> names = serviceLabels.namesBy(lang);
+        return blogService.listPublished(pageable)
+                .map(blog -> BlogMapper.toSummary(blog, lang, names.get(blog.getServiceId())));
     }
 
     @GetMapping("/{slug}")
@@ -37,6 +46,12 @@ public class BlogController {
             @PathVariable String slug,
             @RequestParam(name = "lang", required = false) String rawLang) {
         Lang lang = Lang.orDefault(rawLang);
-        return BlogMapper.toDetail(blogService.getPublishedBySlug(slug), lang);
+        Blog blog = blogService.getPublishedBySlug(slug);
+        Map<Long, String> names = serviceLabels.namesBy(lang);
+        Blog older = blogService.findOlder(blog.getPublishedAt());
+        Blog newer = blogService.findNewer(blog.getPublishedAt());
+        return BlogMapper.toDetail(blog, lang, names.get(blog.getServiceId()),
+                BlogMapper.toNeighbour(older, lang, older == null ? null : names.get(older.getServiceId())),
+                BlogMapper.toNeighbour(newer, lang, newer == null ? null : names.get(newer.getServiceId())));
     }
 }

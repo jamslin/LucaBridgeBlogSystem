@@ -10,6 +10,7 @@ import com.lucabridge.core.media.MediaRepository;
 import com.lucabridge.core.publish.PublishStatus;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,26 @@ public class BlogService {
     public Blog getPublishedBySlug(String slug) {
         return blogRepository.findVisibleBySlug(slug, Instant.now())
                 .orElseThrow(() -> new ResourceNotFoundException("Blog not found: " + slug));
+    }
+
+    /** Older neighbour of a post, or null when it is the oldest visible one. */
+    @Transactional(readOnly = true)
+    public Blog findOlder(Instant publishedAt) {
+        if (publishedAt == null) {
+            return null;
+        }
+        List<Blog> found = blogRepository.findOlderThan(publishedAt, Instant.now(), PageRequest.of(0, 1));
+        return found.isEmpty() ? null : found.get(0);
+    }
+
+    /** Newer neighbour of a post, or null when it is the newest visible one. */
+    @Transactional(readOnly = true)
+    public Blog findNewer(Instant publishedAt) {
+        if (publishedAt == null) {
+            return null;
+        }
+        List<Blog> found = blogRepository.findNewerThan(publishedAt, Instant.now(), PageRequest.of(0, 1));
+        return found.isEmpty() ? null : found.get(0);
     }
 
     // ---- admin ----

@@ -638,7 +638,7 @@ html[lang="en"] .site-nav__actions .btn {
   min-width: 460px;
   padding: var(--space-8);
   border-radius: var(--radius-panel);
-  background: var(--glass-fallback-light);
+  background: var(--color-cream);
   border: 1px solid var(--color-line);
   box-shadow: var(--elev-raised);
   opacity: 0;
@@ -646,12 +646,8 @@ html[lang="en"] .site-nav__actions .btn {
   transition: opacity var(--motion-standard), transform var(--motion-standard), visibility var(--motion-standard);
 }
 
-@supports (backdrop-filter: blur(12px)) {
-  .mega {
-    background: rgba(247, 242, 241, .92);
-    backdrop-filter: blur(18px) saturate(1.1);
-  }
-}
+/* No glass here. The brief limits it to the utility bar and the nav bar, and
+   at 92% a dark serif H1 still ghosted through the open panel. */
 
 .site-nav__item:hover>.mega,
 .site-nav__item:focus-within>.mega {
@@ -3185,4 +3181,536 @@ a.drawer__row:hover {
   .contact-channels { grid-template-columns: 1fr; }
   .contact-hero { padding-left: 18px; padding-right: 18px; }
   .follow-band { flex-direction: column; align-items: flex-start; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   物資捐贈 / Donate goods
+   Ordered by what someone holding a box actually asks: is my thing wanted,
+   what do I do, is there a catch, where do I bring it, who do I tell.
+   ───────────────────────────────────────────────────────────────────────── */
+.goods-page {
+  padding-bottom: clamp(48px, 7vw, 96px);
+}
+
+.goods-hero {
+  padding: clamp(40px, 6vw, 80px) 20px clamp(28px, 4vw, 48px);
+}
+
+.goods-hero h1 {
+  margin: 10px 0 16px;
+  font-size: clamp(32px, 4.8vw, 60px);
+  line-height: 1.08;
+}
+
+.goods-hero__lead {
+  max-width: 52ch;
+  margin: 0;
+  font-size: clamp(16px, 1.7vw, 19px);
+  color: var(--color-ink-soft);
+}
+
+.goods-needs,
+.goods-steps,
+.goods-visit,
+.goods-cta {
+  margin-bottom: clamp(40px, 6vw, 80px);
+}
+
+.need-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.need-card {
+  padding: clamp(20px, 2.4vw, 28px);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+  box-shadow: var(--elev-card);
+}
+
+.need-card__num {
+  font-family: var(--font-label);
+  font-size: 12px;
+  color: var(--color-accent-deep);
+}
+
+.need-card__title {
+  margin: 10px 0 8px;
+  font-size: clamp(17px, 1.8vw, 21px);
+}
+
+.need-card__desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+/* Numbered steps. The counter is a real list marker replacement, so the
+   sequence survives with CSS off. */
+.step-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  gap: 16px;
+  padding: clamp(20px, 2.4vw, 28px);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-line);
+  background: var(--color-cream);
+}
+
+.step__num {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-cream);
+  font-family: var(--font-label);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.step__title {
+  margin: 4px 0 6px;
+  font-size: clamp(16px, 1.7vw, 19px);
+}
+
+.step__desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+/* Same two-card lockup as the contact page's visit block, so the two
+   "where to find us" moments on the site read as one pattern. */
+.goods-visit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.goods-visit .visit-card .btn-ghost {
+  margin-top: 16px;
+}
+
+.goods-notes__title {
+  margin: 10px 0 14px;
+  font-size: clamp(19px, 2vw, 24px);
+}
+
+.goods-notes {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-ink-soft);
+}
+
+.goods-notes li + li {
+  margin-top: 8px;
+}
+
+.goods-cta__lead {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: rgba(253, 246, 238, .93);
+}
+
+.goods-cta__alt {
+  margin: 16px 0 0;
+  font-size: 14px;
+  color: var(--color-ink-soft);
+}
+
+/* A cream button on the accent band. The accent-on-accent alternative fails
+   contrast, and a ghost outline disappears against the red. */
+.btn-on-accent {
+  background: var(--color-cream);
+  color: var(--color-accent-deep);
+  border: 1px solid var(--color-cream);
+}
+
+.btn-on-accent:hover {
+  background: #fff;
+  text-decoration: none;
+}
+
+@media (max-width: 1023px) {
+  .need-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .step-list,
+  .goods-visit {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .need-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The accent CTA band that closes a page (mockup 8d). Shares the follow-band
+   lockup but in the accent gradient, which is what the comps use to close an
+   article and a conversion page — the ink band stays for "follow us", where the
+   ask is softer. */
+.cta-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+  padding: clamp(24px, 3.5vw, 40px);
+  border-radius: var(--radius-panel);
+  background: linear-gradient(140deg, var(--color-accent) 0%, var(--color-accent-deep) 78%);
+  color: var(--color-cream);
+}
+
+.cta-band h2 {
+  margin: 0;
+  font-size: clamp(22px, 2.8vw, 32px);
+  line-height: 1.15;
+  color: var(--color-cream);
+}
+
+/* ── Mega-menu variants (comps 8a/8b) ────────────────────────────────────── */
+
+/* About gets an intro column beside its four cards; the panel widens to hold
+   both. The others stay narrow, sized to their link list. */
+.mega--intro {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: var(--space-8);
+  min-width: min(1080px, 88vw);
+}
+
+.mega__intro-title {
+  margin: 8px 0 10px;
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.15;
+}
+
+.mega__intro-lead {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--color-ink-soft);
+}
+
+.mega__card-desc {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+}
+
+/* News and Recruitment: a heading and a plain list on the same glass panel,
+   the panel narrowing to the list rather than stretching numbered cards
+   across a width two items cannot fill. */
+.mega__list {
+  min-width: 200px;
+}
+
+.mega__list-head {
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--color-ink);
+}
+
+.mega__list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mega__list li + li {
+  margin-top: 4px;
+}
+
+.mega__list a {
+  display: block;
+  padding: 8px 10px;
+  margin-left: -10px;
+  border-radius: var(--radius-input);
+  font-size: 15px;
+  color: var(--color-ink-soft);
+}
+
+.mega__list a:hover {
+  background: var(--color-card);
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+@media (max-width: 1200px) {
+  .mega--intro {
+    grid-template-columns: 1fr;
+    min-width: min(720px, 88vw);
+    gap: var(--space-6);
+  }
+
+  .mega--intro .mega__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── 關於我們 / About ─────────────────────────────────────────────────────── */
+.about-page {
+  padding-bottom: clamp(48px, 7vw, 96px);
+}
+
+.about-hero {
+  padding: clamp(40px, 6vw, 80px) 20px clamp(24px, 3vw, 40px);
+}
+
+.about-hero h1 {
+  margin: 10px 0 16px;
+  font-size: clamp(32px, 4.8vw, 60px);
+  line-height: 1.08;
+}
+
+.about-hero__lead {
+  max-width: 52ch;
+  margin: 0;
+  font-size: clamp(16px, 1.7vw, 19px);
+  color: var(--color-ink-soft);
+}
+
+.about-sections {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.about-section {
+  display: flex;
+  gap: 20px;
+  padding: clamp(22px, 3vw, 36px);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+  box-shadow: var(--elev-card);
+  /* The nav is sticky, so an anchor jump must stop short of it. */
+  scroll-margin-top: 110px;
+}
+
+.about-section__num {
+  flex-shrink: 0;
+  font-family: var(--font-label);
+  font-size: 13px;
+  color: var(--color-accent-deep);
+  padding-top: 6px;
+}
+
+.about-section h2 {
+  margin: 0 0 6px;
+  font-size: clamp(21px, 2.3vw, 28px);
+}
+
+.about-section__desc {
+  margin: 0 0 14px;
+  font-size: 15px;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 560px) {
+  .about-section {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Contact details live in the footer's brand column (comps 8a/8b), and the
+   networks get a column of their own as text links rather than icons. */
+.footer-brand__contact {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.footer-brand__contact a {
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.footer-col__social {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.footer-col__social a {
+  color: var(--color-paper);
+}
+
+.footer-col__social a:hover {
+  text-decoration: underline;
+}
+
+/* The About panel spans the whole bar in the comps, not a box centred on its
+   trigger — centring a 1080px panel on the first nav item pushed its left edge
+   past the viewport. Taking the item out of the positioning flow lets the panel
+   resolve against the bar and inherit the shell's width and gutters. */
+.site-nav__bar {
+  position: relative;
+}
+
+.site-nav__item--wide {
+  position: static;
+}
+
+.mega--intro {
+  left: 0;
+  right: 0;
+  width: auto;
+  min-width: 0;
+  transform: translateY(6px);
+}
+
+.site-nav__item--wide:hover > .mega--intro,
+.site-nav__item--wide:focus-within > .mega--intro {
+  transform: translateY(0);
+}
+
+/* "欄數隨子項數收窄" — a two-item menu should not be held open at the 460px
+   minimum the numbered-card layout needed. */
+.mega:not(.mega--intro) {
+  min-width: 0;
+  padding: var(--space-6);
+}
+
+/* ── Article foot: 上一篇 / 下一篇 and the volunteer band (mockup 8d) ─────── */
+.article-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: clamp(32px, 5vw, 56px) 0 var(--space-6);
+}
+
+.article-nav__card {
+  display: block;
+  padding: clamp(18px, 2.2vw, 26px);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-line);
+  background: var(--color-card);
+  color: var(--color-ink);
+}
+
+.article-nav__card:hover {
+  border-color: var(--color-accent);
+  text-decoration: none;
+}
+
+/* The comp mirrors the trailing card so the pair reads outward from the middle. */
+.article-nav__card--next {
+  text-align: right;
+}
+
+.article-nav__label {
+  display: block;
+  font-family: var(--font-label);
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.article-nav__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0 10px;
+  font-family: var(--font-label);
+  font-size: 12px;
+  color: var(--color-ink-soft);
+}
+
+.article-nav__card--next .article-nav__meta {
+  justify-content: flex-end;
+}
+
+.article-nav__title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(17px, 1.9vw, 22px);
+  line-height: 1.3;
+}
+
+.article-cta {
+  margin-bottom: var(--space-6);
+}
+
+.article-cta__lead {
+  margin: 10px 0 0;
+  max-width: 62ch;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(253, 246, 238, .93);
+}
+
+/* Tag sits before the date on the article meta line, so the two need to align
+   on a shared baseline rather than the pill's box. */
+.article__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-label);
+  font-size: 13px;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 720px) {
+  .article-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .article-nav__card--next,
+  .article-nav__card--next .article-nav__meta {
+    text-align: left;
+    justify-content: flex-start;
+  }
+}
+
+/* The English tree is six top-level items wide and, with About now carrying a
+   caret, it no longer clears the bar at 1024px — the CTA was pushed 50px past
+   the viewport. The comps already step English down once (14→13px, 22→16px,
+   CTA 24→20px); this is the same move one notch further, applied only in the
+   band where it is needed. */
+@media (max-width: 1180px) {
+  html[lang="en"] .site-nav__link {
+    font-size: 12px;
+    padding: 10px 5px;
+  }
+
+  html[lang="en"] .site-nav__list {
+    gap: 0;
+  }
+
+  html[lang="en"] .site-nav__actions .btn {
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  html[lang="en"] .site-nav__bar {
+    gap: var(--space-3);
+  }
 }

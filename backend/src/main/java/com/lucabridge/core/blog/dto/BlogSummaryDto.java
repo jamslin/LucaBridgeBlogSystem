@@ -6,6 +6,8 @@ import java.time.Instant;
 public record BlogSummaryDto(
         Long id,
         String slug,
+        /** Localised name of the service this post belongs to — the card's tag. */
+        String serviceName,
         String title,
         String summary,
         String coverUrl,
